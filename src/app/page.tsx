@@ -1,9 +1,13 @@
-import Image from "next/image";
+"use client";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
-  return (
-    <div className="font-bold text-white">
-     welcome to my project
-    </div>
-  );
+  const router = useRouter();
+
+  useEffect(() => {
+    router.push("/auth/login");
+  }, [router]);
+
+  return <div className="flex items-center justify-center min-h-screen"></div>;
 }
