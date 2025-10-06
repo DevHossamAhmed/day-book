@@ -53,7 +53,7 @@ const SideBar: React.FC<SideBarProps> = ({ isOpen, onClose }) => {
           <ul className="space-y-1">
             <li>
               <Link
-                href="/admin/dashboard"
+                href="/dashboard"
                 className="flex items-center gap-3 px-4 py-3 rounded-lg text-[15px] font-medium hover:bg-gray-50 hover:text-[#1520eb] transition-all duration-200"
                 onClick={onClose}
               >
@@ -63,7 +63,7 @@ const SideBar: React.FC<SideBarProps> = ({ isOpen, onClose }) => {
             </li>
             <li>
               <Link
-                href="#"
+                href="/daily-records"
                 className="flex items-center gap-3 px-4 py-3 rounded-lg text-[15px] font-medium hover:bg-gray-50 hover:text-[#1520eb] transition-all duration-200"
                 onClick={onClose}
               >
