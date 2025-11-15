@@ -1,3 +1,4 @@
+
 import Image from "next/image";
 import React from "react";
 import Logo from "../../../public/assets/images/Logo.png";
@@ -73,7 +74,7 @@ const SideBar: React.FC<SideBarProps> = ({ isOpen, onClose }) => {
             </li>
             <li>
               <Link
-                href="#"
+                href="/income"
                 className="flex items-center gap-3 px-4 py-3 rounded-lg text-[15px] font-medium hover:bg-gray-50 hover:text-[#1520eb] transition-all duration-200"
                 onClick={onClose}
               >
@@ -83,7 +84,7 @@ const SideBar: React.FC<SideBarProps> = ({ isOpen, onClose }) => {
             </li>
             <li>
               <Link
-                href="#"
+                href="/expenses"
                 className="flex items-center gap-3 px-4 py-3 rounded-lg text-[15px] font-medium hover:bg-gray-50 hover:text-[#1520eb] transition-all duration-200"
                 onClick={onClose}
               >
@@ -93,7 +94,7 @@ const SideBar: React.FC<SideBarProps> = ({ isOpen, onClose }) => {
             </li>
             <li>
               <Link
-                href="#"
+                href="/planned-payments"
                 className="flex items-center gap-3 px-4 py-3 rounded-lg text-[15px] font-medium hover:bg-gray-50 hover:text-[#1520eb] transition-all duration-200"
                 onClick={onClose}
               >
@@ -103,7 +104,7 @@ const SideBar: React.FC<SideBarProps> = ({ isOpen, onClose }) => {
             </li>
             <li>
               <Link
-                href="#"
+                href="/salary"
                 className="flex items-center gap-3 px-4 py-3 rounded-lg text-[15px] font-medium hover:bg-gray-50 hover:text-[#1520eb] transition-all duration-200"
                 onClick={onClose}
               >
@@ -120,7 +121,7 @@ const SideBar: React.FC<SideBarProps> = ({ isOpen, onClose }) => {
             <ul className="space-y-1">
               <li>
                 <Link
-                  href="#"
+                  href="/members"
                   className="flex items-center gap-3 px-4 py-3 rounded-lg text-[15px] font-medium hover:bg-gray-50 hover:text-[#1520eb] transition-all duration-200"
                   onClick={onClose}
                 >
@@ -130,7 +131,7 @@ const SideBar: React.FC<SideBarProps> = ({ isOpen, onClose }) => {
               </li>
               <li>
                 <Link
-                  href="#"
+                  href="/settings"
                   className="flex items-center gap-3 px-4 py-3 rounded-lg text-[15px] font-medium hover:bg-gray-50 hover:text-[#1520eb] transition-all duration-200"
                   onClick={onClose}
                 >
