@@ -17,7 +17,7 @@ const Page = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    
+
     setTimeout(() => {
       console.log({ email, password, rememberMe });
       router.push("/dashboard");
@@ -34,9 +34,9 @@ const Page = () => {
             <Image
               src={Logo}
               alt="Logo"
-              width={160}
-              height={45}
-              className="w-auto h-auto"
+              width={300}
+              height={90}
+              className="w-[300px] h-[120px] "
             />
           </div>
 
@@ -44,7 +44,6 @@ const Page = () => {
             <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
               Sign in to your account
             </h2>
-
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-5">
@@ -167,7 +166,6 @@ const Page = () => {
                 "Sign in"
               )}
             </button>
-
           </form>
         </div>
 
