@@ -1,5 +1,9 @@
-import Head from "next/head";
+import type { Metadata } from "next";
 import "./globals.css";
+
+export const metadata: Metadata = {
+  title: "Day Book",
+};
 
 export default function RootLayout({
   children,
@@ -8,9 +12,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="mdl-js">
-      <Head>
-        <title>Day Book</title>
-      </Head>
       <body>{children}</body>
     </html>
   );
