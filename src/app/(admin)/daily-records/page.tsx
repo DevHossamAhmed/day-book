@@ -218,7 +218,7 @@ const OpeningBalancePage = () => {
 
           {/* Pagination */}
           <div className="p-6 border-t border-gray-200">
-            <div className="flex items-center justify-center gap-2">
+            <div className="flex items-center justify-end gap-2">
               <button className="px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors font-medium text-sm">
                 ← Previous
               </button>

@@ -159,7 +159,7 @@ const PlannedPaymentPage = () => {
           </div>
 
           {/* Pagination */}
-          <div className="flex items-center justify-center gap-2 mt-8 pt-6 border-t border-gray-100">
+          <div className="flex items-center justify-end gap-2 mt-8 pt-6 border-t border-gray-100">
             <button className="px-4 py-2 border border-gray-200 rounded-lg hover:bg-gray-50 flex items-center gap-2">
               <ChevronLeft size={18} />
               <span>Previous</span>
