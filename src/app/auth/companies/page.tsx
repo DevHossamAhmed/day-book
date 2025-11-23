@@ -13,7 +13,7 @@ const SignupPage = () => {
   const [agreeToTerms, setAgreeToTerms] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: { preventDefault: () => void; }) => {
     e.preventDefault();
     setIsLoading(true);
 
@@ -54,7 +54,7 @@ const SignupPage = () => {
           {/* Logo */}
           <div className="mb-12">
             <div className="flex items-center justify-start gap-2.5 mb-2">
-              <Image src={logo} alt="logo" className="ml-[-50px] "></Image>
+              <Image src={logo} alt="Company Logo" className="ml-[-50px]"></Image>
             </div>
             
             <h2 className="text-3xl font-semibold text-gray-900">
@@ -185,7 +185,7 @@ const SignupPage = () => {
           {/* Footer Link */}
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600">
-              Don't have an account?{" "}
+              Don&apos;t have an account?{" "}
               <a href="/signup" className="text-blue-600 hover:underline font-semibold">
                 Get started
               </a>
