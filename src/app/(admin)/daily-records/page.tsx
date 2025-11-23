@@ -377,7 +377,7 @@ const OpeningBalancePage = () => {
               {/* Modal Header */}
               <div className="flex items-center justify-between p-6 border-b border-gray-200">
                 <h2 className="text-xl font-bold text-gray-900">
-                  Create Entry
+                  Transfer Cash
                 </h2>
                 <button
                   onClick={() => setIsTransferModalOpen(false)}
@@ -413,14 +413,46 @@ const OpeningBalancePage = () => {
                   </div>
                 </div>
 
-                {/* Source Field */}
+                {/* From Account Field */}
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    Source
-                  </label>
                   <div className="relative">
-                    <select className="w-full px-4 py-3 border border-gray-300 rounded-lg appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white">
-                      <option value="">Select source</option>
+                    <select className="w-full px-4 py-3 border border-gray-300 rounded-lg appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900">
+                      <option value="cash-sale">Cash in Sale Counter</option>
+                      <option value="cash-bank">Cash in Bank</option>
+                      <option value="other">Other</option>
+                    </select>
+                    <div className="absolute right-3 top-3 text-gray-400 pointer-events-none">
+                      <ChevronRight size={20} className="rotate-90" />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Transfer Arrow */}
+                <div className="flex justify-center">
+                  <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 20 20"
+                      fill="none"
+                      className="text-gray-600"
+                    >
+                      <path
+                        d="M10 4L10 16M10 16L6 12M10 16L14 12"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </div>
+                </div>
+
+                {/* To Account Field */}
+                <div>
+                  <div className="relative">
+                    <select className="w-full px-4 py-3 border border-gray-300 rounded-lg appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900">
+                      <option value="undeposited">Undeposited Fund</option>
                       <option value="cash-sale">Cash in Sale Counter</option>
                       <option value="cash-bank">Cash in Bank</option>
                       <option value="other">Other</option>
@@ -438,15 +470,57 @@ const OpeningBalancePage = () => {
                   </label>
                   <input
                     type="text"
-                    placeholder="Enter amount"
+                    placeholder="Select date"
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
+                  <p className="text-sm text-blue-600 font-medium mt-2">
+                    21,000 Available in Cash Counter
+                  </p>
                 </div>
 
-                {/* Note Field */}
+                {/* Attachment Field */}
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    Note
+                    Attachment
+                  </label>
+                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-gray-400 transition-colors cursor-pointer">
+                    <div className="flex flex-col items-center gap-2">
+                      <svg
+                        width="40"
+                        height="40"
+                        viewBox="0 0 40 40"
+                        fill="none"
+                        className="text-gray-400"
+                      >
+                        <rect
+                          x="8"
+                          y="12"
+                          width="24"
+                          height="20"
+                          rx="2"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                        />
+                        <circle cx="15" cy="19" r="2" fill="currentColor" />
+                        <path
+                          d="M32 26L27 21L20 28"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                      <p className="text-sm text-gray-500 font-medium">
+                        Drag & Drop Receipt
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Additional Info Field */}
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Additional Info
                   </label>
                   <textarea
                     placeholder="Receipt Info (optional)"
@@ -459,18 +533,10 @@ const OpeningBalancePage = () => {
 
               {/* Modal Footer */}
               <div className="p-6 border-t border-gray-200 bg-gray-50">
-                <div className="flex gap-3">
-                  <button
-                    onClick={() => setIsCreateModalOpen(false)}
-                    className="flex-1 px-6 py-3 bg-white text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors font-medium"
-                  >
-                    Save and New
-                  </button>
-                  <button className="flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium flex items-center justify-center gap-2">
-                    <Save size={18} />
-                    Save
-                  </button>
-                </div>
+                <button className="w-full px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium flex items-center justify-center gap-2">
+                  <Save size={18} />
+                  Confirm
+                </button>
               </div>
             </div>
           </div>
