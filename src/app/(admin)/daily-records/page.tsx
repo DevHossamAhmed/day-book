@@ -12,6 +12,7 @@ import {
   Save,
   ArrowUpDown,
 } from "lucide-react";
+import EntryDetails from "@/components/modals/EntryDetails";
 
 const OpeningBalancePage = () => {
   const [selectedDate, setSelectedDate] = useState(21);
@@ -19,6 +20,8 @@ const OpeningBalancePage = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
   const [isPNLModalOpen, setIsPNLModalOpen] = useState(false);
+  const [isEntryDetailsOpen, setIsEntryDetailsOpen] = useState(false);
+
 
   const dates = [
     { day: 19, label: "Sun" },
@@ -185,6 +188,7 @@ const OpeningBalancePage = () => {
               {transactions.map((transaction) => (
                 <div
                   key={transaction.id}
+                  onClick={() => setIsEntryDetailsOpen(true)}
                   className="flex items-center justify-between p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors cursor-pointer"
                 >
                   <div className="flex items-center gap-4">
@@ -542,6 +546,9 @@ const OpeningBalancePage = () => {
           </div>
         </div>
       )}
+
+      <EntryDetails isOpen={isEntryDetailsOpen}  onClose={() => setIsEntryDetailsOpen(false)}
+      />
 
       {/* PNL Details Modal */}
       {isPNLModalOpen && (
