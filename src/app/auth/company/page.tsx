@@ -1,8 +1,9 @@
 "use client"
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import logo from "../../../../public/assets/images/Logo.png";
 import sidePic from "../../../../public/assets/images/leftsideLogin2.png";
 import Image from "next/image";
+import { listProducts } from "@/services/product.service";
 
 
 const SignupPage = () => {
@@ -12,6 +13,14 @@ const SignupPage = () => {
   const [password, setPassword] = useState("");
   const [agreeToTerms, setAgreeToTerms] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    async function fetchProducts() {
+      const products = await listProducts();
+      console.log("Fetched Products:", products);
+    }
+    fetchProducts();
+  }, []);
 
   const handleSubmit = async (e: { preventDefault: () => void; }) => {
     e.preventDefault();
@@ -56,7 +65,7 @@ const SignupPage = () => {
             <div className="flex items-center justify-start gap-2.5 mb-2">
               <Image src={logo} alt="Company Logo" className="ml-[-50px]"></Image>
             </div>
-            
+
             <h2 className="text-3xl font-semibold text-gray-900">
               Get started
             </h2>
@@ -146,10 +155,9 @@ const SignupPage = () => {
               onClick={handleSubmit}
               disabled={!isFormValid || isLoading}
               className={`w-full text-white py-3.5 rounded-lg font-semibold text-sm transition-all duration-200 mt-6
-                ${
-                  isFormValid && !isLoading
-                    ? "bg-blue-600 hover:bg-blue-700 cursor-pointer"
-                    : "bg-gray-300 cursor-not-allowed"
+                ${isFormValid && !isLoading
+                  ? "bg-blue-600 hover:bg-blue-700 cursor-pointer"
+                  : "bg-gray-300 cursor-not-allowed"
                 }`}
             >
               {isLoading ? (
