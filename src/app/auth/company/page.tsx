@@ -4,9 +4,11 @@ import logo from "../../../../public/assets/images/Logo.png";
 import sidePic from "../../../../public/assets/images/leftsideLogin2.png";
 import Image from "next/image";
 import { listProducts } from "@/services/product.service";
+import { Product } from "@/types/product";
 
 
 const SignupPage = () => {
+  const [products, setProducts] = useState<Product[]>([]);
   const [productName, setProductName] = useState("This is product name");
   const [companyName, setCompanyName] = useState("");
   const [email, setEmail] = useState("");
@@ -16,8 +18,8 @@ const SignupPage = () => {
 
   useEffect(() => {
     async function fetchProducts() {
-      const products = await listProducts();
-      console.log("Fetched Products:", products);
+      const res = await listProducts();
+      setProducts(res || []);
     }
     fetchProducts();
   }, []);
