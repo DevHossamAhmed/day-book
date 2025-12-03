@@ -11,12 +11,12 @@ const EntryDetails: React.FC<EntryDetailsProps> = ({ isOpen, onClose }) => {
 
   return (
     <>
-      <div 
-        className="fixed inset-0 bg-black/5 bg-opacity-50 z-[9998]" 
+      <div
+        className="fixed inset-0 bg-black/5 bg-opacity-50 z-[9998]"
         onClick={onClose}
       />
       <div className="fixed inset-0 flex items-center justify-end z-[9999] pointer-events-none">
-        <div 
+        <div
           className="bg-white w-full max-w-2xl h-full shadow-2xl animate-slide-in overflow-y-auto pointer-events-auto"
           onClick={(e) => e.stopPropagation()}
         >
@@ -28,7 +28,7 @@ const EntryDetails: React.FC<EntryDetailsProps> = ({ isOpen, onClose }) => {
                 <Trash2 size={18} />
                 Delete
               </button>
-              <button 
+              <button
                 onClick={onClose}
                 className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
               >

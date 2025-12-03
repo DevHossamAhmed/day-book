@@ -6,23 +6,11 @@ import Image from "next/image";
 import { listProducts } from "@/services/product.service";
 import { Product } from "@/types/product";
 import { ChevronRight } from "lucide-react";
-import { set, z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Loading from "@/components/ui/Loading";
 import ErrorMessage from "@/components/ui/ErrorMessage";
-
-const formSchema = z.object({
-  product: z.string().min(1, "Please select a product"),
-  company: z.string().min(2, "Company name is required"),
-  first_name: z.string().min(2, "First name is required"),
-  last_name: z.string().min(2, "Last name is required"),
-  email: z.email("Invalid email address"),
-  password: z.string().min(6, "Min 6 characters"),
-  agree_terms: z.boolean().refine(val => val === true, {
-    message: "You must agree to the Terms of Service",
-  }),
-});
+import { CreateOrganizationValidationSchema } from "@/validations/organization";
 
 const SignupPage = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -33,7 +21,7 @@ const SignupPage = () => {
     handleSubmit,
     formState: { errors },
   } = useForm({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(CreateOrganizationValidationSchema),
   });
 
   useEffect(() => {

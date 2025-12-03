@@ -3,6 +3,11 @@ export const getToken = () => {
     return localStorage.getItem("access_token");
 };
 
+export const getOrg = () => {
+    if (typeof window === "undefined") return null;
+    return localStorage.getItem("org_id");
+};
+
 export const refreshToken = async () => {
     const refresh = localStorage.getItem("refresh_token");
 
