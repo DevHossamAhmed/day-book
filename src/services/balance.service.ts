@@ -7,7 +7,6 @@ export async function store(form: any): Promise<Balance> {
         const res = await DaybookApi.post("/balances", form);
         return res.data.data as Balance;
     } catch (error: any) {
-        console.error("Error store balance:", error);
         return Promise.reject(error);
     }
 }

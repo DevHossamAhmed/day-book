@@ -1,4 +1,5 @@
 import ErrorMessage from "@/components/ui/ErrorMessage";
+import Loading from "@/components/ui/Loading";
 import { sources } from "@/data/sources";
 import { store } from "@/services/balance.service";
 import { CreateRecordValidationSchema } from "@/validations/daily-record";
@@ -6,6 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { ChevronRight, X, Save } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 
 type Props = {
     onClose: () => void;
@@ -13,10 +15,13 @@ type Props = {
 
 export default function CreateDailyRecord({ onClose }: Props) {
     const [isLoading, setIsLoading] = useState(false);
+    const [serverErrors, setServerErrors] = useState<string[]>([]);
+
     const {
         register,
         handleSubmit,
         formState: { errors },
+        reset
     } = useForm({
         resolver: zodResolver(CreateRecordValidationSchema),
     });
@@ -27,10 +32,20 @@ export default function CreateDailyRecord({ onClose }: Props) {
 
     const onSubmit = async (data: any) => {
         try {
+            setServerErrors([]);
             setIsLoading(true);
-            await store(data)
+
+            await store(data);
+            
+            toast.success("Record added successfully!");
+            reset();
+            closeDailog();
         } catch (error) {
-            console.error("Error creating daily record:", error);
+            if (error instanceof Error && 'response' in error && (error as any).response?.data?.message) {
+                setServerErrors((error as any).response.data.message);
+            } else {
+                setServerErrors(['An unexpected error occurred. Please try again later.']);
+            }
         } finally { setIsLoading(false); }
     };
 
@@ -59,6 +74,15 @@ export default function CreateDailyRecord({ onClose }: Props) {
                         </div>
                         {/* Modal Body */}
                         <div className="flex-1 overflow-y-auto p-6 space-y-6">
+                            {serverErrors.length > 0 && (
+                                <div className="bg-red-50 border border-red-300 text-red-700 px-4 py-3 rounded-lg space-y-1 mb-4">
+                                    {serverErrors.map((err, index) => (
+                                        <p key={index} className="text-sm">
+                                            • {err}
+                                        </p>
+                                    ))}
+                                </div>
+                            )}
                             <div>
                                 <label className="block text-sm font-semibold text-gray-700 mb-2">
                                     Date
@@ -80,7 +104,7 @@ export default function CreateDailyRecord({ onClose }: Props) {
                                     Source
                                 </label>
                                 <div className="relative">
-                                    <select { ...register("source") } className="w-full px-4 py-3 border border-gray-300 rounded-lg appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white">
+                                    <select {...register("source")} className="w-full px-4 py-3 border border-gray-300 rounded-lg appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white">
                                         <option value="">Select Source</option>
                                         {sources.map((item) => (
                                             <option key={item} value={item}>
@@ -130,14 +154,22 @@ export default function CreateDailyRecord({ onClose }: Props) {
                         <div className="p-6 border-t border-gray-200 bg-gray-50">
                             <div className="flex gap-3">
                                 <button
+                                    disabled={isLoading}
                                     onClick={() => closeDailog()}
                                     className="flex-1 px-6 py-3 bg-white text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors font-medium"
                                 >
                                     Save and New
                                 </button>
-                                <button type="submit" className="flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium flex items-center justify-center gap-2">
-                                    <Save size={18} />
-                                    Save
+                                <button disabled={isLoading} type="submit" className="flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium flex items-center justify-center gap-2">
+                                    {isLoading ? (
+                                        <Loading />
+                                    ) : (
+                                        <>
+                                            <Save size={18} />
+                                            Save
+                                        </>
+                                    )}
+
                                 </button>
                             </div>
                         </div>
