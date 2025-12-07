@@ -11,9 +11,10 @@ import toast from "react-hot-toast";
 
 type Props = {
     onClose: () => void;
+    onSave: () => void;
 };
 
-export default function CreateDailyRecord({ onClose }: Props) {
+export default function CreateDailyRecord({ onClose, onSave }: Props) {
     const [isLoading, setIsLoading] = useState(false);
     const [serverErrors, setServerErrors] = useState<string[]>([]);
 
@@ -35,10 +36,11 @@ export default function CreateDailyRecord({ onClose }: Props) {
             setServerErrors([]);
             setIsLoading(true);
 
-            await store(data);
+            await store({type: "added", ...data});
             
             toast.success("Record added successfully!");
             reset();
+            onSave();
             closeDailog();
         } catch (error) {
             if (error instanceof Error && 'response' in error && (error as any).response?.data?.message) {

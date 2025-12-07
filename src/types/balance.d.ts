@@ -1,7 +1,10 @@
 export interface Balance {
     id: number;
-    amount: number;
+    amount: string;
+    type: string;
     note: string;
-    date: Date;
+    date: string;
     source: string;
+    added_by_fullname: string;
+    type: string;
 }

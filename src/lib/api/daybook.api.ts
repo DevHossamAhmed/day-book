@@ -18,7 +18,7 @@ UserApi.interceptors.request.use(
         if (token) {
             config.headers["Authorization"] = `Bearer ${token}`;
         } else {
-            config.headers["Authorization"] = `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2FwaS5pYS5lZHUuc2EvYXBpL2F1dGgvbG9naW4iLCJpYXQiOjE3NjA4NzU3MDgsIm5iZiI6MTc2MDg3NTcwOCwianRpIjoiMVNwTDJBQzB2RTBJRnl2dSIsInN1YiI6IjMzNzgiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.mC0sK1Yvu3jYxkye8ybaVsFvVjyVTBoJKwAdPpLMhLg`;
+            config.headers["Authorization"] = `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjozLCJmdWxsbmFtZSI6Ik1haG1vdWQgQWhtZWQiLCJleHAiOjE5ODEwNTM1NDIsImlhdCI6MTc2NTA1MzU0Mn0.AfKCWh4rqXVXMaZgT7xbrBjuHP2Nuu67Hq6yi6eg1vo`;
         }
 
         if (orgId) {

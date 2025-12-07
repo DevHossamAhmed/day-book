@@ -1,7 +1,6 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
-  ChevronLeft,
   ChevronRight,
   Plus,
   ArrowLeftRight,
@@ -13,14 +12,24 @@ import {
 import EntryDetails from "@/components/modals/EntryDetails";
 import CreateDailyRecord from "@/components/daily-record/models/CreateDialyRecord";
 import CreateTransfer from "@/components/daily-record/models/CreateTransfer";
+import { fetchBalances } from "@/services/balance.service";
+import type { Balance } from "@/types/balance";
+import toast from "react-hot-toast";
+import { formatDate, getDateByLabel } from "@/lib/utils/date";
+import { date } from "zod";
 
 const OpeningBalancePage = () => {
-  const [selectedDate, setSelectedDate] = useState(21);
-  const [activeTab, setActiveTab] = useState("Today");
+  const [activeTab, setActiveTab] = useState<string>("Today");
+  const [dateFilter, setDateFilter] = useState<string>(getDateByLabel("today"));
+  const [balances, setBalances] = useState<Balance[]>([]);
 
-  const [isOpenCreateRecord, setOpenCreateRecord] = useState(false);
-  const [isOpenCreateTransfer, setOpenCreateTransfer] = useState(false);
-  const [isEntryDetailsOpen, setIsEntryDetailsOpen] = useState(false);
+  const [isOpenCreateRecord, setOpenCreateRecord] = useState<boolean>(false);
+  const [isOpenCreateTransfer, setOpenCreateTransfer] = useState<boolean>(false);
+  const [isEntryDetailsOpen, setIsEntryDetailsOpen] = useState<boolean>(false);
+
+  useEffect(() => {
+    fetchData();
+  }, [activeTab]);
 
   const openCreateRecord = () => setOpenCreateRecord(true);
   const closeCreateRecord = () => setOpenCreateRecord(false);
@@ -28,51 +37,23 @@ const OpeningBalancePage = () => {
   const openCreateTransfer = () => setOpenCreateTransfer(true);
   const closeCreateTransfer = () => setOpenCreateTransfer(false);
 
+  const setDateToFilter = (value: string) => {
+    setActiveTab(value);
+    setDateFilter(getDateByLabel(value.toLowerCase()));
+  }
 
-  const dates = [
-    { day: 19, label: "Sun" },
-    { day: 20, label: "Mon" },
-    { day: 21, label: "Tue" },
-    { day: 22, label: "Wed" },
-    { day: 23, label: "Thu" },
-    { day: 24, label: "Fri" },
-    { day: 25, label: "Sat" },
-  ];
+  const onSave = () => fetchData();
 
-  const transactions = [
-    {
-      id: 1,
-      type: "Cash in Sale Counter",
-      status: "Added",
-      user: "Sajid Nahvi",
-      time: "9:30 AM",
-      amount: "$30,000",
-    },
-    {
-      id: 2,
-      type: "Cash in Sale Counter",
-      status: "Added",
-      user: "Sajid Nahvi",
-      time: "9:30 AM",
-      amount: "$30,000",
-    },
-    {
-      id: 3,
-      type: "Cash in Sale Counter",
-      status: "Added",
-      user: "Sajid Nahvi",
-      time: "9:30 AM",
-      amount: "$30,000",
-    },
-    {
-      id: 4,
-      type: "Cash in Bank",
-      status: "Transfer",
-      user: "Sajid Nahvi",
-      time: "9:30 AM",
-      amount: "$30,000",
-    },
-  ];
+  const fetchData = async () => {
+    try {
+      const data = await fetchBalances({
+        date: dateFilter,
+      });
+      setBalances(data);
+    } catch (error) {
+      toast.error("Failed to fetch balances. Please try again later.");
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
@@ -126,7 +107,7 @@ const OpeningBalancePage = () => {
                   Day
                 </button>
                 <button className="flex items-center gap-2 text-gray-700 font-medium text-sm">
-                  21st September, 2025
+                  {formatDate(new Date(), "Do MMMM, YYYY")}
                   <ChevronRight size={16} className="rotate-90" />
                 </button>
               </div>
@@ -134,7 +115,7 @@ const OpeningBalancePage = () => {
                 {["Yesterday", "Today", "Tomorrow"].map((tab) => (
                   <button
                     key={tab}
-                    onClick={() => setActiveTab(tab)}
+                    onClick={() => setDateToFilter(tab)}
                     className={`font-medium text-sm pb-1 transition-colors ${activeTab === tab
                       ? "text-blue-600 border-b-2 border-blue-600"
                       : "text-gray-500 hover:text-gray-700"
@@ -154,68 +135,39 @@ const OpeningBalancePage = () => {
                 </button>
               </div>
             </div>
-
-            {/* Calendar */}
-            <div className="flex items-center justify-between">
-              <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
-                <ChevronLeft size={20} className="text-gray-600" />
-              </button>
-
-              <div className="flex gap-4">
-                {dates.map((date) => (
-                  <button
-                    key={date.day}
-                    onClick={() => setSelectedDate(date.day)}
-                    className={`flex flex-col items-center justify-center w-16 h-20 rounded-2xl transition-all ${selectedDate === date.day
-                      ? "bg-blue-600 text-white shadow-lg scale-105"
-                      : "bg-gray-50 text-gray-700 hover:bg-gray-100"
-                      }`}
-                  >
-                    <span className="text-2xl font-bold mb-1">{date.day}</span>
-                    <span className="text-xs font-medium opacity-80">
-                      {date.label}
-                    </span>
-                  </button>
-                ))}
-              </div>
-
-              <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
-                <ChevronRight size={20} className="text-gray-600" />
-              </button>
-            </div>
           </div>
 
           {/* Transactions List */}
           <div className="p-6">
             <div className="space-y-3">
-              {transactions.map((transaction) => (
+              {balances.map((balance: Balance) => (
                 <div
-                  key={transaction.id}
+                  key={balance.id}
                   onClick={() => setIsEntryDetailsOpen(true)}
                   className="flex items-center justify-between p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors cursor-pointer"
                 >
                   <div className="flex items-center gap-4">
                     <div>
                       <h3 className="font-semibold text-gray-900 mb-1">
-                        {transaction.type}
+                        {balance.source}
                       </h3>
                       <div className="flex items-center gap-2 text-sm">
                         <span
-                          className={`px-2 py-0.5 rounded font-medium ${transaction.status === "Added"
-                            ? "bg-blue-100 text-blue-700"
+                          className={`px-2 py-0.5 rounded font-medium ${balance.type === "Added"
+                            ? ""
                             : "bg-purple-100 text-purple-700"
                             }`}
                         >
-                          {transaction.status}
+                          {balance.type}
                         </span>
                         <span className="text-gray-600">
-                          {transaction.user} {transaction.time}
+                          {balance.added_by_fullname} {balance.date}
                         </span>
                       </div>
                     </div>
                   </div>
                   <div className="text-2xl font-bold text-gray-900">
-                    {transaction.amount}
+                    {balance.amount}
                   </div>
                 </div>
               ))}
@@ -256,7 +208,7 @@ const OpeningBalancePage = () => {
       </div>
 
       {/* Create Entry Modal */}
-      {isOpenCreateRecord && <CreateDailyRecord onClose={closeCreateRecord} />}
+      {isOpenCreateRecord && <CreateDailyRecord onClose={closeCreateRecord} onSave={onSave} />}
 
       {/* Transfer Modal */}
       {isOpenCreateTransfer && (<CreateTransfer onClose={closeCreateTransfer} />)}
