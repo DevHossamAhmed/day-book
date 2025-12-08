@@ -1,5 +1,7 @@
 import DaybookApi from "@/lib/api/daybook.api";
+import { ApiResponse } from "@/types/api";
 import { Balance } from "@/types/balance";
+import { PaginatedResult } from "@/types/pagination";
 
 
 export async function store(form: any): Promise<Balance> {
@@ -11,10 +13,10 @@ export async function store(form: any): Promise<Balance> {
     }
 }
 
-export async function fetchBalances(params: Object): Promise<Balance[]> {
+export async function fetchBalances(params: Object): Promise<PaginatedResult<Balance>> {
     try {
-        const res = await DaybookApi.get("/balances", { params });
-        return res.data.data as Balance[];
+        const res = await DaybookApi.get<ApiResponse<PaginatedResult<Balance>>>("/balances", { params });
+        return res.data.data;
     } catch (error: any) {
         return Promise.reject(error);
     }

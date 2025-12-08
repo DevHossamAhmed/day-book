@@ -9,26 +9,30 @@ import {
   Search,
   ArrowUpDown,
 } from "lucide-react";
-import EntryDetails from "@/components/modals/EntryDetails";
-import CreateDailyRecord from "@/components/daily-record/models/CreateDialyRecord";
-import CreateTransfer from "@/components/daily-record/models/CreateTransfer";
+import CreateDailyRecord from "@/components/daily-record/modals/CreateDialyRecord";
+import CreateTransfer from "@/components/daily-record/modals/CreateTransfer";
 import { fetchBalances } from "@/services/balance.service";
 import type { Balance } from "@/types/balance";
 import toast from "react-hot-toast";
-import { formatDate, getDateByLabel } from "@/lib/utils/date";
-import { date } from "zod";
+import { formatDate, getDateByLabel } from "@/lib/utils/date.util";
+import Row from "@/components/daily-record/ui/Row";
+import { PaginationMeta } from "@/types/pagination";
+import { Pagination } from "@/components/ui/Pagination";
 
 const OpeningBalancePage = () => {
   const [activeTab, setActiveTab] = useState<string>("Today");
   const [dateFilter, setDateFilter] = useState<string>(getDateByLabel("today"));
   const [balances, setBalances] = useState<Balance[]>([]);
+  const [meta, setMeta] = useState<PaginationMeta>();
+  const [page, setPage] = useState<number>(1);
+  const [limit, setLimit] = useState<number>(2);
 
   const [isOpenCreateRecord, setOpenCreateRecord] = useState<boolean>(false);
   const [isOpenCreateTransfer, setOpenCreateTransfer] = useState<boolean>(false);
-  const [isEntryDetailsOpen, setIsEntryDetailsOpen] = useState<boolean>(false);
+
 
   useEffect(() => {
-    fetchData();
+    fetchData(1);
   }, [activeTab]);
 
   const openCreateRecord = () => setOpenCreateRecord(true);
@@ -42,14 +46,23 @@ const OpeningBalancePage = () => {
     setDateFilter(getDateByLabel(value.toLowerCase()));
   }
 
-  const onSave = () => fetchData();
+  const onSave = () => fetchData(1);
 
-  const fetchData = async () => {
+  const onPageChange = (page: number) => {
+    fetchData(page);
+  }
+
+  const fetchData = async (newPage: number) => {
     try {
-      const data = await fetchBalances({
+      const { items, meta } = await fetchBalances({
         date: dateFilter,
+        page: newPage,
+        limit
       });
-      setBalances(data);
+
+      setBalances(items);
+      setMeta(meta);
+      setPage(meta.page);
     } catch (error) {
       toast.error("Failed to fetch balances. Please try again later.");
     }
@@ -141,69 +154,16 @@ const OpeningBalancePage = () => {
           <div className="p-6">
             <div className="space-y-3">
               {balances.map((balance: Balance) => (
-                <div
-                  key={balance.id}
-                  onClick={() => setIsEntryDetailsOpen(true)}
-                  className="flex items-center justify-between p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors cursor-pointer"
-                >
-                  <div className="flex items-center gap-4">
-                    <div>
-                      <h3 className="font-semibold text-gray-900 mb-1">
-                        {balance.source}
-                      </h3>
-                      <div className="flex items-center gap-2 text-sm">
-                        <span
-                          className={`px-2 py-0.5 rounded font-medium ${balance.type === "Added"
-                            ? ""
-                            : "bg-purple-100 text-purple-700"
-                            }`}
-                        >
-                          {balance.type}
-                        </span>
-                        <span className="text-gray-600">
-                          {balance.added_by_fullname} {balance.date}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="text-2xl font-bold text-gray-900">
-                    {balance.amount}
-                  </div>
-                </div>
+                <Row key={balance.id} balance={balance} />
               ))}
             </div>
           </div>
 
           {/* Pagination */}
-          <div className="p-6 border-t border-gray-200">
-            <div className="flex items-center justify-end gap-2">
-              <button className="px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors font-medium text-sm">
-                ← Previous
-              </button>
-              <button className="w-10 h-10 bg-blue-600 text-white rounded-lg font-medium text-sm">
-                1
-              </button>
-              <button className="w-10 h-10 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors font-medium text-sm">
-                2
-              </button>
-              <button className="w-10 h-10 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors font-medium text-sm">
-                3
-              </button>
-              <span className="px-2 text-gray-500">...</span>
-              <button className="w-10 h-10 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors font-medium text-sm">
-                8
-              </button>
-              <button className="w-10 h-10 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors font-medium text-sm">
-                9
-              </button>
-              <button className="w-10 h-10 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors font-medium text-sm">
-                10
-              </button>
-              <button className="px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors font-medium text-sm">
-                Next →
-              </button>
-            </div>
-          </div>
+          <Pagination
+            meta={meta}
+            onPageChange={(newPage) => onPageChange(newPage)}
+          />
         </div>
       </div>
 
@@ -212,9 +172,6 @@ const OpeningBalancePage = () => {
 
       {/* Transfer Modal */}
       {isOpenCreateTransfer && (<CreateTransfer onClose={closeCreateTransfer} />)}
-
-      <EntryDetails isOpen={isEntryDetailsOpen} onClose={() => setIsEntryDetailsOpen(false)}
-      />
 
       <style jsx>{`
         @keyframes slide-in {

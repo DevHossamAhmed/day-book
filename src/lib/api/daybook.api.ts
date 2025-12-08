@@ -1,5 +1,5 @@
 import axios from "axios";
-import { getOrg, getToken, refreshToken } from "../utils/auth";
+import { getOrg, getToken, refreshToken } from "../utils/auth.util";
 
 const UserApi = axios.create({
     baseURL: process.env.NEXT_PUBLIC_DAY_BOOK_SERVICE,
