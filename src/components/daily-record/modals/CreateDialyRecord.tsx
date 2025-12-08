@@ -2,7 +2,7 @@ import ErrorMessage from "@/components/ui/ErrorMessage";
 import Loading from "@/components/ui/Loading";
 import { sources } from "@/data/sources";
 import { store } from "@/services/balance.service";
-import { CreateRecordValidationSchema } from "@/validations/daily-record";
+import { CreateRecordValidationSchema } from "@/validations/daily-record.validation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ChevronRight, X, Save } from "lucide-react";
 import { useState } from "react";

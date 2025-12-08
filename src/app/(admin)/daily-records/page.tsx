@@ -113,8 +113,7 @@ const OpeningBalancePage = () => {
 
           {/* Date Navigation */}
           <div className="p-6 border-b border-gray-200">
-            {/* Tabs */}
-            <div className="flex items-center justify-between gap-6 mb-6">
+            <div className="flex items-center justify-between gap-6">
               <div className="flex gap-6">
                 <button className="px-4 py-2 bg-gray-900 text-white rounded-lg font-medium text-sm">
                   Day
