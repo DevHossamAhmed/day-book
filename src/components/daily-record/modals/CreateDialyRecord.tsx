@@ -53,7 +53,7 @@ export default function CreateDailyRecord({ onClose, onSave }: Props) {
 
     return (
         <div
-            className="fixed inset-0 flex items-center justify-end z-[9999]"
+            className="fixed inset-0 flex items-center justify-end z-9999"
             onClick={() => closeDailog()}
         >
             <div
