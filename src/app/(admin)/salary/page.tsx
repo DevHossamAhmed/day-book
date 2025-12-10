@@ -1,68 +1,71 @@
-"use client"
-import React, { useState } from 'react';
-import { ChevronLeft, ChevronRight, Search, SlidersHorizontal, MoreVertical, Plus, X, Calendar, ChevronDown, Save, Copy, Trash2, Printer } from 'lucide-react';
+"use client";
+import React, { useState } from "react";
+import {
+  ChevronRight,
+  Search,
+  SlidersHorizontal,
+  MoreVertical,
+  Plus,
+  X,
+  Calendar,
+  ChevronDown,
+  Save,
+  Copy,
+  Trash2,
+  Printer,
+} from "lucide-react";
+import { formatDate } from "@/lib/utils/date.util";
 
 const SalaryPage = () => {
-  const [selectedDate, setSelectedDate] = useState(21);
   const [isCreateSalaryOpen, setIsCreateSalaryOpen] = useState(false);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [selectedSalary, setSelectedSalary] = useState(null);
-  
-  const dates = [
-    { day: 19, name: 'Sun' },
-    { day: 20, name: 'Mon' },
-    { day: 21, name: 'Tue' },
-    { day: 22, name: 'Wed' },
-    { day: 23, name: 'Thu' },
-    { day: 24, name: 'Fri' },
-    { day: 25, name: 'Sat' }
-  ];
 
   const salaries = [
     {
       id: 1,
-      title: 'Mahmoud Ahmed',
-      position: 'Backend Developer',
-      employeeId: '344521',
-      seller: 'Sajid Nahvi',
-      time: '9:30 AM',
-      amount: '$40,000',
-      salary: '$45,000',
-      deduction: '$5,000',
-      deductionReason: 'Reason',
-      type: 'Account',
-      status: 'Upcoming',
+      title: "Mahmoud Ahmed",
+      position: "Backend Developer",
+      employeeId: "344521",
+      seller: "Sajid Nahvi",
+      time: "9:30 AM",
+      amount: "$40,000",
+      salary: "$45,000",
+      deduction: "$5,000",
+      deductionReason: "Reason",
+      type: "Account",
+      status: "Upcoming",
       hasIcon: true,
-      joiningDate: '1st January, 2025',
-      payPeriod: 'August, 2025',
-      payDate: '29th August, 2025',
-      paidBy: 'Bank Transfer',
-      note: 'This is an additional information. If available this section will show otherwise it will be hidden.',
-      attachment: true
+      joiningDate: "1st January, 2025",
+      payPeriod: "August, 2025",
+      payDate: "29th August, 2025",
+      paidBy: "Bank Transfer",
+      note: "This is an additional information. If available this section will show otherwise it will be hidden.",
+      attachment: true,
     },
     {
       id: 2,
-      title: 'Sajid Nahvi',
-      position: 'Frontend Developer',
-      employeeId: '344522',
-      seller: 'Sajid Nahvi',
-      time: '9:30 AM',
-      amount: '$35,000',
-      salary: '$40,000',
-      deduction: '$5,000',
-      deductionReason: 'Late arrival',
-      type: 'Account',
-      status: 'Upcoming',
+      title: "Sajid Nahvi",
+      position: "Frontend Developer",
+      employeeId: "344522",
+      seller: "Sajid Nahvi",
+      time: "9:30 AM",
+      amount: "$35,000",
+      salary: "$40,000",
+      deduction: "$5,000",
+      deductionReason: "Late arrival",
+      type: "Account",
+      status: "Upcoming",
       hasIcon: false,
-      joiningDate: '15th March, 2025',
-      payPeriod: 'August, 2025',
-      payDate: '29th August, 2025',
-      paidBy: 'Bank Transfer',
-      note: 'Regular monthly salary payment',
-      attachment: false
-    }
+      joiningDate: "15th March, 2025",
+      payPeriod: "August, 2025",
+      payDate: "29th August, 2025",
+      paidBy: "Bank Transfer",
+      note: "Regular monthly salary payment",
+      attachment: false,
+    },
   ];
-//@ts-expect-error:salary
+  //@ts-expect-error:salary
   const handleRowClick = (salary) => {
     setSelectedSalary(salary);
     setIsDetailsOpen(true);
@@ -78,7 +81,7 @@ const SalaryPage = () => {
 
         {/* Create Salary Button and Menu */}
         <div className="flex gap-2 mb-6">
-          <button 
+          <button
             onClick={() => setIsCreateSalaryOpen(true)}
             className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-lg flex items-center gap-2 font-medium shadow-sm"
           >
@@ -99,15 +102,21 @@ const SalaryPage = () => {
                 Day
               </button>
               <div className="flex items-center gap-2 text-gray-700">
-                <span className="font-medium">21st September, 2025</span>
+                <span className="font-medium">{formatDate(new Date(), "Do MMMM, YYYY")}</span>
                 <ChevronRight size={20} className="transform rotate-90" />
               </div>
             </div>
 
             <div className="flex items-center gap-4">
-              <button className="text-gray-600 hover:text-gray-900 font-medium">Yesterday</button>
-              <button className="text-blue-600 font-medium border-b-2 border-blue-600 pb-1">Today</button>
-              <button className="text-gray-600 hover:text-gray-900 font-medium">Tomorrow</button>
+              <button className="text-gray-600 hover:text-gray-900 font-medium">
+                Yesterday
+              </button>
+              <button className="text-blue-600 font-medium border-b-2 border-blue-600 pb-1">
+                Today
+              </button>
+              <button className="text-gray-600 hover:text-gray-900 font-medium">
+                Tomorrow
+              </button>
             </div>
 
             <div className="flex items-center gap-2">
@@ -120,35 +129,6 @@ const SalaryPage = () => {
               </button>
             </div>
           </div>
-
-          {/* Calendar Week View */}
-          <div className="flex items-center justify-between mb-8">
-            <button className="p-2 hover:bg-gray-100 rounded-lg">
-              <ChevronLeft size={20} />
-            </button>
-            
-            <div className="flex gap-2">
-              {dates.map((date) => (
-                <button
-                  key={date.day}
-                  onClick={() => setSelectedDate(date.day)}
-                  className={`flex flex-col items-center justify-center w-20 h-20 rounded-2xl transition-all ${
-                    selectedDate === date.day
-                      ? 'bg-blue-600 text-white shadow-lg'
-                      : 'bg-white hover:bg-gray-50 text-gray-700'
-                  }`}
-                >
-                  <span className="text-2xl font-bold">{date.day}</span>
-                  <span className="text-sm">{date.name}</span>
-                </button>
-              ))}
-            </div>
-
-            <button className="p-2 hover:bg-gray-100 rounded-lg">
-              <ChevronRight size={20} />
-            </button>
-          </div>
-
           {/* Salaries List */}
           <div className="space-y-1">
             {salaries.map((salary) => (
@@ -160,7 +140,9 @@ const SalaryPage = () => {
                 <div className="flex items-center gap-4">
                   <div>
                     <div className="flex items-center gap-2 mb-1">
-                      <h3 className="font-semibold text-gray-900">{salary.title}</h3>
+                      <h3 className="font-semibold text-gray-900">
+                        {salary.title}
+                      </h3>
                       {salary.hasIcon && (
                         <Copy size={16} className="text-gray-400" />
                       )}
@@ -169,14 +151,22 @@ const SalaryPage = () => {
                       <span className="text-xs px-2 py-0.5 rounded bg-pink-100 text-pink-700">
                         {salary.type}
                       </span>
-                      <span className="text-sm text-gray-600">{salary.seller}</span>
-                      <span className="text-sm text-gray-600">{salary.time}</span>
+                      <span className="text-sm text-gray-600">
+                        {salary.seller}
+                      </span>
+                      <span className="text-sm text-gray-600">
+                        {salary.time}
+                      </span>
                     </div>
                   </div>
                 </div>
                 <div className="flex items-center gap-4">
-                  <span className="text-sm font-medium text-orange-500">{salary.status}</span>
-                  <div className="text-xl font-bold text-gray-900">{salary.amount}</div>
+                  <span className="text-sm font-medium text-orange-500">
+                    {salary.status}
+                  </span>
+                  <div className="text-xl font-bold text-gray-900">
+                    {salary.amount}
+                  </div>
                 </div>
               </div>
             ))}
@@ -188,17 +178,17 @@ const SalaryPage = () => {
       {isCreateSalaryOpen && (
         <>
           {/* Overlay */}
-          <div 
+          <div
             className="fixed inset-0 bg-black/5 bg-opacity-50 z-40"
             onClick={() => setIsCreateSalaryOpen(false)}
           />
-          
+
           {/* Side Panel */}
-          <div className="fixed top-0 right-0 h-full w-[560px] bg-white shadow-2xl z-[9999] flex flex-col">
+          <div className="fixed top-0 right-0 h-full w-[560px] bg-white shadow-2xl z-9999 flex flex-col">
             {/* Header */}
             <div className="flex items-center justify-between p-6 border-b border-gray-200">
               <h2 className="text-xl font-bold text-gray-900">Create Salary</h2>
-              <button 
+              <button
                 onClick={() => setIsCreateSalaryOpen(false)}
                 className="p-1 hover:bg-gray-100 rounded-lg"
               >
@@ -210,18 +200,25 @@ const SalaryPage = () => {
             <div className="flex-1 overflow-y-auto p-6 space-y-5">
               {/* Employee */}
               <div>
-                <label className="block text-sm font-semibold text-gray-900 mb-2">Employee</label>
+                <label className="block text-sm font-semibold text-gray-900 mb-2">
+                  Employee
+                </label>
                 <div className="relative">
                   <select className="w-full pl-4 pr-12 py-3 border border-gray-300 rounded-lg appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-500">
                     <option value=""></option>
                   </select>
-                  <ChevronDown size={20} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                  <ChevronDown
+                    size={20}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
+                  />
                 </div>
               </div>
 
               {/* Salary Amount */}
               <div>
-                <label className="block text-sm font-semibold text-gray-900 mb-2">Salary Amount</label>
+                <label className="block text-sm font-semibold text-gray-900 mb-2">
+                  Salary Amount
+                </label>
                 <input
                   type="text"
                   placeholder="Enter amount"
@@ -232,16 +229,20 @@ const SalaryPage = () => {
               {/* Deductions and Deduction Reason */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-semibold text-gray-900 mb-2">Deductions</label>
+                  <label className="block text-sm font-semibold text-gray-900 mb-2">
+                    Deductions
+                  </label>
                   <input
                     type="text"
                     placeholder="Enter amount"
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-500"
                   />
                 </div>
-                
+
                 <div>
-                  <label className="block text-sm font-semibold text-gray-900 mb-2">Deduction Reason</label>
+                  <label className="block text-sm font-semibold text-gray-900 mb-2">
+                    Deduction Reason
+                  </label>
                   <input
                     type="text"
                     placeholder="Enter reason"
@@ -253,59 +254,81 @@ const SalaryPage = () => {
               {/* Payment Date and Period */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-semibold text-gray-900 mb-2">Payment Date</label>
+                  <label className="block text-sm font-semibold text-gray-900 mb-2">
+                    Payment Date
+                  </label>
                   <div className="relative">
                     <input
                       type="text"
                       placeholder="Select date"
                       className="w-full pl-4 pr-12 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-500"
                     />
-                    <Calendar size={20} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400" />
+                    <Calendar
+                      size={20}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400"
+                    />
                   </div>
                 </div>
-                
+
                 <div>
-                  <label className="block text-sm font-semibold text-gray-900 mb-2">Period</label>
+                  <label className="block text-sm font-semibold text-gray-900 mb-2">
+                    Period
+                  </label>
                   <div className="relative">
                     <input
                       type="text"
                       placeholder="Select period"
                       className="w-full pl-4 pr-12 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-500"
                     />
-                    <Calendar size={20} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400" />
+                    <Calendar
+                      size={20}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400"
+                    />
                   </div>
                 </div>
               </div>
 
               {/* Payment Method */}
               <div>
-                <label className="block text-sm font-semibold text-gray-900 mb-2">Payment Method</label>
+                <label className="block text-sm font-semibold text-gray-900 mb-2">
+                  Payment Method
+                </label>
                 <div className="relative">
                   <select className="w-full pl-4 pr-12 py-3 border border-gray-300 rounded-lg appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-500">
                     <option value="">Select method</option>
                     <option value="cash">Cash</option>
                     <option value="account">Bank Transfer</option>
                   </select>
-                  <ChevronDown size={20} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                  <ChevronDown
+                    size={20}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
+                  />
                 </div>
               </div>
 
               {/* Status */}
               <div>
-                <label className="block text-sm font-semibold text-gray-900 mb-2">Status</label>
+                <label className="block text-sm font-semibold text-gray-900 mb-2">
+                  Status
+                </label>
                 <div className="relative">
                   <select className="w-full pl-4 pr-12 py-3 border border-gray-300 rounded-lg appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-500">
                     <option value="">Select status</option>
                     <option value="upcoming">Upcoming</option>
                     <option value="paid">Paid</option>
                   </select>
-                  <ChevronDown size={20} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                  <ChevronDown
+                    size={20}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
+                  />
                 </div>
               </div>
 
               {/* Note */}
               <div>
-                <label className="block text-sm font-semibold text-gray-900 mb-2">Note</label>
+                <label className="block text-sm font-semibold text-gray-900 mb-2">
+                  Note
+                </label>
                 <textarea
                   placeholder="Receipt Info (optional)"
                   rows={5}
@@ -332,22 +355,24 @@ const SalaryPage = () => {
       {isDetailsOpen && selectedSalary && (
         <>
           {/* Overlay */}
-          <div 
+          <div
             className="fixed inset-0 bg-black/5 bg-opacity-50 z-40"
             onClick={() => setIsDetailsOpen(false)}
           />
-          
+
           {/* Side Panel */}
-          <div className="fixed top-0 right-0 h-full w-[800px] bg-white shadow-2xl z-[9999] flex flex-col">
+          <div className="fixed top-0 right-0 h-full w-[800px] bg-white shadow-2xl z-9999 flex flex-col">
             {/* Header */}
             <div className="flex items-center justify-between p-6 border-b border-gray-200">
-              <h2 className="text-2xl font-bold text-gray-900">Salary Details</h2>
+              <h2 className="text-2xl font-bold text-gray-900">
+                Salary Details
+              </h2>
               <div className="flex items-center gap-3">
                 <button className="flex items-center gap-2 px-4 py-2 border border-red-200 text-red-600 rounded-lg hover:bg-red-50 font-medium">
                   <Trash2 size={18} />
                   Delete
                 </button>
-                <button 
+                <button
                   onClick={() => setIsDetailsOpen(false)}
                   className="p-1 hover:bg-gray-100 rounded-lg"
                 >
@@ -363,45 +388,73 @@ const SalaryPage = () => {
                 <div className="space-y-6">
                   {/* Employee Info Card */}
                   <div className="bg-gray-50 rounded-xl p-6">
-                    <h3 className="text-2xl font-bold text-gray-900 mb-1">{
-                    //@ts-expect-error:salary
-                    selectedSalary.title}</h3>
-                    <p className="text-gray-600 mb-1">{
-                    //@ts-expect-error:salary
-                    selectedSalary.position}</p>
-                    <p className="text-sm text-gray-500">Employee ID# {
-                    //@ts-expect-error:salary
-                    selectedSalary.employeeId}</p>
+                    <h3 className="text-2xl font-bold text-gray-900 mb-1">
+                      {
+                        //@ts-expect-error:salary
+                        selectedSalary.title
+                      }
+                    </h3>
+                    <p className="text-gray-600 mb-1">
+                      {
+                        //@ts-expect-error:salary
+                        selectedSalary.position
+                      }
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      Employee ID#{" "}
+                      {
+                        //@ts-expect-error:salary
+                        selectedSalary.employeeId
+                      }
+                    </p>
                   </div>
 
                   {/* Details */}
                   <div className="space-y-4">
                     <div className="flex justify-between items-center py-3 border-b border-gray-200">
-                      <span className="text-gray-600 font-medium">Joining Date</span>
-                      <span className="text-gray-900 font-semibold">{
-                      //@ts-expect-error:salary
-                      selectedSalary.joiningDate}</span>
+                      <span className="text-gray-600 font-medium">
+                        Joining Date
+                      </span>
+                      <span className="text-gray-900 font-semibold">
+                        {
+                          //@ts-expect-error:salary
+                          selectedSalary.joiningDate
+                        }
+                      </span>
                     </div>
-                    
+
                     <div className="flex justify-between items-center py-3 border-b border-gray-200">
-                      <span className="text-gray-600 font-medium">Pay Period</span>
-                      <span className="text-gray-900 font-semibold">{
-                      //@ts-expect-error:salary
-                      selectedSalary.payPeriod}</span>
+                      <span className="text-gray-600 font-medium">
+                        Pay Period
+                      </span>
+                      <span className="text-gray-900 font-semibold">
+                        {
+                          //@ts-expect-error:salary
+                          selectedSalary.payPeriod
+                        }
+                      </span>
                     </div>
-                    
+
                     <div className="flex justify-between items-center py-3 border-b border-gray-200">
-                      <span className="text-gray-600 font-medium">Pay Date</span>
-                      <span className="text-gray-900 font-semibold">{
-                      //@ts-expect-error:salary
-                      selectedSalary.payDate}</span>
+                      <span className="text-gray-600 font-medium">
+                        Pay Date
+                      </span>
+                      <span className="text-gray-900 font-semibold">
+                        {
+                          //@ts-expect-error:salary
+                          selectedSalary.payDate
+                        }
+                      </span>
                     </div>
-                    
+
                     <div className="flex justify-between items-center py-3 border-b border-gray-200">
                       <span className="text-gray-600 font-medium">Paid By</span>
-                      <span className="text-gray-900 font-semibold">{
-                      //@ts-expect-error:salary
-                      selectedSalary.paidBy}</span>
+                      <span className="text-gray-900 font-semibold">
+                        {
+                          //@ts-expect-error:salary
+                          selectedSalary.paidBy
+                        }
+                      </span>
                     </div>
                   </div>
 
@@ -410,165 +463,204 @@ const SalaryPage = () => {
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <p className="text-sm text-gray-500 mb-2">Earning</p>
-                        <p className="text-lg font-semibold text-gray-900">Total</p>
+                        <p className="text-lg font-semibold text-gray-900">
+                          Total
+                        </p>
                       </div>
                       <div className="text-right">
                         <p className="text-sm text-gray-500 mb-2">Deduction</p>
-                        <p className="text-lg font-semibold text-gray-900">Total</p>
+                        <p className="text-lg font-semibold text-gray-900">
+                          Total
+                        </p>
                       </div>
                     </div>
 
                     <div className="grid grid-cols-2 gap-4 pb-4 border-b border-gray-200">
                       <div className="flex justify-between">
                         <span className="text-gray-600">Salary</span>
-                        <span className="text-gray-900 font-semibold">{
-                        //@ts-expect-error:salary
-                        selectedSalary.salary}</span>
+                        <span className="text-gray-900 font-semibold">
+                          {
+                            //@ts-expect-error:salary
+                            selectedSalary.salary
+                          }
+                        </span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-gray-600">{
-                        //@ts-expect-error:salary
-                        selectedSalary.deductionReason}</span>
-                        <span className="text-red-600 font-semibold">{
-                        //@ts-expect-error:salary
-                        selectedSalary.deduction}</span>
+                        <span className="text-gray-600">
+                          {
+                            //@ts-expect-error:salary
+                            selectedSalary.deductionReason
+                          }
+                        </span>
+                        <span className="text-red-600 font-semibold">
+                          {
+                            //@ts-expect-error:salary
+                            selectedSalary.deduction
+                          }
+                        </span>
                       </div>
                     </div>
 
                     <div className="bg-blue-50 rounded-lg p-4 flex justify-between items-center">
                       <span className="text-gray-700 font-semibold">Total</span>
-                      <span className="text-2xl font-bold text-gray-900">{
-                      //@ts-expect-error:salary
-                      selectedSalary.amount}</span>
+                      <span className="text-2xl font-bold text-gray-900">
+                        {
+                          //@ts-expect-error:salary
+                          selectedSalary.amount
+                        }
+                      </span>
                     </div>
                   </div>
 
                   {/* Additional Info */}
                   <div>
-                    <h4 className="text-sm font-semibold text-gray-900 mb-3">Additional Info</h4>
+                    <h4 className="text-sm font-semibold text-gray-900 mb-3">
+                      Additional Info
+                    </h4>
                     <div className="bg-gray-50 rounded-lg p-4">
-                      <p className="text-sm text-gray-700 leading-relaxed">{
-                      //@ts-expect-error:salary
-                      selectedSalary.note}</p>
+                      <p className="text-sm text-gray-700 leading-relaxed">
+                        {
+                          //@ts-expect-error:salary
+                          selectedSalary.note
+                        }
+                      </p>
                     </div>
                   </div>
                 </div>
 
                 {/* Right Column - Attachment */}
                 <div>
-                  <h4 className="text-sm font-semibold text-gray-900 mb-3">Attachment</h4>
+                  <h4 className="text-sm font-semibold text-gray-900 mb-3">
+                    Attachment
+                  </h4>
                   {
-                  //@ts-expect-error:salary
-                  selectedSalary.attachment && (
-                    <div className="border border-gray-200 rounded-lg p-4 bg-white">
-                      <div className="bg-gray-50 rounded-lg p-6">
-                        <div className="text-center">
-                          <p className="text-xs text-gray-600 font-medium mb-2">Written Tests - Recruitment - 2025 (944 Posts)</p>
-                          <div className="bg-white border border-gray-200 rounded p-4 text-xs text-left space-y-1">
-                            <p className="font-semibold">It is expected that Written Test of shortlisted candidates for the advertised posts of IRPS 7 or 10</p>
-                            <p>job notification will be held as per the following schedule:</p>
-                            
-                            <table className="w-full mt-3 text-xs">
-                              <thead>
-                                <tr className="border-b">
-                                  <th className="text-left py-1">Date / Day</th>
-                                  <th className="text-left py-1">Shift</th>
-                                  <th className="text-left py-1">Post</th>
-                                  <th className="text-left py-1">Batch</th>
-                                  <th className="text-left py-1">Start Time</th>
-                                </tr>
-                              </thead>
-                              <tbody className="text-gray-700">
-                                <tr>
-                                  <td className="py-1">10-04-2025</td>
-                                  <td>Morning</td>
-                                  <td>Corporate</td>
-                                  <td>Batch-1</td>
-                                  <td>9 AM</td>
-                                </tr>
-                                <tr>
-                                  <td className="py-1">(Day 1)</td>
-                                  <td>Afternoon</td>
-                                  <td>Corporate</td>
-                                  <td>Batch-3</td>
-                                  <td>2 PM</td>
-                                </tr>
-                                <tr>
-                                  <td className="py-1">10-04-2025</td>
-                                  <td>Morning</td>
-                                  <td>AB</td>
-                                  <td>Batch-2</td>
-                                  <td>9 AM</td>
-                                </tr>
-                                <tr>
-                                  <td className="py-1">(Day 2)</td>
-                                  <td>Afternoon</td>
-                                  <td>Corporate</td>
-                                  <td>Batch-1</td>
-                                  <td>2 PM</td>
-                                </tr>
-                                <tr>
-                                  <td className="py-1">10-04-2025</td>
-                                  <td>Morning</td>
-                                  <td>LDC</td>
-                                  <td>-</td>
-                                  <td>9 AM</td>
-                                </tr>
-                                <tr>
-                                  <td className="py-1">(Day 3)</td>
-                                  <td>Afternoon</td>
-                                  <td>Assistant</td>
-                                  <td>Batch-2</td>
-                                  <td>2 PM</td>
-                                </tr>
-                                <tr>
-                                  <td className="py-1">11-04-2025</td>
-                                  <td>Morning</td>
-                                  <td>GDC</td>
-                                  <td>-</td>
-                                  <td>9 AM</td>
-                                </tr>
-                                <tr>
-                                  <td className="py-1">(Day 1)</td>
-                                  <td>Afternoon</td>
-                                  <td>Assistant</td>
-                                  <td>-</td>
-                                  <td>2 PM</td>
-                                </tr>
-                                <tr>
-                                  <td className="py-1">12-04-2025</td>
-                                  <td>Morning</td>
-                                  <td>Lab Attendant</td>
-                                  <td>-</td>
-                                  <td>9 AM</td>
-                                </tr>
-                                <tr>
-                                  <td className="py-1">(Day 2)</td>
-                                  <td>Afternoon</td>
-                                  <td>Stenotypist</td>
-                                  <td>-</td>
-                                  <td>1 PM</td>
-                                </tr>
-                                <tr>
-                                  <td className="py-1">-</td>
-                                  <td>Evening</td>
-                                  <td>Nursing Assistant</td>
-                                  <td>-</td>
-                                  <td>5 PM</td>
-                                </tr>
-                              </tbody>
-                            </table>
+                    //@ts-expect-error:salary
+                    selectedSalary.attachment && (
+                      <div className="border border-gray-200 rounded-lg p-4 bg-white">
+                        <div className="bg-gray-50 rounded-lg p-6">
+                          <div className="text-center">
+                            <p className="text-xs text-gray-600 font-medium mb-2">
+                              Written Tests - Recruitment - 2025 (944 Posts)
+                            </p>
+                            <div className="bg-white border border-gray-200 rounded p-4 text-xs text-left space-y-1">
+                              <p className="font-semibold">
+                                It is expected that Written Test of shortlisted
+                                candidates for the advertised posts of IRPS 7 or
+                                10
+                              </p>
+                              <p>
+                                job notification will be held as per the
+                                following schedule:
+                              </p>
+
+                              <table className="w-full mt-3 text-xs">
+                                <thead>
+                                  <tr className="border-b">
+                                    <th className="text-left py-1">
+                                      Date / Day
+                                    </th>
+                                    <th className="text-left py-1">Shift</th>
+                                    <th className="text-left py-1">Post</th>
+                                    <th className="text-left py-1">Batch</th>
+                                    <th className="text-left py-1">
+                                      Start Time
+                                    </th>
+                                  </tr>
+                                </thead>
+                                <tbody className="text-gray-700">
+                                  <tr>
+                                    <td className="py-1">10-04-2025</td>
+                                    <td>Morning</td>
+                                    <td>Corporate</td>
+                                    <td>Batch-1</td>
+                                    <td>9 AM</td>
+                                  </tr>
+                                  <tr>
+                                    <td className="py-1">(Day 1)</td>
+                                    <td>Afternoon</td>
+                                    <td>Corporate</td>
+                                    <td>Batch-3</td>
+                                    <td>2 PM</td>
+                                  </tr>
+                                  <tr>
+                                    <td className="py-1">10-04-2025</td>
+                                    <td>Morning</td>
+                                    <td>AB</td>
+                                    <td>Batch-2</td>
+                                    <td>9 AM</td>
+                                  </tr>
+                                  <tr>
+                                    <td className="py-1">(Day 2)</td>
+                                    <td>Afternoon</td>
+                                    <td>Corporate</td>
+                                    <td>Batch-1</td>
+                                    <td>2 PM</td>
+                                  </tr>
+                                  <tr>
+                                    <td className="py-1">10-04-2025</td>
+                                    <td>Morning</td>
+                                    <td>LDC</td>
+                                    <td>-</td>
+                                    <td>9 AM</td>
+                                  </tr>
+                                  <tr>
+                                    <td className="py-1">(Day 3)</td>
+                                    <td>Afternoon</td>
+                                    <td>Assistant</td>
+                                    <td>Batch-2</td>
+                                    <td>2 PM</td>
+                                  </tr>
+                                  <tr>
+                                    <td className="py-1">11-04-2025</td>
+                                    <td>Morning</td>
+                                    <td>GDC</td>
+                                    <td>-</td>
+                                    <td>9 AM</td>
+                                  </tr>
+                                  <tr>
+                                    <td className="py-1">(Day 1)</td>
+                                    <td>Afternoon</td>
+                                    <td>Assistant</td>
+                                    <td>-</td>
+                                    <td>2 PM</td>
+                                  </tr>
+                                  <tr>
+                                    <td className="py-1">12-04-2025</td>
+                                    <td>Morning</td>
+                                    <td>Lab Attendant</td>
+                                    <td>-</td>
+                                    <td>9 AM</td>
+                                  </tr>
+                                  <tr>
+                                    <td className="py-1">(Day 2)</td>
+                                    <td>Afternoon</td>
+                                    <td>Stenotypist</td>
+                                    <td>-</td>
+                                    <td>1 PM</td>
+                                  </tr>
+                                  <tr>
+                                    <td className="py-1">-</td>
+                                    <td>Evening</td>
+                                    <td>Nursing Assistant</td>
+                                    <td>-</td>
+                                    <td>5 PM</td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  )}
+                    )
+                  }
                 </div>
               </div>
 
               {/* Footer Note */}
               <div className="text-xs text-gray-500 border-t pt-4 mt-6">
-                <p>This document has been automatically generated by Day Book.</p>
+                <p>
+                  This document has been automatically generated by Day Book.
+                </p>
                 <p>Therefore, a signature is not required.</p>
               </div>
             </div>

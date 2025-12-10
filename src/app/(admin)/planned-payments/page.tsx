@@ -15,22 +15,12 @@ import {
   Trash2,
   Printer,
 } from "lucide-react";
+import { formatDate } from "@/lib/utils/date.util";
 
 const PlannedPaymentPage = () => {
-  const [selectedDate, setSelectedDate] = useState(21);
   const [isCreatePaymentOpen, setIsCreatePaymentOpen] = useState(false);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [selectedPayment, setSelectedPayment] = useState(null);
-
-  const dates = [
-    { day: 19, name: "Sun" },
-    { day: 20, name: "Mon" },
-    { day: 21, name: "Tue" },
-    { day: 22, name: "Wed" },
-    { day: 23, name: "Thu" },
-    { day: 24, name: "Fri" },
-    { day: 25, name: "Sat" },
-  ];
 
   const payments = [
     {
@@ -97,7 +87,7 @@ const PlannedPaymentPage = () => {
                 Day
               </button>
               <div className="flex items-center gap-2 text-gray-700">
-                <span className="font-medium">21st September, 2025</span>
+                <span className="font-medium">{formatDate(new Date(), "Do MMMM, YYYY")}</span>
                 <ChevronRight size={20} className="transform rotate-90" />
               </div>
             </div>
@@ -124,35 +114,6 @@ const PlannedPaymentPage = () => {
               </button>
             </div>
           </div>
-
-          {/* Calendar Week View */}
-          <div className="flex items-center justify-between mb-8">
-            <button className="p-2 hover:bg-gray-100 rounded-lg">
-              <ChevronLeft size={20} />
-            </button>
-
-            <div className="flex gap-2">
-              {dates.map((date) => (
-                <button
-                  key={date.day}
-                  onClick={() => setSelectedDate(date.day)}
-                  className={`flex flex-col items-center justify-center w-20 h-20 rounded-2xl transition-all ${
-                    selectedDate === date.day
-                      ? "bg-blue-600 text-white shadow-lg"
-                      : "bg-white hover:bg-gray-50 text-gray-700"
-                  }`}
-                >
-                  <span className="text-2xl font-bold">{date.day}</span>
-                  <span className="text-sm">{date.name}</span>
-                </button>
-              ))}
-            </div>
-
-            <button className="p-2 hover:bg-gray-100 rounded-lg">
-              <ChevronRight size={20} />
-            </button>
-          </div>
-
           {/* Payments List */}
           <div className="space-y-1">
             {payments.map((payment) => (
@@ -247,7 +208,7 @@ const PlannedPaymentPage = () => {
           />
 
           {/* Side Panel */}
-          <div className="fixed top-0 right-0 h-full w-[560px] bg-white shadow-2xl z-[9999] flex flex-col">
+          <div className="fixed top-0 right-0 h-full w-[560px] bg-white shadow-2xl z-9999 flex flex-col">
             {/* Header */}
             <div className="flex items-center justify-between p-6 border-b border-gray-200">
               <h2 className="text-xl font-bold text-gray-900">
@@ -394,7 +355,7 @@ const PlannedPaymentPage = () => {
           />
 
           {/* Side Panel */}
-          <div className="fixed top-0 right-0 h-full w-[560px] bg-white shadow-2xl z-[9999] flex flex-col">
+          <div className="fixed top-0 right-0 h-full w-[560px] bg-white shadow-2xl z-9999 flex flex-col">
             {/* Header */}
             <div className="flex items-center justify-between p-6 border-b border-gray-200">
               <h2 className="text-xl font-bold text-gray-900">
