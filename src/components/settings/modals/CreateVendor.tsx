@@ -1,4 +1,4 @@
-import { Save, Upload, X } from "lucide-react";
+import { Save, X } from "lucide-react";
 import { useState } from "react";
 
 type Props = {
@@ -14,7 +14,7 @@ export default function CreateVendor({ onClose, onSave }: Props) {
   };
 
   return (
-    <div className="fixed inset-0  bg-opacity-50 flex items-center justify-end z-[9999]">
+    <div className="fixed inset-0  bg-opacity-50 flex items-center justify-end z-9999">
       <div className="bg-white shadow-xl w-full max-w-2xl h-full overflow-y-auto">
         <div className="p-6 border-b border-gray-200 flex items-center justify-between sticky top-0 bg-white">
           <h2 className="text-xl font-semibold text-gray-900">Add Vendor</h2>
