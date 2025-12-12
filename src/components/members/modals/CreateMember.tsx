@@ -1,0 +1,282 @@
+import ErrorMessage from "@/components/ui/ErrorMessage";
+import Loading from "@/components/ui/Loading";
+import { sources } from "@/data/sources";
+import { store } from "@/services/balance.service";
+import { CreateRecordValidationSchema } from "@/validations/daily-record.validation";
+import { CreateMemberValidationSchema } from "@/validations/member.validation";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { ChevronRight, X, Save, ChevronDown } from "lucide-react";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
+
+type Props = {
+  onClose: () => void;
+  onSave: () => void;
+};
+
+export default function CreateMember({ onClose, onSave }: Props) {
+  const [isLoading, setIsLoading] = useState(false);
+  const [serverErrors, setServerErrors] = useState<string[]>([]);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm({
+    resolver: zodResolver(CreateMemberValidationSchema),
+  });
+
+  const closeDailog = () => {
+    onClose();
+  };
+
+  const onSubmit = async (data: any) => {
+    try {
+      setServerErrors([]);
+      setIsLoading(true);
+
+      await store({ type: "added", ...data });
+
+      toast.success("Record added successfully!");
+      reset();
+      onSave();
+      closeDailog();
+    } catch (error) {
+      if (
+        error instanceof Error &&
+        "response" in error &&
+        (error as any).response?.data?.message
+      ) {
+        setServerErrors((error as any).response.data.message);
+      } else {
+        setServerErrors([
+          "An unexpected error occurred. Please try again later.",
+        ]);
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <div
+      className="fixed inset-0 flex items-center justify-end z-9999"
+      onClick={() => closeDailog()}
+    >
+      <div
+        className="bg-white w-full max-w-md h-full shadow-2xl animate-slide-in"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex flex-col h-full">
+          <form onSubmit={handleSubmit(onSubmit)}>
+            {/* Modal Header */}
+            <div className="flex items-center justify-between p-6 border-b border-gray-200">
+              <h2 className="text-xl font-bold text-gray-900">Create Member</h2>
+              <button
+                onClick={() => closeDailog()}
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <X size={20} className="text-gray-600" />
+              </button>
+            </div>
+            {/* Modal Body */}
+            <div className="flex-1 overflow-y-auto p-6 space-y-6">
+              {serverErrors.length > 0 && (
+                <div className="bg-red-50 border border-red-300 text-red-700 px-4 py-3 rounded-lg space-y-1 mb-4">
+                  {serverErrors.map((err, index) => (
+                    <p key={index} className="text-sm">
+                      • {err}
+                    </p>
+                  ))}
+                </div>
+              )}
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-semibold text-gray-900 mb-2">
+                    First Name
+                  </label>
+                  <input
+                    type="text"
+                    id="first_name"
+                    placeholder="Enter First Name"
+                    {...register("first_name")}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-500"
+                  />
+                  {errors.first_name && (
+                    <ErrorMessage message={errors.first_name.message} />
+                  )}
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-900 mb-2">
+                    Last Name
+                  </label>
+                  <input
+                    type="text"
+                    id="last_name"
+                    placeholder="Enter Last Name"
+                    {...register("last_name")}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-500"
+                  />
+                  {errors.last_name && (
+                    <ErrorMessage message={errors.last_name.message} />
+                  )}
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Joining Date
+                </label>
+                <div className="relative">
+                  <input
+                    {...register("joining_date")}
+                    type="date"
+                    placeholder="Select date"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+                <ErrorMessage
+                  message={errors.joining_date?.message as string}
+                />
+              </div>
+              <div>
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
+                  Email
+                </label>
+                <input
+                  type="email"
+                  id="email"
+                  {...register("email")}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none transition-all text-sm text-gray-900 placeholder-gray-400"
+                  placeholder="Enter your email"
+                />
+                {errors.email && (
+                  <ErrorMessage message={errors.email.message} />
+                )}
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-900 mb-2">
+                  Salary Cycle
+                </label>
+                <div className="relative">
+                  <select className="w-full px-4 py-3 border border-gray-300 rounded-lg appearance-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    <option value="">Select cycle</option>
+                    <option value="monthly">Monthly</option>
+                    <option value="weekly">Weekly</option>
+                    <option value="biweekly">Bi-weekly</option>
+                  </select>
+                  <ChevronDown className="absolute left-auto right-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-900 mb-2">
+                  Role
+                </label>
+                <div className="relative">
+                  <select className="w-full px-4 py-3 border border-gray-300 rounded-lg appearance-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    <option value="">Select Role</option>
+                    <option value="Admin">Admin</option>
+                    <option value="Account Manager">Account Manager</option>
+                    <option value="Sales Person">Sales Person</option>
+                    <option value="HR">HR</option>
+                    <option value="Employee">Employee</option>
+                  </select>
+                  <ChevronDown className="absolute left-auto right-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+                </div>
+              </div>
+              <div>
+                <label
+                  htmlFor="password"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
+                  Password
+                </label>
+                <input
+                  type="password"
+                  id="password"
+                  {...register("password")}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none transition-all text-sm text-gray-900 placeholder-gray-400"
+                  placeholder="Enter your password"
+                />
+                {errors.password && (
+                  <ErrorMessage message={errors.password.message} />
+                )}
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Designation
+                </label>
+                <input
+                  type="text"
+                  {...register("designation")}
+                  placeholder="Enter Designation"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+                <ErrorMessage message={errors.designation?.message as string} />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Salary Amount
+                </label>
+                <input
+                  type="text"
+                  {...register("salary_amount")}
+                  placeholder="Enter Salary amount"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+                <ErrorMessage
+                  message={errors.salary_amount?.message as string}
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Additional Info
+                </label>
+                <textarea
+                  {...register("additional_info")}
+                  placeholder="Receipt Info (optional)"
+                  //@ts-expect-error:row
+                  rows="4"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                />
+                <ErrorMessage
+                  message={errors.additional_info?.message as string}
+                />
+              </div>
+            </div>
+            {/* Modal Footer */}
+            <div className="p-6 border-t border-gray-200 bg-gray-50">
+              <div className="flex gap-3">
+                <button
+                  disabled={isLoading}
+                  onClick={() => closeDailog()}
+                  className="flex-1 px-6 py-3 bg-white text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors font-medium"
+                >
+                  Save and New
+                </button>
+                <button
+                  disabled={isLoading}
+                  type="submit"
+                  className="flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium flex items-center justify-center gap-2"
+                >
+                  {isLoading ? (
+                    <Loading />
+                  ) : (
+                    <>
+                      <Save size={18} />
+                      Save
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+}

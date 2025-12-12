@@ -1,4 +1,3 @@
-import { sources } from "@/data/sources";
 import z from "zod";
 
 export const CreateBankAccountValidationSchema = z.object({
