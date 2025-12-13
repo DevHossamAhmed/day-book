@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React, { useEffect, useState } from "react";
 import logo from "../../../../public/assets/images/Logo.png";
 import sidePic from "../../../../public/assets/images/leftsideLogin2.png";
@@ -10,9 +10,16 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Loading from "@/components/ui/Loading";
 import ErrorMessage from "@/components/ui/ErrorMessage";
-import { CreateOrganizationValidationSchema } from "@/validations/organization";
+import { CreateOrganizationValidationSchema } from "@/validations/organization.validation";
+import { Store } from "@/services/organization.service";
+import toast from "react-hot-toast";
+import axios from "axios";
+import { CapitalizeFirst } from "@/lib/utils/string.util";
+import { useRouter } from "next/navigation";
 
 const SignupPage = () => {
+  const router = useRouter();
+
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -32,9 +39,25 @@ const SignupPage = () => {
     fetchProducts();
   }, []);
 
-  const onSubmit = (data: any) => {
-    setIsLoading(true);
-    console.log(data);
+  const onSubmit = async (form: any) => {
+    try {
+      setIsLoading(true);
+      await Store({ ...form, plan_id: 1 });
+      toast.success(`Organization created successfully.`);
+      router.push("/auth/signin");
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        if (error.response?.status === 400) {
+          toast.error(`${CapitalizeFirst(error.response?.data?.error)}.` || "Something went wrong.");
+        } else {
+          toast.error("Failed to store organization. Please try again later.");
+        }
+      } else {
+        toast.error("Unexpected error occurred");
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
   return (
     <div className="min-h-screen flex p-9">
@@ -61,7 +84,11 @@ const SignupPage = () => {
         <div className="w-full max-w-md px-4">
           <div className="mb-12">
             <div className="flex items-center justify-start gap-2.5 mb-2">
-              <Image src={logo} alt="Company Logo" className="ml-[-50px]"></Image>
+              <Image
+                src={logo}
+                alt="Company Logo"
+                className="ml-[-50px]"
+              ></Image>
             </div>
             <h2 className="text-3xl font-semibold text-gray-900">
               Get started
@@ -74,10 +101,13 @@ const SignupPage = () => {
                   Product
                 </label>
                 <div className="relative">
-                  <select  {...register("product")} className="w-full px-4 py-3 border border-gray-300 rounded-lg appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white">
-                    <option value="">Select Product</option>
+                  <select
+                    {...register("product_id")}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+                  >
+                    <option value="0">Select Product</option>
                     {products.map((product) => (
-                      <option key={product.id} value={product.id}>
+                      <option key={product.id} value={Number(product.id)}>
                         {product.name}
                       </option>
                     ))}
@@ -86,28 +116,29 @@ const SignupPage = () => {
                     <ChevronRight size={20} className="rotate-90" />
                   </div>
                 </div>
-                {errors.product && (
-                  <ErrorMessage message={errors.product.message} />
-                )}
+                <ErrorMessage message={errors.product_id?.message} />
               </div>
               <div>
-                <label htmlFor="company" className="block text-sm font-medium text-gray-700 mb-2">
+                <label
+                  htmlFor="company"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
                   Company name
                 </label>
                 <input
                   type="text"
                   id="company"
-                  {...register("company")}
+                  {...register("name")}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none transition-all text-sm text-gray-900 placeholder-gray-400"
                   placeholder="Enter your company name as per document"
                 />
-                {errors.company && (
-                  <ErrorMessage message={errors.company.message} />
-                )}
+                <ErrorMessage message={errors.name?.message} />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-semibold text-gray-900 mb-2">First Name</label>
+                  <label className="block text-sm font-semibold text-gray-900 mb-2">
+                    First Name
+                  </label>
                   <input
                     type="text"
                     id="first_name"
@@ -115,10 +146,12 @@ const SignupPage = () => {
                     {...register("first_name")}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-500"
                   />
-                  {errors.first_name && <ErrorMessage message={errors.first_name.message} />}
+                  <ErrorMessage message={errors.first_name?.message} />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-gray-900 mb-2">Last Name</label>
+                  <label className="block text-sm font-semibold text-gray-900 mb-2">
+                    Last Name
+                  </label>
                   <input
                     type="text"
                     id="last_name"
@@ -126,11 +159,14 @@ const SignupPage = () => {
                     {...register("last_name")}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-500"
                   />
-                  {errors.last_name && <ErrorMessage message={errors.last_name.message} />}
+                  <ErrorMessage message={errors.last_name?.message} />
                 </div>
               </div>
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
                   Email
                 </label>
                 <input
@@ -140,10 +176,13 @@ const SignupPage = () => {
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none transition-all text-sm text-gray-900 placeholder-gray-400"
                   placeholder="Enter your email"
                 />
-                {errors.email && <ErrorMessage message={errors.email.message} />}
+                <ErrorMessage message={errors.email?.message} />
               </div>
               <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+                <label
+                  htmlFor="password"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
                   Password
                 </label>
                 <input
@@ -153,9 +192,7 @@ const SignupPage = () => {
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none transition-all text-sm text-gray-900 placeholder-gray-400"
                   placeholder="Enter your password"
                 />
-                {errors.password && (
-                  <ErrorMessage message={errors.password.message} />
-                )}
+                <ErrorMessage message={errors.password?.message} />
               </div>
               <div>
                 <div className="flex items-start pt-2">
@@ -165,7 +202,10 @@ const SignupPage = () => {
                     {...register("agree_terms")}
                     className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-600 cursor-pointer mt-0.5"
                   />
-                  <label htmlFor="terms" className="ml-2.5 text-sm text-gray-600 cursor-pointer">
+                  <label
+                    htmlFor="terms"
+                    className="ml-2.5 text-sm text-gray-600 cursor-pointer"
+                  >
                     By signing up, you agree to our{" "}
                     <a href="/terms" className="text-blue-600 hover:underline">
                       Terms of Service
@@ -173,9 +213,7 @@ const SignupPage = () => {
                     .
                   </label>
                 </div>
-                {errors.agree_terms && (
-                  <ErrorMessage message={errors.agree_terms.message} />
-                )}
+                <ErrorMessage message={errors.agree_terms?.message} />
               </div>
               <button
                 type="submit"
@@ -183,18 +221,17 @@ const SignupPage = () => {
                 className={`w-full bg-blue-600 hover:bg-blue-700 cursor-pointer text-white py-3.5 rounded-lg font-semibold text-sm transition-all duration-200 mt-6
                }`}
               >
-                {isLoading ? (
-                  <Loading />
-                ) : (
-                  "Continue"
-                )}
+                {isLoading ? <Loading /> : "Continue"}
               </button>
             </div>
           </form>
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600">
               Do you have an account?{" "}
-              <a href="/auth/signin" className="text-blue-600 hover:underline font-semibold">
+              <a
+                href="/auth/signin"
+                className="text-blue-600 hover:underline font-semibold"
+              >
                 Login
               </a>
             </p>

@@ -6,7 +6,7 @@ export default function Home() {
   const router = useRouter();
 
   useEffect(() => {
-    router.push("/auth/signin");
+    router.push("/dashboard");
   }, [router]);
 
   return <div className="flex items-center justify-center min-h-screen"></div>;

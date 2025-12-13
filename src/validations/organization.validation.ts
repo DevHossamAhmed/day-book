@@ -1,8 +1,13 @@
 import z from "zod";
 
 export const CreateOrganizationValidationSchema = z.object({
-  product: z.string().min(1, "Please select a product"),
-  company: z.string().min(2, "Company name is required"),
+  product_id: z
+  .string()
+  .transform(val => Number(val))
+  .refine(val => !isNaN(val) && val > 0, {
+    message: "Please select a product",
+  }),
+  name: z.string().min(2, "Company name is required"),
   first_name: z.string().min(2, "First name is required"),
   last_name: z.string().min(2, "Last name is required"),
   email: z.email("Invalid email address"),

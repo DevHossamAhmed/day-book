@@ -1,11 +1,11 @@
+import UsersApi from "@/lib/api/users.api";
 
-export async function registerOrganization(name: string, domain: string): Promise<void> {
+export async function Store(form:any): Promise<void> {
     try {
         // Simulate API call to register organization
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-        console.log(`Organization ${name} with domain ${domain} registered successfully.`);
+        const res = await UsersApi.post("/v1/organizations", form);
+        return res.data.data;
     } catch (error: any) {
-        console.error("Error registering organization:", error);
-        throw new Error("Failed to register organization");
+        return Promise.reject(error);
     }
 }
