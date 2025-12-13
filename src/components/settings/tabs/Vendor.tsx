@@ -1,24 +1,30 @@
 import { ChevronRight, FileText, TrendingUp } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CreateVendor from "../modals/CreateVendor";
+import { fetchVendors } from "@/services/vendor.service";
+import toast from "react-hot-toast";
+import { Vendor as Vendors } from "@/types/vendor";
 
 export default function Vendor() {
   const [isOpenVendor, setOpenVendor] = useState<boolean>(false);
-
+  const [vendors, setVendors] = useState<Vendors[]>([]);
   const openVendor = () => setOpenVendor(true);
   const closeVendor = () => setOpenVendor(false);
 
+  useEffect(() => {
+    fetchData();
+  }, []);
+
   const onSave = () => {};
-  const [vendors, setVendors] = useState([
-    {
-      id: 1,
-      name: "A vendor name",
-      description: "Full address of the company",
-      percentage: "+3.85%",
-    },
-    { id: 2, name: "Al Rajhi", price: "$39,000", percentage: "+3.85%" },
-    { id: 3, name: "Al Rajhi", price: "$39,000", percentage: "+3.85%" },
-  ]);
+
+  const fetchData = async () => {
+    try {
+      const data = await fetchVendors();
+      setVendors(data.data);
+    } catch (error) {
+      toast.error("Failed to fetch vendors. Please try again later.");
+    }
+  };
 
   return (
     <>
@@ -28,7 +34,7 @@ export default function Vendor() {
             onClick={() => openVendor()}
             className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium"
           >
-            Add Vendor
+            Create Vendor
           </button>
           <button className="p-3 border border-gray-300 rounded-lg hover:bg-gray-50">
             <FileText className="w-5 h-5 text-gray-600" />
@@ -46,16 +52,9 @@ export default function Vendor() {
                   {vendor.name}
                 </h3>
                 <div className="flex items-center gap-2 text-sm">
-                  {vendor.description && (
-                    <span className="text-gray-600">{vendor.description}</span>
+                  {vendor.email && (
+                    <span className="text-gray-600">{vendor.email}</span>
                   )}
-                  {vendor.price && (
-                    <span className="text-gray-600">{vendor.price}</span>
-                  )}
-                  <span className="flex items-center gap-1 text-green-600">
-                    <TrendingUp className="w-4 h-4" />
-                    {vendor.percentage}
-                  </span>
                 </div>
               </div>
               <ChevronRight className="w-5 h-5 text-gray-400" />
@@ -64,7 +63,9 @@ export default function Vendor() {
         </div>
       </div>
       {/* Create Vendor Modal */}
-      {isOpenVendor && <CreateVendor onClose={closeVendor} onSave={onSave} />}
+      {isOpenVendor && (
+        <CreateVendor onClose={closeVendor} onSave={() => fetchData()} />
+      )}
     </>
   );
 }
