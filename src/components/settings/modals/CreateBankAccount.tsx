@@ -80,7 +80,7 @@ export default function CreateBankAccount({ onClose, onSave }: Props) {
         </div>
 
         <form onSubmit={handleSubmit((d) => submit(d, true))}>
-          <div className="p-6 space-y-6 pb-32">
+          <div className="p-6 space-y-6">
             {serverErrors.length > 0 && (
               <div className="space-y-1">
                 {serverErrors.map((s, i) => (
@@ -91,7 +91,7 @@ export default function CreateBankAccount({ onClose, onSave }: Props) {
 
             <div>
               <label className="block text-sm font-medium text-gray-900 mb-2">
-                Bank Name
+                Bank Name*
               </label>
               <input
                 {...register("name")}
@@ -104,7 +104,7 @@ export default function CreateBankAccount({ onClose, onSave }: Props) {
 
             <div>
               <label className="block text-sm font-medium text-gray-900 mb-2">
-                Account Number
+                Account Number*
               </label>
               <input
                 {...register("account_number")}

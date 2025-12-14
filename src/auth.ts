@@ -52,7 +52,7 @@ export const authOptions: NextAuthOptions = {
           id: user.id,
           email: user.email,
           name: user.name,
-          roles: (user as any).roles,
+          org_id: (user as any).org_id,
         };
         token.accessToken = (user as any).accessToken;
       }

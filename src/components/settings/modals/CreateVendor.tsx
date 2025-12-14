@@ -71,7 +71,7 @@ export default function CreateVendor({ onClose, onSave }: Props) {
           </button>
         </div>
         <form onSubmit={handleSubmit((d) => submit(d, true))}>
-          <div className="p-6 space-y-6 pb-32">
+          <div className="p-6 space-y-6">
             {serverErrors.length > 0 && (
               <div className="bg-red-50 border border-red-300 text-red-700 px-4 py-3 rounded-lg space-y-1 mb-4">
                 {serverErrors.map((err, index) => (
@@ -83,7 +83,7 @@ export default function CreateVendor({ onClose, onSave }: Props) {
             )}
             <div>
               <label className="block text-sm font-medium text-gray-900 mb-2">
-                Vendor Name
+                Vendor Name*
               </label>
               <input
                 type="text"
@@ -94,7 +94,7 @@ export default function CreateVendor({ onClose, onSave }: Props) {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-900 mb-2">
-                Contact Person
+                Contact Person*
               </label>
               <input
                 type="text"
@@ -108,7 +108,7 @@ export default function CreateVendor({ onClose, onSave }: Props) {
 
             <div>
               <label className="block text-sm font-medium text-gray-900 mb-2">
-                Phone
+                Phone*
               </label>
               <input
                 type="tel"
@@ -120,7 +120,7 @@ export default function CreateVendor({ onClose, onSave }: Props) {
 
             <div>
               <label className="block text-sm font-medium text-gray-900 mb-2">
-                Email
+                Email*
               </label>
               <input
                 type="email"
@@ -136,7 +136,7 @@ export default function CreateVendor({ onClose, onSave }: Props) {
               </label>
               <textarea
                 {...register("address")}
-                placeholder="Receipt Info (optional)"
+                placeholder="Address (optional)"
                 //@ts-expect-error:rows
                 rows="4"
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
@@ -150,7 +150,7 @@ export default function CreateVendor({ onClose, onSave }: Props) {
               </label>
               <textarea
                 {...register("note")}
-                placeholder="Receipt Info (optional)"
+                placeholder="Note (optional)"
                 //@ts-expect-error:rows
                 rows="4"
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"

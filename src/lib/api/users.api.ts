@@ -1,5 +1,5 @@
 import axios from "axios";
-import { getToken, refreshToken } from "../utils/auth.util";
+import { getOrg, getToken, refreshToken } from "../utils/auth.util";
 
 const UserApi = axios.create({
     baseURL: process.env.NEXT_PUBLIC_USER_SERVICE,
@@ -12,10 +12,15 @@ const UserApi = axios.create({
 // REQUEST INTERCEPTOR
 UserApi.interceptors.request.use(
     async (config) => {
-        const token = getToken();
+        const token = await getToken();
+        const orgId = await getOrg();
 
         if (token) {
             config.headers["Authorization"] = `Bearer ${token}`;
+        }
+
+        if (orgId) {
+            config.headers["OrgId"] = orgId;
         }
 
         return config;

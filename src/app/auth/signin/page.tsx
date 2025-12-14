@@ -38,7 +38,7 @@ const LoginPage = () => {
       setIsLoading(false);
       toast.error(res.error);
     } else {
-      toast.success(`Organization created successfully.`);
+      toast.success("Welcome back 👋 You’re logged in successfully!");
       router.push("/dashboard");
     }
   };

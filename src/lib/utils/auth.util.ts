@@ -1,11 +1,14 @@
-export const getToken = () => {
-    if (typeof window === "undefined") return null;
-    return localStorage.getItem("access_token");
+import { getSession } from "next-auth/react";
+
+export const getToken = async (): Promise<string | null> => {
+    const session = await getSession();
+    return (session as any)?.accessToken ?? null;
 };
 
-export const getOrg = () => {
-    if (typeof window === "undefined") return null;
-    return localStorage.getItem("org_id");
+export const getOrg = async (): Promise<string | null> => {
+    const session = await getSession();
+    console.log(session)
+    return (session as any)?.user.org_id ?? null;
 };
 
 export const refreshToken = async () => {

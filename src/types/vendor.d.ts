@@ -6,6 +6,7 @@ export interface Vendor {
   email: string;
   address?: string | null;
   note?: string | null;
+  added_by_fullname?: string | null;
 
   created_at: string; // ISO date string
   updated_at: string; // ISO date string

@@ -12,19 +12,15 @@ const UserApi = axios.create({
 // REQUEST INTERCEPTOR
 UserApi.interceptors.request.use(
     async (config) => {
-        const token = getToken();
-        const orgId = getOrg();
+        const token = await getToken();
+        const orgId = await getOrg();
 
         if (token) {
             config.headers["Authorization"] = `Bearer ${token}`;
-        } else {
-            config.headers["Authorization"] = `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjozLCJmdWxsbmFtZSI6Ik1haG1vdWQgQWhtZWQiLCJleHAiOjE5ODEwNTM1NDIsImlhdCI6MTc2NTA1MzU0Mn0.AfKCWh4rqXVXMaZgT7xbrBjuHP2Nuu67Hq6yi6eg1vo`;
         }
 
         if (orgId) {
             config.headers["OrgId"] = orgId;
-        } else {
-            config.headers["OrgId"] = 1;
         }
 
         return config;

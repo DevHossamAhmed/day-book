@@ -12,10 +12,23 @@ export async function store(form: any): Promise<Vendor> {
   }
 }
 
-export async function fetchVendors(): Promise<ApiResponse<Vendor[]>> {
+export async function fetchVendors(search: string): Promise<ApiResponse<Vendor[]>> {
   try {
-    const res = await DaybookApi.get<ApiResponse<Vendor[]>>("/vendors");
+    const res = await DaybookApi.get<ApiResponse<Vendor[]>>("/vendors", {
+      params: {
+        search,
+      },
+    });
     return res.data;
+  } catch (error: any) {
+    return Promise.reject(error);
+  }
+}
+
+export async function update(id: number, form: any): Promise<Vendor> {
+  try {
+    const res = await DaybookApi.put(`/vendors/${id}`, form);
+    return res.data.data as Vendor;
   } catch (error: any) {
     return Promise.reject(error);
   }

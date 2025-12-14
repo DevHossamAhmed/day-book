@@ -1,7 +1,8 @@
 "use client";
 import React, { useState } from "react";
-import { Plus, MoreVertical } from "lucide-react";
 import CreateMember from "@/components/members/modals/CreateMember";
+import SearchIcon from "@/lib/icons/Search.icon";
+import ExcelIcon from "@/lib/icons/Excel.icon";
 
 const MembersManagement = () => {
   const [isOpenCreateMember, setOpenCreateMember] = useState<boolean>(false);
@@ -16,27 +17,41 @@ const MembersManagement = () => {
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="flex justify-between items-center mb-6">
+        <div className="space-y-4">
           <h1 className="text-3xl font-bold text-gray-900">Members</h1>
-        </div>
-        {/* Actions */}
-        <div className="flex gap-2 mb-6">
-          <button
-            onClick={() => openCreateMember()}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-lg flex items-center gap-2 font-medium shadow-sm"
-          >
-            <Plus size={20} />
-            Create Member
-          </button>
-          <button className="bg-white border border-gray-200 p-2.5 rounded-lg hover:bg-gray-50">
-            <MoreVertical size={20} className="text-gray-600" />
-          </button>
-        </div>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            {/* Search */}
+            <div className="relative w-full sm:max-w-sm">
+              <input
+                type="text"
+                placeholder="Search members..."
+                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+              <SearchIcon />
+            </div>
 
-        {/* Members List */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100">
-          <div className="p-6 space-y-1"></div>
+            {/* Actions */}
+            <div className="flex gap-3">
+              <button
+                className="px-6 py-3 border border-green-600 text-green-700 rounded-lg hover:bg-green-50 font-medium flex items-center gap-2"
+              >
+                <ExcelIcon />
+                Export Excel
+              </button>
+
+              <button
+                onClick={openCreateMember}
+                className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium"
+              >
+                Create Member
+              </button>
+            </div>
+          </div>
+
+          {/* Members List */}
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100">
+            <div className="p-6 space-y-1"></div>
+          </div>
         </div>
       </div>
 

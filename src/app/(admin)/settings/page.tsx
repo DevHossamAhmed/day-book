@@ -27,11 +27,10 @@ const CompanySettings = () => {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`px-6 py-4 font-medium transition-colors relative ${
-                  activeTab === tab.id
+                className={`px-6 py-4 font-medium transition-colors relative ${activeTab === tab.id
                     ? "text-white bg-blue-600 rounded-t-lg"
                     : "text-gray-600 hover:text-gray-900"
-                }`}
+                  }`}
               >
                 {tab.label}
               </button>

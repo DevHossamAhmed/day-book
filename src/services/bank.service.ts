@@ -11,11 +11,23 @@ export async function store(form: any): Promise<BankAccount> {
   }
 }
 
-export async function fetchBanks(
-): Promise<ApiResponse<BankAccount[]>> {
+export async function fetchBanks(search?: string): Promise<ApiResponse<BankAccount[]>> {
   try {
-    const res = await DaybookApi.get<ApiResponse<BankAccount[]>>("/banks");
+    const res = await DaybookApi.get<ApiResponse<BankAccount[]>>("/banks", {
+      params: {
+        search,
+      },
+    });
     return res.data;
+  } catch (error: any) {
+    return Promise.reject(error);
+  }
+}
+
+export async function update(id: number, form: any): Promise<BankAccount> {
+  try {
+    const res = await DaybookApi.put(`/banks/${id}`, form);
+    return res.data.data as BankAccount;
   } catch (error: any) {
     return Promise.reject(error);
   }
