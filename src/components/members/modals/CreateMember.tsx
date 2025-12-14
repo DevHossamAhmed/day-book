@@ -46,9 +46,9 @@ export default function CreateMember({ onClose, onSave }: Props) {
       if (
         error instanceof Error &&
         "response" in error &&
-        (error as any).response?.data?.message
+        (error as any).response?.data?.errors
       ) {
-        setServerErrors((error as any).response.data.message);
+        setServerErrors((error as any).response.data.errors);
       } else {
         setServerErrors([
           "An unexpected error occurred. Please try again later.",
