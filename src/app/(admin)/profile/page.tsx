@@ -10,7 +10,6 @@ const UserProfilePage = () => {
   const [hasChanges, setHasChanges] = useState(false);
 
   const handleSaveChanges = () => {
-    console.log({ name, email, bio, avatar });
     setHasChanges(false);
     // Show success message
     alert('Changes saved successfully!');

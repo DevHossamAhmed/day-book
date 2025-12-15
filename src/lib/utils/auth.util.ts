@@ -7,7 +7,6 @@ export const getToken = async (): Promise<string | null> => {
 
 export const getOrg = async (): Promise<string | null> => {
     const session = await getSession();
-    console.log(session)
     return (session as any)?.user.org_id ?? null;
 };
 

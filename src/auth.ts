@@ -27,7 +27,6 @@ export const authOptions: NextAuthOptions = {
             }),
           }
         );
-        console.log("Auth response status:", res.ok, res.status);
         if (!res.ok) {
           if (res.status === 401) {
             throw new Error("Invalid email or password");

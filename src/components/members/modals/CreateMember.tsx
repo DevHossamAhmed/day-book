@@ -30,6 +30,11 @@ export default function CreateMember({ onClose, onSave }: Props) {
     onClose();
   };
 
+  const resetForm = () => {
+    reset();
+    setServerErrors([]);
+  };
+
   const submit = async (data: any, close = true) => {
     setServerErrors([]);
     setIsLoading(true);
@@ -49,6 +54,10 @@ export default function CreateMember({ onClose, onSave }: Props) {
         (error as any).response?.data?.errors
       ) {
         setServerErrors((error as any).response.data.errors);
+      } else if (error instanceof Error &&
+        "response" in error &&
+        (error as any).response?.data?.error) {
+        setServerErrors([(error as any).response?.data?.error]);
       } else {
         setServerErrors([
           "An unexpected error occurred. Please try again later.",
@@ -91,7 +100,7 @@ export default function CreateMember({ onClose, onSave }: Props) {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-semibold text-gray-900 mb-2">
-                  First Name
+                  First Name*
                 </label>
                 <input
                   type="text"
@@ -106,7 +115,7 @@ export default function CreateMember({ onClose, onSave }: Props) {
               </div>
               <div>
                 <label className="block text-sm font-semibold text-gray-900 mb-2">
-                  Last Name
+                  Last Name*
                 </label>
                 <input
                   type="text"
@@ -122,7 +131,7 @@ export default function CreateMember({ onClose, onSave }: Props) {
             </div>
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Joining Date
+                Joining Date*
               </label>
               <div className="relative">
                 <input
@@ -135,6 +144,70 @@ export default function CreateMember({ onClose, onSave }: Props) {
               <ErrorMessage
                 message={errors.joining_date?.message as string}
               />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Designation*
+              </label>
+              <input
+                type="text"
+                {...register("designation")}
+                placeholder="Enter Designation"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+              <ErrorMessage message={errors.designation?.message as string} />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-900 mb-2">
+                Salary Cycle*
+              </label>
+              <div className="relative">
+                <select
+                  {...register("salary_cycle")}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg appearance-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+                  <option value="">Select cycle</option>
+                  <option value="monthly">Monthly</option>
+                  <option value="weekly">Weekly</option>
+                  <option value="biweekly">Bi-weekly</option>
+                </select>
+                <ChevronDown className="absolute left-auto right-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+              </div>
+              <ErrorMessage message={errors.salary_cycle?.message as string} />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Salary Amount*
+              </label>
+              <input
+                type="text"
+                {...register("salary_amount")}
+                placeholder="Enter Salary amount"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+              <ErrorMessage
+                message={errors.salary_amount?.message as string}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-900 mb-2">
+                Role*
+              </label>
+              <div className="relative">
+                <select
+                  {...register("role")}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg appearance-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+                  <option value="">Select Role</option>
+                  <option value="Admin">Admin</option>
+                  <option value="Account Manager">Account Manager</option>
+                  <option value="Sales Person">Sales Person</option>
+                  <option value="HR">HR</option>
+                  <option value="Employee">Employee</option>
+                </select>
+                <ChevronDown className="absolute left-auto right-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+              </div>
+              <ErrorMessage message={errors.role?.message as string} />
             </div>
             <div>
               <label
@@ -153,36 +226,6 @@ export default function CreateMember({ onClose, onSave }: Props) {
               {errors.email && (
                 <ErrorMessage message={errors.email.message} />
               )}
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-900 mb-2">
-                Salary Cycle
-              </label>
-              <div className="relative">
-                <select className="w-full px-4 py-3 border border-gray-300 rounded-lg appearance-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                  <option value="">Select cycle</option>
-                  <option value="monthly">Monthly</option>
-                  <option value="weekly">Weekly</option>
-                  <option value="biweekly">Bi-weekly</option>
-                </select>
-                <ChevronDown className="absolute left-auto right-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
-              </div>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-900 mb-2">
-                Role
-              </label>
-              <div className="relative">
-                <select className="w-full px-4 py-3 border border-gray-300 rounded-lg appearance-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                  <option value="">Select Role</option>
-                  <option value="Admin">Admin</option>
-                  <option value="Account Manager">Account Manager</option>
-                  <option value="Sales Person">Sales Person</option>
-                  <option value="HR">HR</option>
-                  <option value="Employee">Employee</option>
-                </select>
-                <ChevronDown className="absolute left-auto right-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
-              </div>
             </div>
             <div>
               <label
@@ -204,37 +247,11 @@ export default function CreateMember({ onClose, onSave }: Props) {
             </div>
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Designation
-              </label>
-              <input
-                type="text"
-                {...register("designation")}
-                placeholder="Enter Designation"
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
-              <ErrorMessage message={errors.designation?.message as string} />
-            </div>
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Salary Amount
-              </label>
-              <input
-                type="text"
-                {...register("salary_amount")}
-                placeholder="Enter Salary amount"
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
-              <ErrorMessage
-                message={errors.salary_amount?.message as string}
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
                 Additional Info
               </label>
               <textarea
                 {...register("additional_info")}
-                placeholder="Receipt Info (optional)"
+                placeholder="Additional Info (optional)"
                 //@ts-expect-error:row
                 rows="4"
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
@@ -246,6 +263,14 @@ export default function CreateMember({ onClose, onSave }: Props) {
           </div>
           {/* Modal Footer */}
           <div className="p-6 border-t border-gray-200 flex justify-end gap-3 sticky bottom-0 bg-white z-10">
+              <button
+                disabled={isLoading}
+                type="button"
+                onClick={resetForm}
+                className="px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 font-medium"
+              >
+                Reset
+              </button>
             <button
               disabled={isLoading}
               onClick={handleSubmit((d) => submit(d, false))}

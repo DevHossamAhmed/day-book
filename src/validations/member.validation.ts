@@ -10,15 +10,21 @@ export const CreateMemberValidationSchema = z.object({
       const date = new Date(value);
       return date.toISOString().split("T")[0];
     }),
+  salary_cycle: z.enum(["monthly", "weekly", "biweekly"], {
+    message: "Salary cycle is required",
+  }),
+  designation: z.string().min(1, { message: "Designation is required" }),
+  role: z.enum(["Admin", "Account Manager", "Sales Person", "HR", "Employee"], {
+    message: "Role is required",
+  }),
   salary_amount: z
     .string()
-    .min(1, { message: "Salary_amount is required" })
+    .min(1, { message: "Salary amount is required" })
     .refine((val) => !Number.isNaN(Number(val)), {
       message: "Salary amount must be a number",
     })
     .transform((val) => Number(val)),
   email: z.email("Invalid email address"),
   password: z.string().min(6, "Min 6 characters"),
-  designation: z.string().optional().nullable(),
   additional_info: z.string().optional().nullable(),
 });
