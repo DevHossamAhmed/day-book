@@ -3,7 +3,7 @@ export interface Member {
   first_name: string;
   last_name: string;
   email: string;
-  joining_date?: string;
+  joining_date?: Date;
   salary_amount?: number;
   designation?: string | null;
   role?: string | null;

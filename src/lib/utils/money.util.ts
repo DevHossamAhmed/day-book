@@ -1,4 +1,4 @@
-export function FormatMoney(amount: number | string, currency = "USD"): string {
+export function formatMoney(amount: number | string, currency = "USD"): string {
     const value = Number(amount);
     if (isNaN(value)) return "0";
 

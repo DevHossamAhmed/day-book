@@ -6,6 +6,8 @@ import ExcelIcon from "@/lib/icons/Excel.icon";
 import { fetchMembers } from "@/services/user.service";
 import { Member } from "@/types/member";
 import toast from "react-hot-toast";
+import { formatMoney } from "@/lib/utils/money.util";
+import { formatDate } from "@/lib/utils/date.util";
 
 const MembersManagement = () => {
   const [isOpenCreateMember, setOpenCreateMember] = useState<boolean>(false);
@@ -68,8 +70,8 @@ const MembersManagement = () => {
             </div>
           </div>
 
-          {/* Members List */}
-          <div className="hidden sm:block bg-white rounded-lg border border-gray-200 overflow-hidden">
+          {/* Desktop Table */}
+          <div className="hidden sm:block bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50">
@@ -93,83 +95,132 @@ const MembersManagement = () => {
                 </thead>
 
                 <tbody className="divide-y divide-gray-200">
-                  {members.map((member) => (
-                    <tr key={member.id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4">
-                        <div className="font-semibold text-gray-900">
-                          {member.first_name} {member.last_name}
-                        </div>
-                        {member.additional_info && (
-                          <div className="text-sm text-gray-500">
-                            {member.additional_info}
+                  {members.map((member) => {
+                    return (
+                      <tr
+                        key={member.id}
+                        className={[
+                          "group transition-colors cursor-pointer hover:bg-gray-50 focus-within:bg-gray-50",
+                        ].join(" ")}
+                      >
+                        <td className="px-6 py-4">
+                          <div className="flex items-start justify-between gap-3">
+                            <div>
+                              <div className="font-semibold text-gray-900">
+                                {member.first_name} {member.last_name}
+                              </div>
+
+                              {member.additional_info ? (
+                                <div className="text-sm text-gray-500 line-clamp-1">
+                                  {member.additional_info}
+                                </div>
+                              ) : (
+                                <div className="text-sm text-gray-400">—</div>
+                              )}
+                            </div>
                           </div>
-                        )}
-                      </td>
-                      <td className="px-6 py-4">
-                        {member.email ? (
-                          <span className="text-sm text-gray-700">
-                            {member.email}
-                          </span>
-                        ) : (
-                          <span className="text-sm text-gray-400">—</span>
-                        )}
-                      </td>
-                      <td className="px-6 py-4">
-                        {member.joining_date ? (
-                          <span className="text-sm text-gray-700">
-                            {member.joining_date}
-                          </span>
-                        ) : (
-                          <span className="text-sm text-gray-400">—</span>
-                        )}
-                      </td>
-                      <td className="px-6 py-4">
-                        {member.salary_amount !== undefined ? (
-                          <span className="text-sm text-gray-700">
-                            {member.salary_amount}
-                          </span>
-                        ) : (
-                          <span className="text-sm text-gray-400">—</span>
-                        )}
-                      </td>
-                      <td className="px-6 py-4">
-                        {member.designation ? (
-                          <span className="text-sm text-gray-700">
-                            {member.designation}
-                          </span>
-                        ) : (
-                          <span className="text-sm text-gray-400">—</span>
-                        )}
-                      </td>
-                    </tr>
-                  ))}
+                        </td>
+
+                        <td className="px-6 py-4">
+                          {member.email ? (
+                            <span className="text-sm text-gray-700">
+                              {member.email}
+                            </span>
+                          ) : (
+                            <span className="text-sm text-gray-400">—</span>
+                          )}
+                        </td>
+
+                        <td className="px-6 py-4">
+                          {member.joining_date ? (
+                            <span className="text-sm text-gray-700">
+                              {formatDate(member.joining_date)}
+                            </span>
+                          ) : (
+                            <span className="text-sm text-gray-400">—</span>
+                          )}
+                        </td>
+
+                        <td className="px-6 py-4">
+                          {member.salary_amount !== undefined &&
+                            member.salary_amount !== null ? (
+                            <span className="text-sm font-medium text-gray-900">
+                              {formatMoney(member.salary_amount)}
+                            </span>
+                          ) : (
+                            <span className="text-sm text-gray-400">—</span>
+                          )}
+                        </td>
+
+                        <td className="px-6 py-4">
+                          {member.designation ? (
+                            <span className="inline-flex items-center rounded-full bg-gray-100 px-3 py-1 text-sm text-gray-700">
+                              {member.designation}
+                            </span>
+                          ) : (
+                            <span className="text-sm text-gray-400">—</span>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
           </div>
 
           {/* Mobile Cards */}
-          <div className="sm:hidden bg-white rounded-lg divide-y divide-gray-200">
-            {members.map((member) => (
-              <div key={member.id} className="p-4 space-y-1">
-                <div className="font-semibold text-gray-900">
-                  {member.first_name} {member.last_name}
-                </div>
-                <div className="text-sm text-gray-600">
-                  {member.email || "No email"}
-                </div>
-                {member.joining_date && (
-                  <div className="text-sm text-gray-500">
-                    Joined: {member.joining_date}
+          <div className="sm:hidden bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm divide-y divide-gray-200">
+            {members.map((member) => {
+              return (
+                <button
+                  key={member.id}
+                  type="button"
+                  className={[
+                    "w-full text-left p-4 space-y-2 transition-colors hover:bg-gray-50 active:bg-gray-100",
+                  ].join(" ")}
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <div className="font-semibold text-gray-900">
+                        {member.first_name} {member.last_name}
+                      </div>
+                      <div className="text-sm text-gray-600">
+                        {member.email || "No email"}
+                      </div>
+                    </div>
+
+                    <span className="text-gray-400">→</span>
                   </div>
-                )}
-                {member.designation && (
-                  <div className="text-sm text-gray-500">
-                    Role: {member.designation}
+
+                  <div className="grid grid-cols-2 gap-2 text-sm">
+                    <div className="text-gray-500">
+                      Joined:{" "}
+                      <span className="text-gray-700">
+                        {member.joining_date ? formatDate(member.joining_date) : "—"}
+                      </span>
+                    </div>
+
+                    <div className="text-gray-500">
+                      Salary:{" "}
+                      <span className="text-gray-700">
+                        {member.salary_amount !== undefined &&
+                          member.salary_amount !== null
+                          ? formatMoney(member.salary_amount)
+                          : "—"}
+                      </span>
+                    </div>
+
+                    <div className="text-gray-500 col-span-2">
+                      Role:{" "}
+                      <span className="text-gray-700">
+                        {member.designation || "—"}
+                      </span>
+                    </div>
                   </div>
-                )}
-              </div>
-            ))}
+                </button>
+              );
+            })}
           </div>
         </div>
       </div>

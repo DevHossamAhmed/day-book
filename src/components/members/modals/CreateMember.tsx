@@ -39,7 +39,7 @@ export default function CreateMember({ onClose, onSave }: Props) {
     setServerErrors([]);
     setIsLoading(true);
     try {
-      await store({ type: "added", ...data });
+      await store(data);
       toast.success("Member saved successfully.");
       if (onSave) await onSave();
       if (close) {
@@ -263,21 +263,20 @@ export default function CreateMember({ onClose, onSave }: Props) {
           </div>
           {/* Modal Footer */}
           <div className="p-6 border-t border-gray-200 flex justify-end gap-3 sticky bottom-0 bg-white z-10">
-              <button
-                disabled={isLoading}
-                type="button"
-                onClick={resetForm}
-                className="px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 font-medium"
-              >
-                Reset
-              </button>
             <button
               disabled={isLoading}
               onClick={handleSubmit((d) => submit(d, false))}
               type="button"
               className="px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 font-medium"
             >
-              Save and New
+              {isLoading ? (
+                <Loading />
+              ) : (
+                <>
+                  Save and New
+                </>
+              )}
+
             </button>
             <button
               disabled={isLoading}
