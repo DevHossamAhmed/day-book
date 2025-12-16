@@ -1,5 +1,5 @@
 import EntryDetails from "@/components/daily-record/modals/EntryDetails"
-import { FormatMoney } from "@/lib/utils/money.util";
+import { formatMoney } from "@/lib/utils/money.util";
 import { CapitalizeFirst } from "@/lib/utils/string.util";
 import { Balance } from "@/types/balance"
 import { useState } from "react";
@@ -36,7 +36,7 @@ export default function Row({ balance }: {
                     </div>
                 </div>
                 <div className="text-2xl font-bold text-gray-900">
-                    {FormatMoney(balance.amount)}
+                    {formatMoney(balance.amount)}
                 </div>
             </div>
             <EntryDetails balance={balance} isOpen={isEntryDetailsOpen} onClose={() => setIsEntryDetailsOpen(false)} />

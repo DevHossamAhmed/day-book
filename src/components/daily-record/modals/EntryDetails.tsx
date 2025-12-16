@@ -1,7 +1,7 @@
 import React from 'react';
-import { X, Trash2, Printer } from 'lucide-react';
+import { X, Trash2 } from 'lucide-react';
 import { Balance } from '@/types/balance';
-import { FormatMoney } from '@/lib/utils/money.util';
+import { formatMoney } from '@/lib/utils/money.util';
 
 export default function ({ isOpen, onClose, balance }: {
   isOpen: boolean;
@@ -46,7 +46,7 @@ export default function ({ isOpen, onClose, balance }: {
                 <p className="text-sm text-gray-500 mb-1">{balance.date}</p>
                 <h2 className="text-xl font-semibold text-gray-900">{balance.source}</h2>
               </div>
-              <div className="text-3xl font-bold text-blue-600">{FormatMoney(balance.amount)}</div>
+              <div className="text-3xl font-bold text-blue-600">{formatMoney(balance.amount)}</div>
             </div>
 
             {/* Note Section */}
