@@ -12,3 +12,8 @@ export interface Member {
   updated_at?: string;
 }
 
+export interface MemberIdNameList {
+  id: number;
+  full_name: string;
+}
+

@@ -1,5 +1,8 @@
+import { fetchGetIdNameList } from "@/services/user.service";
+import { MemberIdNameList } from "@/types/member";
 import { ChevronDown, Save, X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 type Props = {
   onClose: () => void;
@@ -8,11 +11,26 @@ type Props = {
 
 export default function CreateStore({ onClose, onSave }: Props) {
   const [isLoading, setIsLoading] = useState(false);
-  const [serverErrors, setServerErrors] = useState<string[]>([]);
+  const [serverErrors, setServerErrors] = useState<MemberIdNameList[]>([]);
+  const [members, setMembers] = useState<MemberIdNameList[]>([]);
 
   const closeDailog = () => {
     onClose();
   };
+
+  useEffect(() => {
+    fetchData()
+  }, [])
+
+  const fetchData = async () => {
+    try {
+      const res = await fetchGetIdNameList()
+      setMembers(res.data)
+    } catch (error) {
+      toast.error("Failed to fetch members. Please try again later.");
+    }
+
+  }
 
   return (
     <>
@@ -44,17 +62,20 @@ export default function CreateStore({ onClose, onSave }: Props) {
 
             <div>
               <label className="block text-sm font-medium text-gray-900 mb-2">
-                Salesperson
+                Sales Person
               </label>
               <div className="relative">
-                <input
-                  type="text"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
+                <select className="w-full px-4 py-3 border border-gray-300 rounded-lg appearance-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                  <option value="">Select</option>
+                  {members.map((member) => {
+                    return (
+                      <option key={member.id} value={member.id}>{member.full_name}</option>
+                    )
+                  })}
+                </select>
                 <ChevronDown className="absolute right-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
               </div>
             </div>
-
             <div>
               <label className="block text-sm font-medium text-gray-900 mb-2">
                 Default Currency

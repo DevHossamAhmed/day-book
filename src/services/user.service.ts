@@ -1,6 +1,6 @@
 import UsersApi from "@/lib/api/users.api";
 import { ApiResponse } from "@/types/api";
-import { Member } from "@/types/member";
+import { Member, MemberIdNameList } from "@/types/member";
 
 export async function store(form: any): Promise<void> {
   try {
@@ -20,6 +20,15 @@ export async function fetchMembers(
         search,
       },
     });
+    return res.data;
+  } catch (error: any) {
+    return Promise.reject(error);
+  }
+}
+
+export async function fetchGetIdNameList(): Promise<ApiResponse<MemberIdNameList[]>> {
+  try {
+    const res = await UsersApi.get<ApiResponse<MemberIdNameList[]>>("/v1/users/id-name-list");
     return res.data;
   } catch (error: any) {
     return Promise.reject(error);
