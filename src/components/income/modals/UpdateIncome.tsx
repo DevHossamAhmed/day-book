@@ -1,21 +1,23 @@
 import Loading from "@/components/ui/Loading";
 import ErrorMessage from "@/components/ui/ErrorMessage";
 import ValidationServerErrors from "@/components/ui/ValidationServerErrors";
-import { store } from "@/services/income.service";
+import { update } from "@/services/income.service";
 import { CreateIncomeValidationSchema } from "@/validations/income.validation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ChevronDown, Save, X } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { sources } from "@/data/sources";
+import { Balance } from "@/types/balance";
 
 type Props = {
     onClose: () => void;
     onSave: () => void;
+    income: Balance;
 };
 
-export default function CreateIncome({ onClose, onSave }: Props) {
+export default function UpdateIncome({ onClose, onSave, income }: Props) {
     const [isLoading, setIsLoading] = useState(false);
     const [serverErrors, setServerErrors] = useState<string[]>([]);
 
@@ -23,10 +25,22 @@ export default function CreateIncome({ onClose, onSave }: Props) {
         register,
         handleSubmit,
         formState: { errors },
-        reset
+        reset,
+        setValue
     } = useForm({
         resolver: zodResolver(CreateIncomeValidationSchema),
     });
+
+    useEffect(() => {
+        if (income) {
+            // Format date for input (YYYY-MM-DD)
+            const dateValue = income.date ? new Date(income.date).toISOString().split('T')[0] : '';
+            setValue("date", dateValue);
+            setValue("source", income.source as any);
+            setValue("amount", income.amount);
+            setValue("note", income.note || "");
+        }
+    }, [income, setValue]);
 
     const closeDailog = () => {
         onClose();
@@ -37,9 +51,9 @@ export default function CreateIncome({ onClose, onSave }: Props) {
             setServerErrors([]);
             setIsLoading(true);
 
-            await store(data);
+            await update(income.id, data);
 
-            toast.success("Record added successfully!");
+            toast.success("Income record updated successfully!");
             reset();
             onSave();
             closeDailog();
@@ -79,7 +93,7 @@ export default function CreateIncome({ onClose, onSave }: Props) {
             />
             <div className="fixed top-0 right-0 h-full w-[560px] bg-white shadow-2xl z-[999999] flex flex-col">
                 <div className="flex items-center justify-between p-6 border-b border-gray-200">
-                    <h2 className="text-xl font-bold text-gray-900">Create Income</h2>
+                    <h2 className="text-xl font-bold text-gray-900">Update Income</h2>
                     <button
                         onClick={() => closeDailog()}
                         className="p-1 hover:bg-gray-100 rounded-lg"
@@ -161,8 +175,13 @@ export default function CreateIncome({ onClose, onSave }: Props) {
                         </div>
                     </div>
                     <div className="p-6 border-t border-gray-200 flex items-center justify-end gap-3">
-                        <button disabled={isLoading} className="px-6 py-2.5 border border-gray-300 rounded-lg font-medium text-gray-700 hover:bg-gray-50">
-                            Save and New
+                        <button 
+                            type="button"
+                            onClick={closeDailog}
+                            disabled={isLoading} 
+                            className="px-6 py-2.5 border border-gray-300 rounded-lg font-medium text-gray-700 hover:bg-gray-50"
+                        >
+                            Cancel
                         </button>
                         <button disabled={isLoading} type="submit" className="flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium flex items-center justify-center gap-2">
                             {isLoading ? (
@@ -170,10 +189,9 @@ export default function CreateIncome({ onClose, onSave }: Props) {
                             ) : (
                                 <>
                                     <Save size={18} />
-                                    Save
+                                    Update
                                 </>
                             )}
-
                         </button>
                     </div>
                 </form>
