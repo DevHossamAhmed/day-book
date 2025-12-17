@@ -57,7 +57,7 @@ const PlannedPaymentPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
@@ -65,10 +65,10 @@ const PlannedPaymentPage = () => {
         </div>
 
         {/* Create Payment Button and Menu */}
-        <div className="flex gap-2 mb-6">
+        <div className="flex gap-3 mb-6">
           <button
             onClick={() => setIsCreatePaymentOpen(true)}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-lg flex items-center gap-2 font-medium shadow-sm"
+            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg flex items-center gap-2 font-medium shadow-sm"
           >
             <Plus size={20} />
             Create Payment
@@ -81,35 +81,35 @@ const PlannedPaymentPage = () => {
         {/* Main Content Card */}
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
           {/* Date Navigation */}
-          <div className="flex items-center justify-between mb-8">
-            <div className="flex items-center gap-4">
-              <button className="bg-black text-white px-4 py-2 rounded-lg text-sm font-medium">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-6">
+              <button className="bg-gray-900 text-white px-4 py-2 rounded-lg text-sm font-medium">
                 Day
               </button>
               <div className="flex items-center gap-2 text-gray-700">
-                <span className="font-medium">{formatDate(new Date(), "Do MMMM, YYYY")}</span>
-                <ChevronRight size={20} className="transform rotate-90" />
+                <span className="font-medium text-sm">{formatDate(new Date(), "Do MMMM, YYYY")}</span>
+                <ChevronRight size={16} className="rotate-90" />
               </div>
             </div>
 
-            <div className="flex items-center gap-4">
-              <button className="text-gray-600 hover:text-gray-900 font-medium">
+            <div className="flex items-center gap-6">
+              <button className="text-gray-500 hover:text-gray-700 font-medium text-sm pb-1 transition-colors">
                 Yesterday
               </button>
-              <button className="text-blue-600 font-medium border-b-2 border-blue-600 pb-1">
+              <button className="text-blue-600 font-medium text-sm border-b-2 border-blue-600 pb-1">
                 Today
               </button>
-              <button className="text-gray-600 hover:text-gray-900 font-medium">
+              <button className="text-gray-500 hover:text-gray-700 font-medium text-sm pb-1 transition-colors">
                 Tomorrow
               </button>
             </div>
 
-            <div className="flex items-center gap-2">
-              <button className="flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-lg hover:bg-gray-50">
-                <SlidersHorizontal size={18} />
-                <span className="font-medium">Filter</span>
+            <div className="flex items-center gap-3">
+              <button className="flex items-center gap-2 px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium">
+                <SlidersHorizontal size={16} />
+                Filter
               </button>
-              <button className="p-2 border border-gray-200 rounded-lg hover:bg-gray-50">
+              <button className="flex items-center justify-center w-10 h-10 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
                 <Search size={18} />
               </button>
             </div>
@@ -164,33 +164,33 @@ const PlannedPaymentPage = () => {
           </div>
 
           {/* Pagination */}
-          <div className="flex items-center justify-end gap-2 mt-8 pt-6 border-t border-gray-100">
-            <button className="px-4 py-2 border border-gray-200 rounded-lg hover:bg-gray-50 flex items-center gap-2">
+          <div className="flex items-center justify-end gap-3 mt-6 pt-6 border-t border-gray-200">
+            <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium flex items-center gap-2">
               <ChevronLeft size={18} />
               <span>Previous</span>
             </button>
 
-            <button className="w-10 h-10 bg-blue-600 text-white rounded-lg font-medium">
+            <button className="w-10 h-10 bg-blue-600 text-white rounded-lg font-medium text-sm">
               1
             </button>
-            <button className="w-10 h-10 hover:bg-gray-100 rounded-lg font-medium">
+            <button className="w-10 h-10 hover:bg-gray-100 rounded-lg font-medium text-sm text-gray-700 transition-colors">
               2
             </button>
-            <button className="w-10 h-10 hover:bg-gray-100 rounded-lg font-medium">
+            <button className="w-10 h-10 hover:bg-gray-100 rounded-lg font-medium text-sm text-gray-700 transition-colors">
               3
             </button>
-            <span className="px-2">...</span>
-            <button className="w-10 h-10 hover:bg-gray-100 rounded-lg font-medium">
+            <span className="px-2 text-gray-500">...</span>
+            <button className="w-10 h-10 hover:bg-gray-100 rounded-lg font-medium text-sm text-gray-700 transition-colors">
               8
             </button>
-            <button className="w-10 h-10 hover:bg-gray-100 rounded-lg font-medium">
+            <button className="w-10 h-10 hover:bg-gray-100 rounded-lg font-medium text-sm text-gray-700 transition-colors">
               9
             </button>
-            <button className="w-10 h-10 hover:bg-gray-100 rounded-lg font-medium">
+            <button className="w-10 h-10 hover:bg-gray-100 rounded-lg font-medium text-sm text-gray-700 transition-colors">
               10
             </button>
 
-            <button className="px-4 py-2 border border-gray-200 rounded-lg hover:bg-gray-50 flex items-center gap-2">
+            <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium flex items-center gap-2">
               <span>Next</span>
               <ChevronRight size={18} />
             </button>

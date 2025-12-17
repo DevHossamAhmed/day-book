@@ -49,7 +49,7 @@ export function Pagination({ meta, onPageChange }: PaginationProps) {
 
     return (
         <div className="p-6 border-t border-gray-200">
-            <div className="flex items-center justify-end gap-2">
+            <div className="flex items-center justify-end gap-3">
                 {/* Previous */}
                 <button
                     disabled={!hasPrevPage}

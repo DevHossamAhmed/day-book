@@ -113,7 +113,7 @@ const RightSide = () => {
 
   return (
     <div className="w-full space-y-6">
-      <div className="bg-white rounded-3xl p-4 sm:p-6 shadow-sm border border-gray-100">
+      <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
         <div className="flex justify-between items-start mb-6">
           <h2 className="text-gray-900 font-bold text-lg sm:text-xl">
             Product Performance
@@ -123,10 +123,10 @@ const RightSide = () => {
           </button>
         </div>
 
-        <div className="flex flex-wrap gap-2 mb-6">
+        <div className="flex flex-wrap gap-3 mb-6">
           <button
             onClick={() => setActiveTab("daily")}
-            className={`px-3 sm:px-5 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-medium transition-all ${
+            className={`px-6 py-3 rounded-lg text-sm font-medium transition-all ${
               activeTab === "daily"
                 ? "bg-gray-900 text-white shadow-sm"
                 : "bg-gray-50 text-gray-600 hover:bg-gray-100"
@@ -136,7 +136,7 @@ const RightSide = () => {
           </button>
           <button
             onClick={() => setActiveTab("online")}
-            className={`px-3 sm:px-5 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-medium transition-all ${
+            className={`px-6 py-3 rounded-lg text-sm font-medium transition-all ${
               activeTab === "online"
                 ? "bg-gray-900 text-white shadow-sm"
                 : "bg-gray-50 text-gray-600 hover:bg-gray-100"
@@ -146,7 +146,7 @@ const RightSide = () => {
           </button>
           <button
             onClick={() => setActiveTab("users")}
-            className={`px-3 sm:px-5 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-medium transition-all ${
+            className={`px-6 py-3 rounded-lg text-sm font-medium transition-all ${
               activeTab === "users"
                 ? "bg-gray-900 text-white shadow-sm"
                 : "bg-gray-50 text-gray-600 hover:bg-gray-100"
@@ -156,8 +156,8 @@ const RightSide = () => {
           </button>
         </div>
 
-        <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-6">
-          <div className="bg-gray-50 rounded-2xl p-3 sm:p-4">
+        <div className="grid grid-cols-2 gap-3 mb-6">
+          <div className="bg-gray-50 rounded-2xl p-4">
             <div className="text-gray-600 text-xs sm:text-sm mb-2">Online</div>
             <div className="flex items-center gap-2">
               <div className="flex items-center gap-1">
@@ -167,7 +167,7 @@ const RightSide = () => {
             </div>
           </div>
 
-          <div className="bg-gray-50 rounded-2xl p-3 sm:p-4">
+          <div className="bg-gray-50 rounded-2xl p-4">
             <div className="text-gray-600 text-xs sm:text-sm mb-2">Offline</div>
             <div className="flex items-center gap-2">
               <div className="flex items-center gap-1">
@@ -194,7 +194,7 @@ const RightSide = () => {
         </div>
       </div>
 
-      <div className="bg-white rounded-3xl p-4 sm:p-6 shadow-sm border border-gray-100">
+      <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-gray-900 font-bold text-lg sm:text-xl">Activities</h2>
           <button className="text-gray-400 hover:text-gray-600">
@@ -202,8 +202,8 @@ const RightSide = () => {
           </button>
         </div>
 
-        <div className="space-y-4 sm:space-y-5">
-          <div className="flex gap-3 sm:gap-4">
+        <div className="space-y-6">
+          <div className="flex gap-3">
             <img
               src="https://i.pravatar.cc/150?img=12"
               alt="Francisco Grbbs"
@@ -238,7 +238,7 @@ const RightSide = () => {
             </div>
           </div>
 
-          <div className="flex gap-3 sm:gap-4">
+          <div className="flex gap-3">
             <img
               src="https://i.pravatar.cc/150?img=5"
               alt="Courtney Henry"
@@ -256,7 +256,7 @@ const RightSide = () => {
             </div>
           </div>
 
-          <div className="flex gap-3 sm:gap-4">
+          <div className="flex gap-3">
             <img
               src="https://i.pravatar.cc/150?img=9"
               alt="Bessie Cooper"
@@ -274,7 +274,7 @@ const RightSide = () => {
             </div>
           </div>
 
-          <div className="flex gap-3 sm:gap-4">
+          <div className="flex gap-3">
             <img
               src="https://i.pravatar.cc/150?img=8"
               alt="Theresa Web"

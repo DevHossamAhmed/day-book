@@ -36,11 +36,11 @@ const MembersManagement = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto">
-        <div className="space-y-4">
+        <div className="space-y-6">
           <h1 className="text-3xl font-bold text-gray-900">Members</h1>
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             {/* Search */}
             <div className="relative w-full sm:max-w-sm">
               <input
@@ -71,7 +71,7 @@ const MembersManagement = () => {
           </div>
 
           {/* Desktop Table */}
-          <div className="hidden sm:block bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
+          <div className="hidden sm:block bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50">
@@ -170,7 +170,7 @@ const MembersManagement = () => {
           </div>
 
           {/* Mobile Cards */}
-          <div className="sm:hidden bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm divide-y divide-gray-200">
+          <div className="sm:hidden bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm divide-y divide-gray-200">
             {members.map((member) => {
               return (
                 <button

@@ -21,7 +21,7 @@ const CompanySettings = () => {
     <div className="min-h-screen bg-gray-50">
       {/* Tabs Navigation */}
       <div className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-8">
+        <div className="max-w-7xl mx-auto px-6">
           <div className="flex gap-1">
             {tabs.map((tab) => (
               <button
@@ -39,7 +39,7 @@ const CompanySettings = () => {
         </div>
       </div>
       {/* Content Area */}
-      <div className="max-w-7xl mx-auto px-8 py-8">
+      <div className="max-w-7xl mx-auto px-6 py-6">
         {activeTab === "company" && <Company />}
         {activeTab === "stores" && <Store />}
         {activeTab === "vendors" && <Vendor />}

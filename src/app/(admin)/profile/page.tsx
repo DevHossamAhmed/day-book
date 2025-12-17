@@ -38,10 +38,10 @@ const UserProfilePage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-4xl mx-auto">
+    <div className="min-h-screen bg-gray-50">
+      <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="flex justify-between items-center mb-12">
+        <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold text-gray-900">User Profile</h1>
           <button
             onClick={handleSaveChanges}
@@ -57,9 +57,9 @@ const UserProfilePage = () => {
         </div>
 
         {/* Form Fields */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 space-y-8">
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 space-y-6">
           {/* Name Field */}
-          <div className="flex flex-col sm:flex-row sm:items-start gap-4">
+          <div className="flex flex-col sm:flex-row sm:items-start gap-3">
             <label className="text-sm font-medium text-gray-700 sm:w-32 pt-3">
               Name<span className="text-red-500">*</span>
             </label>
@@ -73,7 +73,7 @@ const UserProfilePage = () => {
           </div>
 
           {/* Email Field */}
-          <div className="flex flex-col sm:flex-row sm:items-start gap-4">
+          <div className="flex flex-col sm:flex-row sm:items-start gap-3">
             <label className="text-sm font-medium text-gray-700 sm:w-32 pt-3">
               Email<span className="text-red-500">*</span>
             </label>
@@ -87,7 +87,7 @@ const UserProfilePage = () => {
           </div>
 
           {/* Avatar Field */}
-          <div className="flex flex-col sm:flex-row sm:items-start gap-4">
+          <div className="flex flex-col sm:flex-row sm:items-start gap-3">
             <div className="sm:w-32">
               <label className="text-sm font-medium text-gray-700">Avatar</label>
               <p className="text-xs text-gray-500 mt-1">
@@ -118,7 +118,7 @@ const UserProfilePage = () => {
           </div>
 
           {/* Bio Field */}
-          <div className="flex flex-col sm:flex-row sm:items-start gap-4">
+          <div className="flex flex-col sm:flex-row sm:items-start gap-3">
             <label className="text-sm font-medium text-gray-700 sm:w-32 pt-3">
               Bio
             </label>

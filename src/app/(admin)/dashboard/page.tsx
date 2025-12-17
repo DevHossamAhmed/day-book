@@ -8,7 +8,7 @@ const page = () => {
     <div className="bg-[#fcfcfc]">
       <OverView />
       
-      <div className="flex flex-col lg:flex-row gap-4 lg:gap-6 mt-4 lg:mt-6">
+      <div className="flex flex-col lg:flex-row gap-6 mt-6">
         <div className="w-full lg:w-2/3 xl:w-[70%]">
           <LeftSide />
         </div>

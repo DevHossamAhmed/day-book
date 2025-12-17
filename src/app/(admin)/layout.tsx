@@ -26,7 +26,7 @@ export default function DashboardLayout({
         <HeaderBar onMenuClick={toggleSidebar} />
 
         <main className="pt-[50px] min-h-screen overflow-y-auto">
-          <div className="p-4 sm:p-6 max-w-[1600px] mx-auto">
+          <div className="p-6 max-w-7xl mx-auto">
             {children}
           </div>
         </main>

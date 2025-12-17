@@ -4,11 +4,11 @@ import { HiOutlineAdjustmentsHorizontal } from "react-icons/hi2";
 const OverView = () => {
   return (
     <>
-      <div className="w-full flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 p-3">
+      <div className="w-full flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 p-6">
         <h2 className="text-lg sm:text-xl font-semibold">Overview</h2>
         
         <div className="flex flex-col xs:flex-row gap-3 w-full sm:w-auto">
-          <div className="flex gap-[15px] bg-[#e2e6e9] p-1 rounded-md w-full xs:w-auto">
+          <div className="flex gap-3 bg-[#e2e6e9] p-1 rounded-md w-full xs:w-auto">
             <p className="bg-white p-1 rounded-md text-[13px] sm:text-[14px] flex-1 xs:flex-none text-center cursor-pointer">
               Weekly
             </p>
@@ -20,16 +20,16 @@ const OverView = () => {
             </p>
           </div>
           
-          <button className="bg-white border px-3 py-2 rounded-md text-[13px] sm:text-[14px] flex items-center justify-center gap-1 hover:bg-gray-50 transition-colors">
+          <button className="bg-white border px-6 py-3 rounded-lg text-[13px] sm:text-[14px] flex items-center justify-center gap-2 hover:bg-gray-50 transition-colors">
             <HiOutlineAdjustmentsHorizontal className="text-[16px]" />
             Filter
           </button>
         </div>
       </div>
 
-      <div className="w-full px-3 sm:w-[95%] lg:w-[90%] mx-auto mt-4 sm:mt-6">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-          <div className="bg-white p-4 rounded-lg border lg:border-0 lg:border-r lg:rounded-none">
+      <div className="w-full px-6 mx-auto mt-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="bg-white p-6 rounded-2xl border lg:border-0 lg:border-r lg:rounded-none">
             <h2 className="text-[13px] sm:text-[14px] text-gray-600 mb-2">
               Total Transactions
             </h2>
@@ -41,7 +41,7 @@ const OverView = () => {
             </p>
           </div>
 
-          <div className="bg-white p-4 rounded-lg border lg:border-0 lg:border-r lg:rounded-none">
+          <div className="bg-white p-6 rounded-2xl border lg:border-0 lg:border-r lg:rounded-none">
             <h2 className="text-[13px] sm:text-[14px] text-gray-600 mb-2">
               Total Online Sales
             </h2>
@@ -53,7 +53,7 @@ const OverView = () => {
             </p>
           </div>
 
-          <div className="bg-white p-4 rounded-lg border lg:border-0 lg:border-r lg:rounded-none">
+          <div className="bg-white p-6 rounded-2xl border lg:border-0 lg:border-r lg:rounded-none">
             <h2 className="text-[13px] sm:text-[14px] text-gray-600 mb-2">
               Total Offline Sales
             </h2>
@@ -65,7 +65,7 @@ const OverView = () => {
             </p>
           </div>
 
-          <div className="bg-white p-4 rounded-lg border lg:border-0 lg:rounded-none">
+          <div className="bg-white p-6 rounded-2xl border lg:border-0 lg:rounded-none">
             <h2 className="text-[13px] sm:text-[14px] text-gray-600 mb-2">
               Total Payments
             </h2>

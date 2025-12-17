@@ -69,10 +69,10 @@ const OpeningBalancePage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="flex justify-between items-center mb-8">
+        <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold text-gray-900">Opening Balance</h1>
           <button
             className="cursor-pointer flex items-center gap-3 bg-liner-to-r from-blue-400 to-blue-700 text-white px-5 py-3 rounded-full shadow-lg hover:bg-blue-600 transition-colors"
@@ -93,14 +93,14 @@ const OpeningBalancePage = () => {
             <div className="flex gap-3">
               <button
                 onClick={() => openCreateRecord()}
-                className="flex cursor-pointer items-center gap-2 bg-blue-600 text-white px-5 py-2.5 rounded-lg hover:bg-blue-700 transition-colors font-medium shadow-sm"
+                className="flex cursor-pointer items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium shadow-sm"
               >
                 <Plus size={18} />
                 Create Entry
               </button>
               <button
                 onClick={() => openCreateTransfer()}
-                className="flex cursor-pointer items-center gap-2 bg-white text-gray-700 px-5 py-2.5 rounded-lg hover:bg-gray-50 transition-colors font-medium border border-gray-300"
+                className="flex cursor-pointer items-center gap-2 bg-white text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-50 transition-colors font-medium border border-gray-300"
               >
                 <ArrowLeftRight size={18} />
                 Transfer
@@ -123,7 +123,7 @@ const OpeningBalancePage = () => {
                   <ChevronRight size={16} className="rotate-90" />
                 </button>
               </div>
-              <div className="flex gap-6 ">
+              <div className="flex gap-6">
                 {["Yesterday", "Today", "Tomorrow"].map((tab) => (
                   <button
                     key={tab}
@@ -137,7 +137,7 @@ const OpeningBalancePage = () => {
                   </button>
                 ))}
               </div>
-              <div className="flex justify-end gap-3 mb-4">
+              <div className="flex gap-3">
                 <button className="flex items-center gap-2 px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium">
                   <SlidersHorizontal size={16} />
                   Filter

@@ -70,7 +70,7 @@ const IncomePage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto">
         {/* Title */}
         <div className="mb-6">
@@ -78,7 +78,7 @@ const IncomePage = () => {
         </div>
 
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
           {/* Search */}
           <div className="relative w-full sm:max-w-sm">
             <input
@@ -123,7 +123,7 @@ const IncomePage = () => {
                   <ChevronRight size={16} className="rotate-90" />
                 </button>
               </div>
-              <div className="flex gap-6 ">
+              <div className="flex gap-6">
                 {["Yesterday", "Today", "Tomorrow"].map((tab) => (
                   <button
                     key={tab}
@@ -138,7 +138,7 @@ const IncomePage = () => {
                   </button>
                 ))}
               </div>
-              <div className="flex justify-end gap-3 mb-4">
+              <div className="flex gap-3">
                 <button className="flex items-center gap-2 px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium">
                   <SlidersHorizontal size={16} />
                   Filter
