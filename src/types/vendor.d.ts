@@ -11,3 +11,8 @@ export interface Vendor {
   created_at: string; // ISO date string
   updated_at: string; // ISO date string
 }
+
+export interface VendorIdNameList {
+  id: number;
+  name: string;
+}

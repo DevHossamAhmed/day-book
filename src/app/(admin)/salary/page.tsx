@@ -4,22 +4,21 @@ import {
   ChevronRight,
   Search,
   SlidersHorizontal,
-  MoreVertical,
-  Plus,
   X,
-  Calendar,
-  ChevronDown,
-  Save,
   Copy,
   Trash2,
   Printer,
 } from "lucide-react";
 import { formatDate } from "@/lib/utils/date.util";
+import SearchIcon from "@/lib/icons/Search.icon";
+import ExcelIcon from "@/lib/icons/Excel.icon";
+import CreateSalary from "@/components/salary/modals/CreateSalary";
 
 const SalaryPage = () => {
   const [isCreateSalaryOpen, setIsCreateSalaryOpen] = useState(false);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [selectedSalary, setSelectedSalary] = useState(null);
+  const [search, setSearch] = useState<string>("");
 
   const salaries = [
     {
@@ -74,63 +73,82 @@ const SalaryPage = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="flex justify-between items-center mb-6">
+        {/* Title */}
+        <div className="mb-6">
           <h1 className="text-3xl font-bold text-gray-900">Salary</h1>
         </div>
 
-        {/* Create Salary Button and Menu */}
-        <div className="flex gap-3 mb-6">
-          <button
-            onClick={() => setIsCreateSalaryOpen(true)}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg flex items-center gap-2 font-medium shadow-sm"
-          >
-            <Plus size={20} />
-            Create Salary
-          </button>
-          <button className="bg-white border border-gray-200 p-2.5 rounded-lg hover:bg-gray-50">
-            <MoreVertical size={20} className="text-gray-600" />
-          </button>
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
+          {/* Search */}
+          <div className="relative w-full sm:max-w-sm">
+            <input
+              type="text"
+              placeholder="Search salary..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+            <SearchIcon />
+          </div>
+
+          {/* Actions */}
+          <div className="flex gap-3">
+            <button
+              className="px-6 py-3 border border-green-600 text-green-700 rounded-lg hover:bg-green-50 font-medium flex items-center gap-2"
+            >
+              <ExcelIcon />
+              Export Excel
+            </button>
+
+            <button
+              onClick={() => setIsCreateSalaryOpen(true)}
+              className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium"
+            >
+              Create Salary
+            </button>
+          </div>
         </div>
 
         {/* Main Content Card */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100">
           {/* Date Navigation */}
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-6">
-              <button className="bg-gray-900 text-white px-4 py-2 rounded-lg text-sm font-medium">
-                Day
-              </button>
-              <div className="flex items-center gap-2 text-gray-700">
-                <span className="font-medium text-sm">{formatDate(new Date(), "Do MMMM, YYYY")}</span>
-                <ChevronRight size={16} className="rotate-90" />
+          <div className="p-6 border-b border-gray-200">
+            <div className="flex items-center justify-between gap-6">
+              <div className="flex gap-6">
+                <button className="px-4 py-2 bg-gray-900 text-white rounded-lg font-medium text-sm">
+                  Day
+                </button>
+                <button className="flex items-center gap-2 text-gray-700 font-medium text-sm">
+                  {formatDate(new Date(), "Do MMMM, YYYY")}
+                  <ChevronRight size={16} className="rotate-90" />
+                </button>
+              </div>
+              <div className="flex gap-6">
+                {["Yesterday", "Today", "Tomorrow"].map((tab) => (
+                  <button
+                    key={tab}
+                    className="font-medium text-sm pb-1 transition-colors text-gray-500 hover:text-gray-700"
+                  >
+                    {tab}
+                  </button>
+                ))}
+              </div>
+              <div className="flex gap-3">
+                <button className="flex items-center gap-2 px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium">
+                  <SlidersHorizontal size={16} />
+                  Filter
+                </button>
+                <button className="flex items-center justify-center w-10 h-10 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                  <Search size={18} />
+                </button>
               </div>
             </div>
-
-            <div className="flex items-center gap-6">
-              <button className="text-gray-500 hover:text-gray-700 font-medium text-sm pb-1 transition-colors">
-                Yesterday
-              </button>
-              <button className="text-blue-600 font-medium text-sm border-b-2 border-blue-600 pb-1">
-                Today
-              </button>
-              <button className="text-gray-500 hover:text-gray-700 font-medium text-sm pb-1 transition-colors">
-                Tomorrow
-              </button>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <button className="flex items-center gap-2 px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium">
-                <SlidersHorizontal size={16} />
-                Filter
-              </button>
-              <button className="flex items-center justify-center w-10 h-10 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
-                <Search size={18} />
-              </button>
-            </div>
           </div>
+
           {/* Salaries List */}
-          <div className="space-y-1">
+          <div className="p-6">
+            <div className="space-y-1">
             {salaries.map((salary) => (
               <div
                 key={salary.id}
@@ -170,185 +188,19 @@ const SalaryPage = () => {
                 </div>
               </div>
             ))}
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Create Salary Side Panel */}
+      {/* Create Salary Modal */}
       {isCreateSalaryOpen && (
-        <>
-          {/* Overlay */}
-          <div
-            className="fixed inset-0 bg-black/5 bg-opacity-50 z-40"
-            onClick={() => setIsCreateSalaryOpen(false)}
-          />
-
-          {/* Side Panel */}
-          <div className="fixed top-0 right-0 h-full w-[560px] bg-white shadow-2xl z-9999 flex flex-col">
-            {/* Header */}
-            <div className="flex items-center justify-between p-6 border-b border-gray-200">
-              <h2 className="text-xl font-bold text-gray-900">Create Salary</h2>
-              <button
-                onClick={() => setIsCreateSalaryOpen(false)}
-                className="p-1 hover:bg-gray-100 rounded-lg"
-              >
-                <X size={24} className="text-gray-600" />
-              </button>
-            </div>
-
-            {/* Form Content */}
-            <div className="flex-1 overflow-y-auto p-6 space-y-5">
-              {/* Employee */}
-              <div>
-                <label className="block text-sm font-semibold text-gray-900 mb-2">
-                  Employee
-                </label>
-                <div className="relative">
-                  <select className="w-full pl-4 pr-12 py-3 border border-gray-300 rounded-lg appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-500">
-                    <option value=""></option>
-                  </select>
-                  <ChevronDown
-                    size={20}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
-                  />
-                </div>
-              </div>
-
-              {/* Salary Amount */}
-              <div>
-                <label className="block text-sm font-semibold text-gray-900 mb-2">
-                  Salary Amount
-                </label>
-                <input
-                  type="text"
-                  placeholder="Enter amount"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-500"
-                />
-              </div>
-
-              {/* Deductions and Deduction Reason */}
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-semibold text-gray-900 mb-2">
-                    Deductions
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Enter amount"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-500"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-semibold text-gray-900 mb-2">
-                    Deduction Reason
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Enter reason"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-500"
-                  />
-                </div>
-              </div>
-
-              {/* Payment Date and Period */}
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-semibold text-gray-900 mb-2">
-                    Payment Date
-                  </label>
-                  <div className="relative">
-                    <input
-                      type="text"
-                      placeholder="Select date"
-                      className="w-full pl-4 pr-12 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-500"
-                    />
-                    <Calendar
-                      size={20}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-semibold text-gray-900 mb-2">
-                    Period
-                  </label>
-                  <div className="relative">
-                    <input
-                      type="text"
-                      placeholder="Select period"
-                      className="w-full pl-4 pr-12 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-500"
-                    />
-                    <Calendar
-                      size={20}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Payment Method */}
-              <div>
-                <label className="block text-sm font-semibold text-gray-900 mb-2">
-                  Payment Method
-                </label>
-                <div className="relative">
-                  <select className="w-full pl-4 pr-12 py-3 border border-gray-300 rounded-lg appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-500">
-                    <option value="">Select method</option>
-                    <option value="cash">Cash</option>
-                    <option value="account">Bank Transfer</option>
-                  </select>
-                  <ChevronDown
-                    size={20}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
-                  />
-                </div>
-              </div>
-
-              {/* Status */}
-              <div>
-                <label className="block text-sm font-semibold text-gray-900 mb-2">
-                  Status
-                </label>
-                <div className="relative">
-                  <select className="w-full pl-4 pr-12 py-3 border border-gray-300 rounded-lg appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-500">
-                    <option value="">Select status</option>
-                    <option value="upcoming">Upcoming</option>
-                    <option value="paid">Paid</option>
-                  </select>
-                  <ChevronDown
-                    size={20}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
-                  />
-                </div>
-              </div>
-
-              {/* Note */}
-              <div>
-                <label className="block text-sm font-semibold text-gray-900 mb-2">
-                  Note
-                </label>
-                <textarea
-                  placeholder="Receipt Info (optional)"
-                  rows={5}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none text-gray-500"
-                />
-              </div>
-            </div>
-
-            {/* Footer Buttons */}
-            <div className="p-6 border-t border-gray-200 flex items-center justify-end gap-3">
-              <button className="px-6 py-2.5 border border-gray-300 rounded-lg font-medium text-gray-700 hover:bg-gray-50">
-                Save and New
-              </button>
-              <button className="px-6 py-2.5 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 flex items-center gap-2">
-                <Save size={18} />
-                Save
-              </button>
-            </div>
-          </div>
-        </>
+        <CreateSalary
+          onClose={() => setIsCreateSalaryOpen(false)}
+          onSave={() => {
+            // TODO: Implement refresh logic
+          }}
+        />
       )}
 
       {/* Salary Details Side Panel */}
