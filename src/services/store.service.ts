@@ -1,6 +1,6 @@
 import DaybookApi from "@/lib/api/daybook.api";
 import { ApiResponse } from "@/types/api";
-import { Store } from "@/types/store";
+import { Store, StoreIdNameList } from "@/types/store";
 
 export async function store(form: any): Promise<Store> {
   try {
@@ -18,6 +18,15 @@ export async function fetchStores(search?: string): Promise<ApiResponse<Store[]>
         search,
       },
     });
+    return res.data;
+  } catch (error: any) {
+    return Promise.reject(error);
+  }
+}
+
+export async function fetchStoreIdNameList(): Promise<ApiResponse<StoreIdNameList[]>> {
+  try {
+    const res = await DaybookApi.get<ApiResponse<StoreIdNameList[]>>("/stores/id-name-list");
     return res.data;
   } catch (error: any) {
     return Promise.reject(error);

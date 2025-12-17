@@ -16,7 +16,7 @@ import CreateIncome from "@/components/income/modals/CreateIncome";
 import SearchIcon from "@/lib/icons/Search.icon";
 import ExcelIcon from "@/lib/icons/Excel.icon";
 import { fetchIncomes } from "@/services/income.service";
-import { Balance } from "@/types/balance";
+import { Income } from "@/types/income";
 import toast from "react-hot-toast";
 import IncomeRow from "@/components/income/ui/IncomeRow";
 import { PaginationMeta } from "@/types/pagination";
@@ -27,7 +27,7 @@ const IncomePage = () => {
   const [dateFilter, setDateFilter] = useState<string>(getDateByLabel("today"));
   const [isCreateIncomeOpen, setIsCreateIcomeOpen] = useState(false);
   const [search, setSearch] = useState<string>("");
-  const [incomes, setIncomes] = useState<Balance[]>([]);
+  const [incomes, setIncomes] = useState<Income[]>([]);
   const [meta, setMeta] = useState<PaginationMeta>();
   const [page, setPage] = useState<number>(1);
   const [limit, setLimit] = useState<number>(10);
@@ -158,7 +158,7 @@ const IncomePage = () => {
                   No income records found
                 </div>
               ) : (
-                incomes.map((income: Balance) => (
+                incomes.map((income: Income) => (
                   <IncomeRow key={income.id} income={income} onSave={onSave} />
                 ))
               )}

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { X, Trash2, Edit } from 'lucide-react';
-import { Balance } from '@/types/balance';
+import { Income } from '@/types/income';
 import { formatMoney } from '@/lib/utils/money.util';
 import { destroy } from '@/services/income.service';
 import toast from 'react-hot-toast';
@@ -9,7 +9,7 @@ import UpdateIncome from './UpdateIncome';
 type Props = {
     isOpen: boolean;
     onClose: () => void;
-    income: Balance;
+    income: Income;
     onSave?: () => void;
 };
 
@@ -97,9 +97,17 @@ export default function IncomeDetails({ isOpen, onClose, income, onSave }: Props
                             <div>
                                 <p className="text-sm text-gray-500 mb-1">{income.date}</p>
                                 <h2 className="text-xl font-semibold text-gray-900">{income.source}</h2>
-                                {income.added_by_fullname && (
-                                    <p className="text-sm text-gray-500 mt-1">Added by: {income.added_by_fullname}</p>
-                                )}
+                                <div className="mt-2 space-y-1">
+                                    {income.sales_person_fullname && (
+                                        <p className="text-sm text-gray-500">Sales Person: {income.sales_person_fullname}</p>
+                                    )}
+                                    {income.payment_method && (
+                                        <p className="text-sm text-gray-500">Payment Method: {income.payment_method}</p>
+                                    )}
+                                    {income.added_by_fullname && (
+                                        <p className="text-sm text-gray-500">Added by: {income.added_by_fullname}</p>
+                                    )}
+                                </div>
                             </div>
                             <div className="text-3xl font-bold text-blue-600">{formatMoney(income.amount)}</div>
                         </div>

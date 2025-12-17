@@ -123,7 +123,6 @@ export default function CreateStore({ onClose, onSave }: Props) {
               />
               <ErrorMessage message={errors.name?.message as string} />
             </div>
-
             <div>
               <label className="block text-sm font-medium text-gray-900 mb-2">
                 Sales Person*

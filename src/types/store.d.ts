@@ -9,3 +9,8 @@ export interface Store {
   created_at: string; // ISO date string
   updated_at?: string | null; // ISO date string
 }
+
+export interface StoreIdNameList {
+  id: number;
+  name: string;
+}

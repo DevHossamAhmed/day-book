@@ -8,18 +8,26 @@ import { ChevronDown, Save, X } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
-import { sources } from "@/data/sources";
-import { Balance } from "@/types/balance";
+import { PaymentMethod } from "@/data/payment-method";
+import { fetchGetIdNameList } from "@/services/user.service";
+import { MemberIdNameList } from "@/types/member";
+import { fetchStoreIdNameList } from "@/services/store.service";
+import { StoreIdNameList } from "@/types/store";
+import { Income } from "@/types/income";
 
 type Props = {
     onClose: () => void;
     onSave: () => void;
-    income: Balance;
+    income: Income;
 };
 
 export default function UpdateIncome({ onClose, onSave, income }: Props) {
     const [isLoading, setIsLoading] = useState(false);
     const [serverErrors, setServerErrors] = useState<string[]>([]);
+    const [members, setMembers] = useState<MemberIdNameList[]>([]);
+    const [stores, setStores] = useState<StoreIdNameList[]>([]);
+    const [isLoadingMembers, setIsLoadingMembers] = useState(true);
+    const [isLoadingStores, setIsLoadingStores] = useState(true);
 
     const {
         register,
@@ -32,29 +40,67 @@ export default function UpdateIncome({ onClose, onSave, income }: Props) {
     });
 
     useEffect(() => {
-        if (income) {
+        fetchData();
+    }, []);
+
+    useEffect(() => {
+        if (income && members.length > 0 && stores.length > 0) {
             // Format date for input (YYYY-MM-DD)
             const dateValue = income.date ? new Date(income.date).toISOString().split('T')[0] : '';
             setValue("date", dateValue);
-            setValue("source", income.source as any);
-            setValue("amount", income.amount);
+            setValue("store_id", income.store_id?.toString() || "");
+            setValue("sales_person_id", income.sales_person_id?.toString() || "");
+            setValue("amount", income.amount.toString());
+            setValue("payment_method", income.payment_method as any);
             setValue("note", income.note || "");
         }
-    }, [income, setValue]);
+    }, [income, members, stores, setValue]);
+
+    const fetchData = async () => {
+        try {
+            setIsLoadingMembers(true);
+            setIsLoadingStores(true);
+            const [membersRes, storesRes] = await Promise.all([
+                fetchGetIdNameList(),
+                fetchStoreIdNameList()
+            ]);
+            setMembers(membersRes.data);
+            setStores(storesRes.data);
+        } catch (error) {
+            toast.error("Failed to fetch data. Please try again later.");
+        } finally {
+            setIsLoadingMembers(false);
+            setIsLoadingStores(false);
+        }
+    };
 
     const closeDailog = () => {
         onClose();
     }
 
-    const onSubmit = async (data: any) => {
+    const submit = async (data: any) => {
+        setServerErrors([]);
+        setIsLoading(true);
         try {
-            setServerErrors([]);
-            setIsLoading(true);
+            // Find the selected sales person's full name
+            const selectedMember = members.find(
+                (member) => member.id === Number(data.sales_person_id)
+            );
 
-            await update(income.id, data);
+            // Find the selected store's name
+            const selectedStore = stores.find(
+                (store) => store.id === Number(data.store_id)
+            );
 
+            // Add sales_person_fullname and source (store name) to the payload
+            const payload = {
+                ...data,
+                sales_person_fullname: selectedMember?.full_name || "",
+                source: selectedStore?.name || "",
+            };
+
+            await update(income.id, payload);
             toast.success("Income record updated successfully!");
-            reset();
             onSave();
             closeDailog();
         } catch (error) {
@@ -101,94 +147,141 @@ export default function UpdateIncome({ onClose, onSave, income }: Props) {
                         <X size={24} className="text-gray-600" />
                     </button>
                 </div>
-                <form onSubmit={handleSubmit(onSubmit)}>
-                    <div className="flex-1 overflow-y-auto p-6 space-y-6">
+                <form onSubmit={handleSubmit(submit)}>
+                    <div className="p-6 space-y-6">
                         {serverErrors.length > 0 && (
                             <ValidationServerErrors errors={serverErrors} />
                         )}
                         <div>
-                            <label className="block text-sm font-semibold text-gray-900 mb-2">Date*</label>
-                            <div className="relative flex justify-between">
-                                <input
-                                    type="date"
-                                    {...register("date")}
-                                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                />
-                            </div>
+                            <label className="block text-sm font-medium text-gray-900 mb-2">
+                                Date <span className="text-red-500">*</span>
+                            </label>
+                            <input
+                                type="date"
+                                {...register("date")}
+                                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                                    errors.date ? "border-red-300" : "border-gray-300"
+                                }`}
+                            />
                             <ErrorMessage message={errors.date?.message as string} />
                         </div>
                         <div>
-                            <label className="block text-sm font-semibold text-gray-900 mb-2">Channel*</label>
+                            <label className="block text-sm font-medium text-gray-900 mb-2">
+                                Store <span className="text-red-500">*</span>
+                            </label>
                             <div className="relative">
-                                <select 
-                                    {...register("source")}
-                                    className="w-full px-4 py-3 border border-gray-300 rounded-lg appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                                <select
+                                    {...register("store_id")}
+                                    disabled={isLoadingStores}
+                                    className={`w-full px-4 py-3 border rounded-lg appearance-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                                        errors.store_id ? "border-red-300" : "border-gray-300"
+                                    } ${isLoadingStores ? "bg-gray-100 cursor-not-allowed" : "bg-white"}`}
                                 >
-                                    <option value="">Select channel</option>
-                                    {sources.map((source) => (
-                                        <option key={source} value={source}>
-                                            {source}
+                                    <option value="">{isLoadingStores ? "Loading..." : "Select store"}</option>
+                                    {stores.map((store) => (
+                                        <option key={store.id} value={store.id}>
+                                            {store.name}
                                         </option>
                                     ))}
                                 </select>
-                                <ChevronDown size={20} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                                <ChevronDown className="absolute right-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
                             </div>
-                            <ErrorMessage message={errors.source?.message as string} />
+                            <ErrorMessage message={errors.store_id?.message as string} />
                         </div>
                         <div>
-                            <label className="block text-sm font-semibold text-gray-900 mb-2">Sales Person</label>
+                            <label className="block text-sm font-medium text-gray-900 mb-2">
+                                Sales Person <span className="text-red-500">*</span>
+                            </label>
                             <div className="relative">
-                                <select className="w-full px-4 py-3 border border-gray-300 rounded-lg appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
-                                    <option value="">Select sales person</option>
+                                <select
+                                    {...register("sales_person_id")}
+                                    disabled={isLoadingMembers}
+                                    className={`w-full px-4 py-3 border rounded-lg appearance-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                                        errors.sales_person_id ? "border-red-300" : "border-gray-300"
+                                    } ${isLoadingMembers ? "bg-gray-100 cursor-not-allowed" : "bg-white"}`}
+                                >
+                                    <option value="">{isLoadingMembers ? "Loading..." : "Select"}</option>
+                                    {members.map((member) => (
+                                        <option key={member.id} value={member.id}>
+                                            {member.full_name}
+                                        </option>
+                                    ))}
                                 </select>
-                                <ChevronDown size={20} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                                <ChevronDown className="absolute right-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
                             </div>
+                            <ErrorMessage
+                                message={errors.sales_person_id?.message as string}
+                            />
                         </div>
                         <div>
-                            <label className="block text-sm font-semibold text-gray-900 mb-2">Amount*</label>
+                            <label className="block text-sm font-medium text-gray-900 mb-2">
+                                Amount <span className="text-red-500">*</span>
+                            </label>
                             <input
                                 type="text"
                                 {...register("amount")}
                                 placeholder="Enter amount"
-                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                                    errors.amount ? "border-red-300" : "border-gray-300"
+                                }`}
                             />
                             <ErrorMessage message={errors.amount?.message as string} />
                         </div>
                         <div>
-                            <label className="block text-sm font-semibold text-gray-900 mb-2">Payment Method</label>
+                            <label className="block text-sm font-medium text-gray-900 mb-2">
+                                Payment Method <span className="text-red-500">*</span>
+                            </label>
                             <div className="relative">
-                                <select className="w-full px-4 py-3 border border-gray-300 rounded-lg appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
+                                <select
+                                    {...register("payment_method")}
+                                    className={`w-full px-4 py-3 border rounded-lg appearance-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white ${
+                                        errors.payment_method ? "border-red-300" : "border-gray-300"
+                                    }`}
+                                >
                                     <option value="">Select payment method</option>
+                                    {PaymentMethod.map((method) => (
+                                        <option key={method} value={method}>
+                                            {method}
+                                        </option>
+                                    ))}
                                 </select>
-                                <ChevronDown size={20} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                                <ChevronDown className="absolute right-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
                             </div>
+                            <ErrorMessage message={errors.payment_method?.message as string} />
                         </div>
                         <div>
-                            <label className="block text-sm font-semibold text-gray-900 mb-2">Note</label>
+                            <label className="block text-sm font-medium text-gray-900 mb-2">
+                                Note
+                            </label>
                             <textarea
                                 {...register("note")}
                                 placeholder="Receipt Info (optional)"
-                                rows={4}
-                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                                //@ts-expect-error:rows
+                                rows="4"
+                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
                             />
                             <ErrorMessage message={errors.note?.message as string} />
                         </div>
                     </div>
-                    <div className="p-6 border-t border-gray-200 flex items-center justify-end gap-3">
-                        <button 
+                    <div className="p-6 border-t border-gray-200 flex justify-end gap-3 sticky bottom-0 bg-white z-10">
+                        <button
                             type="button"
                             onClick={closeDailog}
-                            disabled={isLoading} 
-                            className="px-6 py-2.5 border border-gray-300 rounded-lg font-medium text-gray-700 hover:bg-gray-50"
+                            disabled={isLoading}
+                            className="px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             Cancel
                         </button>
-                        <button disabled={isLoading} type="submit" className="flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium flex items-center justify-center gap-2">
+                        <button
+                            disabled={isLoading}
+                            type="submit"
+                            className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
                             {isLoading ? (
                                 <Loading />
                             ) : (
                                 <>
-                                    <Save size={18} />
+                                    <Save className="w-5 h-5" />
                                     Update
                                 </>
                             )}

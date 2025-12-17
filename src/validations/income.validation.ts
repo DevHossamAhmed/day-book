@@ -1,4 +1,4 @@
-import { sources } from "@/data/sources";
+import { PaymentMethod } from "@/data/payment-method";
 import z from "zod";
 
 export const CreateIncomeValidationSchema = z.object({
@@ -8,9 +8,20 @@ export const CreateIncomeValidationSchema = z.object({
             const date = new Date(value);
             return date.toISOString().split("T")[0];
         }),
-    source: z.enum(sources, {
-        error: "Source is required",
-    }),
+    store_id: z
+        .string()
+        .min(1, "Store is required")
+        .transform((val) => Number(val))
+        .refine((val) => !isNaN(val) && val > 0, {
+            message: "Please select a Store",
+        }),
+    sales_person_id: z
+        .string()
+        .min(1, "Sales Person is required")
+        .transform((val) => Number(val))
+        .refine((val) => !isNaN(val) && val > 0, {
+            message: "Please select a Sales Person",
+        }),
     amount: z
         .string()
         .min(1, { message: "Amount is required" })
@@ -18,5 +29,8 @@ export const CreateIncomeValidationSchema = z.object({
             message: "Amount must be a number",
         })
         .transform((val) => Number(val)),
+    payment_method: z.enum(PaymentMethod, {
+        error: "Payment Method is required",
+    }),
     note: z.string().optional().nullable(),
 });

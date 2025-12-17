@@ -1,10 +1,10 @@
 import { formatMoney } from "@/lib/utils/money.util";
-import { Balance } from "@/types/balance";
+import { Income } from "@/types/income";
 import { useState } from "react";
 import IncomeDetails from "../modals/IncomeDetails";
 
 type Props = {
-    income: Balance;
+    income: Income;
     onSave?: () => void;
 };
 
