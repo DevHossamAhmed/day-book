@@ -1,22 +1,22 @@
 import { ChevronRight } from "lucide-react";
 import { useEffect, useState } from "react";
-import CreateBankAccount from "../modals/CreateBankAccount";
-import { BankAccount as Bank } from "@/types/bank-account";
-import { fetchBanks } from "@/services/bank.service";
+import CreateExpenseType from "../modals/CreateExpenseType";
+import { fetchExpenseTypes } from "@/services/expense-type.service";
 import toast from "react-hot-toast";
+import { ExpenseType as ExpenseTypes } from "@/types/expense-type";
 import SearchIcon from "@/lib/icons/Search.icon";
 import ExcelIcon from "@/lib/icons/Excel.icon";
-import ShowBankAccount from "../modals/ShowBankAccount";
+import ShowExpenseType from "../modals/ShowExpenseType";
 import FetchDataFromServer from "@/components/ui/FetchDataFromServer";
 
-export default function BankAccount() {
-  const [isOpenBanckAccount, setOpenBanckAccount] = useState<boolean>(false);
-  const [bankDetails, setBankDetails] = useState<Bank | null>(null);
+export default function ExpenseType() {
+  const [isOpenExpenseType, setOpenExpenseType] = useState<boolean>(false);
+  const [expenseTypeDetails, setExpenseTypeDetails] = useState<ExpenseTypes | null>(null);
   const [search, setSearch] = useState<string>("");
-  const [banks, setBanks] = useState<Bank[]>([]);
+  const [expenseTypes, setExpenseTypes] = useState<ExpenseTypes[]>([]);
   const [isFetching, setIsFetching] = useState(true);
-  const openBanckAccount = () => setOpenBanckAccount(true);
-  const closeBanckAccount = () => setOpenBanckAccount(false);
+  const openExpenseType = () => setOpenExpenseType(true);
+  const closeExpenseType = () => setOpenExpenseType(false);
 
   useEffect(() => {
     fetchData();
@@ -25,10 +25,10 @@ export default function BankAccount() {
   const fetchData = async () => {
     try {
       setIsFetching(true);
-      const data = await fetchBanks(search);
-      setBanks(data.data);
+      const data = await fetchExpenseTypes(search);
+      setExpenseTypes(data.data);
     } catch (error) {
-      toast.error("Failed to fetch bank accounts. Please try again later.");
+      toast.error("Failed to fetch expense types. Please try again later.");
     } finally {
       setIsFetching(false);
     }
@@ -36,7 +36,7 @@ export default function BankAccount() {
 
   if (isFetching) {
     return (
-      <FetchDataFromServer model="Bank Accounts" />
+      <FetchDataFromServer model="Epense Types" />
     );
   }
 
@@ -48,7 +48,7 @@ export default function BankAccount() {
           <div className="relative w-full sm:max-w-sm">
             <input
               type="text"
-              placeholder="Search bank accounts..."
+              placeholder="Search expense types..."
               onChange={(e) => setSearch(e.target.value)}
               className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
@@ -65,10 +65,10 @@ export default function BankAccount() {
             </button>
 
             <button
-              onClick={openBanckAccount}
+              onClick={openExpenseType}
               className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium"
             >
-              Create Bank Account
+              Create Expense Type
             </button>
           </div>
         </div>
@@ -79,13 +79,7 @@ export default function BankAccount() {
               <thead className="bg-gray-50">
                 <tr>
                   <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">
-                    Bank Account
-                  </th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">
-                    IBAN
-                  </th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">
-                    Note
+                    Expense Type
                   </th>
                   <th className="px-6 py-4 text-right text-sm font-semibold text-gray-700">
                     Action
@@ -94,31 +88,14 @@ export default function BankAccount() {
               </thead>
 
               <tbody className="divide-y divide-gray-200">
-                {banks.map((bank) => (
+                {expenseTypes.map((expenseType) => (
                   <tr
-                    key={bank.id}
+                    key={expenseType.id}
                     className="hover:bg-gray-50 cursor-pointer"
-                    onClick={() => setBankDetails(bank)}
+                    onClick={() => setExpenseTypeDetails(expenseType)}
                   >
                     <td className="px-6 py-4">
-                      <div className="font-semibold text-gray-900">{bank.name}</div>
-                      {bank.account_number && (
-                        <div className="text-sm text-gray-500">Account Number: {bank.account_number}</div>
-                      )}
-                    </td>
-                    <td className="px-6 py-4">
-                      {bank.iban ? (
-                        <span className="text-sm text-gray-700">{bank.iban}</span>
-                      ) : (
-                        <span className="text-sm text-gray-400">—</span>
-                      )}
-                    </td>
-                    <td className="px-6 py-4">
-                      {bank.note ? (
-                        <span className="text-sm text-gray-700">{bank.note}</span>
-                      ) : (
-                        <span className="text-sm text-gray-400">—</span>
-                      )}
+                      <div className="font-semibold text-gray-900">{expenseType.name}</div>
                     </td>
                     <td className="px-6 py-4 text-right">
                       <ChevronRight className="w-5 h-5 text-gray-400 inline" />
@@ -131,25 +108,14 @@ export default function BankAccount() {
         </div>
         {/* Mobile Cards */}
         <div className="sm:hidden bg-white rounded-lg divide-y divide-gray-200">
-          {banks.map((bank) => (
+          {expenseTypes.map((expenseType) => (
             <div
-              key={bank.id}
+              key={expenseType.id}
               className="p-4 flex items-center justify-between hover:bg-gray-50 cursor-pointer"
-              onClick={() => setBankDetails(bank)}
+              onClick={() => setExpenseTypeDetails(expenseType)}
             >
               <div className="min-w-0">
-                <h3 className="font-semibold text-gray-900 truncate">{bank.name}</h3>
-                <div className="mt-1 space-y-1 text-sm">
-                  {bank.account_number ? (
-                    <p className="text-gray-600 truncate">Account: {bank.account_number}</p>
-                  ) : (
-                    <p className="text-gray-400">No account number</p>
-                  )}
-
-                  {bank.iban && (
-                    <p className="text-gray-500 truncate">IBAN: {bank.iban}</p>
-                  )}
-                </div>
+                <h3 className="font-semibold text-gray-900 truncate">{expenseType.name}</h3>
               </div>
 
               <ChevronRight className="w-5 h-5 text-gray-400 shrink-0" />
@@ -157,19 +123,16 @@ export default function BankAccount() {
           ))}
         </div>
       </div>
-      {/* Create Bank Account Modal */}
-      {isOpenBanckAccount && (
-        <CreateBankAccount
-          onClose={closeBanckAccount}
-          onSave={() => fetchData()}
-        />
+      {/* Create Expense Type Modal */}
+      {isOpenExpenseType && (
+        <CreateExpenseType onClose={closeExpenseType} onSave={() => fetchData()} />
       )}
-      {/* Show Bank Account Modal */}
-      {bankDetails && (
-        <ShowBankAccount
-          onClose={() => setBankDetails(null)}
-          isOpen={!!bankDetails}
-          bankAccount={bankDetails}
+      {/* Show Expense Type Modal */}
+      {expenseTypeDetails && (
+        <ShowExpenseType
+          onClose={() => setExpenseTypeDetails(null)}
+          isOpen={!!expenseTypeDetails}
+          expenseType={expenseTypeDetails}
           onSave={() => fetchData()}
         />
       )}

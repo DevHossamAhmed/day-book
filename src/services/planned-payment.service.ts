@@ -37,3 +37,6 @@ export async function destroy(id: number): Promise<void> {
         return Promise.reject(error);
     }
 }
+
+
+

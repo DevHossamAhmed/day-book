@@ -6,12 +6,13 @@ import toast from "react-hot-toast";
 import { Store as StoreType } from "@/types/store";
 import SearchIcon from "@/lib/icons/Search.icon";
 import ExcelIcon from "@/lib/icons/Excel.icon";
+import FetchDataFromServer from "@/components/ui/FetchDataFromServer";
 
 export default function Store() {
   const [isOpenStore, setOpenStore] = useState<boolean>(false);
   const [search, setSearch] = useState<string>("");
   const [stores, setStores] = useState<StoreType[]>([]);
-
+  const [isFetching, setIsFetching] = useState(true);
   const openStore = () => setOpenStore(true);
   const closeStore = () => setOpenStore(false);
 
@@ -21,12 +22,21 @@ export default function Store() {
 
   const fetchData = async () => {
     try {
+      setIsFetching(true);
       const data = await fetchStores(search);
       setStores(data.data);
     } catch (error) {
       toast.error("Failed to fetch stores. Please try again later.");
+    } finally {
+      setIsFetching(false);
     }
   };
+
+  if (isFetching) {
+    return (
+      <FetchDataFromServer model="Stores" />
+    );
+  }
 
   return (
     <>

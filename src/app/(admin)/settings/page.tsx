@@ -5,6 +5,7 @@ import Notification from "@/components/settings/tabs/Notification";
 import Vendor from "@/components/settings/tabs/Vendor";
 import Store from "@/components/settings/tabs/Store";
 import Company from "@/components/settings/tabs/Company";
+import ExpenseType from "@/components/settings/tabs/ExpenseType";
 
 const CompanySettings = () => {
   const [activeTab, setActiveTab] = useState("company");
@@ -14,6 +15,7 @@ const CompanySettings = () => {
     { id: "stores", label: "Stores" },
     { id: "vendors", label: "Vendors" },
     { id: "bank", label: "Bank Accounts" },
+    { id: "expense-types", label: "Expense Type" },
     { id: "notifications", label: "Notifications" },
   ];
 
@@ -44,6 +46,7 @@ const CompanySettings = () => {
         {activeTab === "stores" && <Store />}
         {activeTab === "vendors" && <Vendor />}
         {activeTab === "bank" && <BankAccount />}
+        {activeTab === "expense-types" && <ExpenseType />}
         {activeTab === "notifications" && <Notification />}
       </div>
     </div>

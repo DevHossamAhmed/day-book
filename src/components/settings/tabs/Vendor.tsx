@@ -7,12 +7,14 @@ import { Vendor as Vendors } from "@/types/vendor";
 import SearchIcon from "@/lib/icons/Search.icon";
 import ExcelIcon from "@/lib/icons/Excel.icon";
 import ShowVendor from "../modals/ShowVendor";
+import FetchDataFromServer from "@/components/ui/FetchDataFromServer";
 
 export default function Vendor() {
   const [isOpenVendor, setOpenVendor] = useState<boolean>(false);
   const [vendorDetails, setVendorDetails] = useState<Vendors | null>(null);
   const [search, setSearch] = useState<string>("");
   const [vendors, setVendors] = useState<Vendors[]>([]);
+  const [isFetching, setIsFetching] = useState(true);
   const openVendor = () => setOpenVendor(true);
   const closeVendor = () => setOpenVendor(false);
 
@@ -22,12 +24,21 @@ export default function Vendor() {
 
   const fetchData = async () => {
     try {
+      setIsFetching(true);
       const data = await fetchVendors(search);
       setVendors(data.data);
     } catch (error) {
       toast.error("Failed to fetch vendors. Please try again later.");
+    } finally {
+      setIsFetching(false);
     }
   };
+
+  if (isFetching) {
+    return (
+      <FetchDataFromServer model="Vendors" />
+    );
+  }
 
   return (
     <>
