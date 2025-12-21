@@ -18,6 +18,7 @@ import { Pagination } from "@/components/ui/Pagination";
 import { formatMoney } from "@/lib/utils/money.util";
 import { exportToExcel } from "@/lib/utils/excel.util";
 import PageTitle from "@/components/ui/PageTitle";
+import PageLoading from "@/components/ui/PageLoading";
 
 const PlannedPaymentPage = () => {
   const [activeTab, setActiveTab] = useState<string>("Today");
@@ -29,6 +30,7 @@ const PlannedPaymentPage = () => {
   const [page, setPage] = useState<number>(1);
   const [limit, setLimit] = useState<number>(10);
   const [isExporting, setIsExporting] = useState(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
     fetchData(1);
@@ -48,6 +50,7 @@ const PlannedPaymentPage = () => {
 
   const fetchData = async (newPage: number) => {
     try {
+      setIsLoading(true);
       const { items, meta } = await fetchPlannedPayments({
         date: dateFilter,
         page: newPage,
@@ -60,6 +63,8 @@ const PlannedPaymentPage = () => {
       setPage(meta.page);
     } catch (error) {
       toast.error("Failed to fetch planned payments. Please try again later.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -179,17 +184,21 @@ const PlannedPaymentPage = () => {
 
         {/* Payments List */}
         <div className="p-6">
-          <div className="space-y-3">
-            {payments.length === 0 ? (
-              <div className="text-center py-12 text-gray-500">
-                No planned payments found
-              </div>
-            ) : (
-              payments.map((payment: PlannedPayment) => (
-                <PlannedPaymentRow key={payment.id} payment={payment} onSave={onSave} />
-              ))
-            )}
-          </div>
+          {isLoading ? (
+            <PageLoading />
+          ) : (
+            <div className="space-y-3">
+              {payments.length === 0 ? (
+                <div className="text-center py-12 text-gray-500">
+                  No planned payments found
+                </div>
+              ) : (
+                payments.map((payment: PlannedPayment) => (
+                  <PlannedPaymentRow key={payment.id} payment={payment} onSave={onSave} />
+                ))
+              )}
+            </div>
+          )}
         </div>
 
         {/* Pagination */}

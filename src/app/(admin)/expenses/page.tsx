@@ -18,6 +18,7 @@ import { Pagination } from "@/components/ui/Pagination";
 import ExpenseDetails from "@/components/expense/modals/ExpenseDetails";
 import { formatMoney } from "@/lib/utils/money.util";
 import PageTitle from "@/components/ui/PageTitle";
+import PageLoading from "@/components/ui/PageLoading";
 
 const ExpensesPage = () => {
   const [activeTab, setActiveTab] = useState<string>("Today");
@@ -31,6 +32,7 @@ const ExpensesPage = () => {
   const [selectedExpense, setSelectedExpense] = useState<Expense | null>(null);
   const [isDetailsOpen, setIsDetailsOpen] = useState<boolean>(false);
   const [isExporting, setIsExporting] = useState(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
     fetchData(1);
@@ -50,6 +52,7 @@ const ExpensesPage = () => {
 
   const fetchData = async (newPage: number) => {
     try {
+      setIsLoading(true);
       const { items, meta } = await fetchExpenses({
         date: dateFilter,
         page: newPage,
@@ -62,6 +65,8 @@ const ExpensesPage = () => {
       setPage(meta.page);
     } catch (error) {
       toast.error("Failed to fetch expense records. Please try again later.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -186,13 +191,16 @@ const ExpensesPage = () => {
 
         {/* Expenses List */}
         <div className="p-6">
-          <div className="space-y-1">
-            {expenses.length === 0 ? (
-              <div className="text-center py-12 text-gray-500">
-                No expense records found
-              </div>
-            ) : (
-              expenses.map((expense) => (
+          {isLoading ? (
+            <PageLoading />
+          ) : (
+            <div className="space-y-1">
+              {expenses.length === 0 ? (
+                <div className="text-center py-12 text-gray-500">
+                  No expense records found
+                </div>
+              ) : (
+                expenses.map((expense) => (
                 <div
                   key={expense.id}
                   onClick={() => handleRowClick(expense)}
@@ -234,8 +242,9 @@ const ExpensesPage = () => {
                   </div>
                 </div>
               ))
-            )}
-          </div>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Pagination */}

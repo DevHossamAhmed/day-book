@@ -10,12 +10,14 @@ import { formatMoney } from "@/lib/utils/money.util";
 import { formatDate } from "@/lib/utils/date.util";
 import { exportToExcel } from "@/lib/utils/excel.util";
 import PageTitle from "@/components/ui/PageTitle";
+import PageLoading from "@/components/ui/PageLoading";
 
 const MembersManagement = () => {
   const [isOpenCreateMember, setOpenCreateMember] = useState<boolean>(false);
   const [members, setMembers] = useState<Member[]>([]);
   const [search, setSearch] = useState<string>("");
   const [isExporting, setIsExporting] = useState(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const openCreateMember = () => setOpenCreateMember(true);
   const closeCreateMember = () => setOpenCreateMember(false);
@@ -27,10 +29,13 @@ const MembersManagement = () => {
 
   const fetchData = async () => {
     try {
+      setIsLoading(true);
       const res = await fetchMembers(search);
       setMembers(res.data);
     } catch (error) {
       toast.error("Failed to fetch members. Please try again later.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -109,9 +114,14 @@ const MembersManagement = () => {
           </div>
 
           {/* Desktop Table */}
-          <div className="hidden sm:block bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
+          {isLoading ? (
+            <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
+              <PageLoading />
+            </div>
+          ) : (
+            <div className="hidden sm:block bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50">
                   <tr>
                     <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">
@@ -203,12 +213,14 @@ const MembersManagement = () => {
                     );
                   })}
                 </tbody>
-              </table>
+                </table>
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Mobile Cards */}
-          <div className="sm:hidden bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm divide-y divide-gray-200">
+          {!isLoading && (
+            <div className="sm:hidden bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm divide-y divide-gray-200">
             {members.map((member) => {
               return (
                 <button
@@ -259,7 +271,8 @@ const MembersManagement = () => {
                 </button>
               );
             })}
-          </div>
+            </div>
+          )}
         </div>
 
       {/* Create Member Modal */}

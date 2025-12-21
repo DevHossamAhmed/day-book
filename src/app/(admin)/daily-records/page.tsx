@@ -24,6 +24,7 @@ import { exportToExcel } from "@/lib/utils/excel.util";
 import { formatMoney } from "@/lib/utils/money.util";
 import { CapitalizeFirst } from "@/lib/utils/string.util";
 import PageTitle from "@/components/ui/PageTitle";
+import PageLoading from "@/components/ui/PageLoading";
 
 const OpeningBalancePage = () => {
   const [activeTab, setActiveTab] = useState<string>("Today");
@@ -36,6 +37,7 @@ const OpeningBalancePage = () => {
   const [search, setSearch] = useState<string>("");
   const [selectedBalance, setSelectedBalance] = useState<Balance | null>(null);
   const [isEntryDetailsOpen, setIsEntryDetailsOpen] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const [isOpenCreateRecord, setOpenCreateRecord] = useState<boolean>(false);
   const [isOpenCreateTransfer, setOpenCreateTransfer] = useState<boolean>(false);
@@ -64,6 +66,7 @@ const OpeningBalancePage = () => {
 
   const fetchData = async (newPage: number) => {
     try {
+      setIsLoading(true);
       const { items, meta } = await fetchBalances({
         date: dateFilter,
         page: newPage,
@@ -75,6 +78,8 @@ const OpeningBalancePage = () => {
       setPage(meta.page);
     } catch (error) {
       toast.error("Failed to fetch balances. Please try again later.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -211,13 +216,16 @@ const OpeningBalancePage = () => {
 
         {/* Transactions List */}
         <div className="p-6">
-          <div className="space-y-1">
-            {balances.length === 0 ? (
-              <div className="text-center py-12 text-gray-500">
-                No records found
-              </div>
-            ) : (
-              balances.map((balance: Balance) => (
+          {isLoading ? (
+            <PageLoading />
+          ) : (
+            <div className="space-y-1">
+              {balances.length === 0 ? (
+                <div className="text-center py-12 text-gray-500">
+                  No records found
+                </div>
+              ) : (
+                balances.map((balance: Balance) => (
                 <div
                   key={balance.id}
                   onClick={() => handleRowClick(balance)}

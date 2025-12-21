@@ -17,6 +17,7 @@ import { formatMoney } from "@/lib/utils/money.util";
 import { PaginationMeta } from "@/types/pagination";
 import { Pagination } from "@/components/ui/Pagination";
 import PageTitle from "@/components/ui/PageTitle";
+import PageLoading from "@/components/ui/PageLoading";
 
 const IncomePage = () => {
   const [activeTab, setActiveTab] = useState<string>("Today");
@@ -28,6 +29,7 @@ const IncomePage = () => {
   const [page, setPage] = useState<number>(1);
   const [limit] = useState<number>(10);
   const [isExporting, setIsExporting] = useState(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
     fetchData(1);
@@ -47,6 +49,7 @@ const IncomePage = () => {
 
   const fetchData = async (newPage: number) => {
     try {
+      setIsLoading(true);
       const { items, meta } = await fetchIncomes({
         date: dateFilter,
         page: newPage,
@@ -59,6 +62,8 @@ const IncomePage = () => {
       setPage(meta.page);
     } catch (error) {
       toast.error("Failed to fetch income records. Please try again later.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -182,13 +187,16 @@ const IncomePage = () => {
 
         {/* Income List */}
         <div className="p-6">
-          <div className="space-y-1">
-            {incomes.length === 0 ? (
-              <div className="text-center py-12 text-gray-500">
-                No income records found
-              </div>
-            ) : (
-              incomes.map((income) => (
+          {isLoading ? (
+            <PageLoading />
+          ) : (
+            <div className="space-y-1">
+              {incomes.length === 0 ? (
+                <div className="text-center py-12 text-gray-500">
+                  No income records found
+                </div>
+              ) : (
+                incomes.map((income) => (
                 <div
                   key={income.id}
                   onClick={() => handleRowClick(income)}
@@ -230,8 +238,9 @@ const IncomePage = () => {
                   </div>
                 </div>
               ))
-            )}
-          </div>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Pagination */}

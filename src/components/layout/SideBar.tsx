@@ -1,8 +1,10 @@
+"use client";
 
 import Image from "next/image";
 import React from "react";
 import Logo from "../../../public/assets/images/Logo.png";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { RiDashboardLine } from "react-icons/ri";
 import { PiMoneyFill } from "react-icons/pi";
 import { LuNotepadText, LuUserPlus } from "react-icons/lu";
@@ -17,6 +19,15 @@ interface SideBarProps {
 }
 
 const SideBar: React.FC<SideBarProps> = ({ isOpen, onClose }) => {
+  const pathname = usePathname();
+
+  const isActive = (path: string) => {
+    if (path === "/dashboard") {
+      return pathname === path;
+    }
+    return pathname.startsWith(path);
+  };
+
   return (
     <>
       {isOpen && (
@@ -28,7 +39,7 @@ const SideBar: React.FC<SideBarProps> = ({ isOpen, onClose }) => {
 
       <aside
         className={`
-          h-screen w-[320px] bg-white border-r border-gray-200 flex flex-col fixed top-0 left-0 z-50
+          h-screen w-[320px] bg-white border-r border-gray-200 shadow-lg flex flex-col fixed top-0 left-0 z-50
           transition-transform duration-300 ease-in-out
           ${isOpen ? "translate-x-0" : "-translate-x-full"}
           lg:translate-x-0
@@ -56,7 +67,11 @@ const SideBar: React.FC<SideBarProps> = ({ isOpen, onClose }) => {
             <li>
               <Link
                 href="/dashboard"
-                className="flex items-center gap-3 px-4 py-3 rounded-lg text-[15px] font-medium hover:bg-gray-50 hover:text-[#1520eb] transition-all duration-200"
+                className={`flex items-center gap-3 px-4 py-3 rounded-lg text-[15px] font-medium transition-all duration-200 ${
+                  isActive("/dashboard")
+                    ? "bg-blue-50 text-blue-600 font-semibold"
+                    : "text-gray-700 hover:bg-gray-50 hover:text-blue-600"
+                }`}
                 onClick={onClose}
               >
                 <RiDashboardLine className="text-[20px]" />
@@ -66,7 +81,11 @@ const SideBar: React.FC<SideBarProps> = ({ isOpen, onClose }) => {
             <li>
               <Link
                 href="/daily-records"
-                className="flex items-center gap-3 px-4 py-3 rounded-lg text-[15px] font-medium hover:bg-gray-50 hover:text-[#1520eb] transition-all duration-200"
+                className={`flex items-center gap-3 px-4 py-3 rounded-lg text-[15px] font-medium transition-all duration-200 ${
+                  isActive("/daily-records")
+                    ? "bg-blue-50 text-blue-600 font-semibold"
+                    : "text-gray-700 hover:bg-gray-50 hover:text-blue-600"
+                }`}
                 onClick={onClose}
               >
                 <PiMoneyFill className="text-[20px]" />
@@ -76,7 +95,11 @@ const SideBar: React.FC<SideBarProps> = ({ isOpen, onClose }) => {
             <li>
               <Link
                 href="/income"
-                className="flex items-center gap-3 px-4 py-3 rounded-lg text-[15px] font-medium hover:bg-gray-50 hover:text-[#1520eb] transition-all duration-200"
+                className={`flex items-center gap-3 px-4 py-3 rounded-lg text-[15px] font-medium transition-all duration-200 ${
+                  isActive("/income")
+                    ? "bg-blue-50 text-blue-600 font-semibold"
+                    : "text-gray-700 hover:bg-gray-50 hover:text-blue-600"
+                }`}
                 onClick={onClose}
               >
                 <PiMoneyFill className="text-[20px]" />
@@ -86,7 +109,11 @@ const SideBar: React.FC<SideBarProps> = ({ isOpen, onClose }) => {
             <li>
               <Link
                 href="/expenses"
-                className="flex items-center gap-3 px-4 py-3 rounded-lg text-[15px] font-medium hover:bg-gray-50 hover:text-[#1520eb] transition-all duration-200"
+                className={`flex items-center gap-3 px-4 py-3 rounded-lg text-[15px] font-medium transition-all duration-200 ${
+                  isActive("/expenses")
+                    ? "bg-blue-50 text-blue-600 font-semibold"
+                    : "text-gray-700 hover:bg-gray-50 hover:text-blue-600"
+                }`}
                 onClick={onClose}
               >
                 <LuNotepadText className="text-[20px]" />
@@ -96,7 +123,11 @@ const SideBar: React.FC<SideBarProps> = ({ isOpen, onClose }) => {
             <li>
               <Link
                 href="/planned-payments"
-                className="flex items-center gap-3 px-4 py-3 rounded-lg text-[15px] font-medium hover:bg-gray-50 hover:text-[#1520eb] transition-all duration-200"
+                className={`flex items-center gap-3 px-4 py-3 rounded-lg text-[15px] font-medium transition-all duration-200 ${
+                  isActive("/planned-payments")
+                    ? "bg-blue-50 text-blue-600 font-semibold"
+                    : "text-gray-700 hover:bg-gray-50 hover:text-blue-600"
+                }`}
                 onClick={onClose}
               >
                 <GiNotebook className="text-[20px]" />
@@ -106,7 +137,11 @@ const SideBar: React.FC<SideBarProps> = ({ isOpen, onClose }) => {
             <li>
               <Link
                 href="/salary"
-                className="flex items-center gap-3 px-4 py-3 rounded-lg text-[15px] font-medium hover:bg-gray-50 hover:text-[#1520eb] transition-all duration-200"
+                className={`flex items-center gap-3 px-4 py-3 rounded-lg text-[15px] font-medium transition-all duration-200 ${
+                  isActive("/salary")
+                    ? "bg-blue-50 text-blue-600 font-semibold"
+                    : "text-gray-700 hover:bg-gray-50 hover:text-blue-600"
+                }`}
                 onClick={onClose}
               >
                 <RiWallet2Line className="text-[20px]" />
@@ -123,7 +158,11 @@ const SideBar: React.FC<SideBarProps> = ({ isOpen, onClose }) => {
               <li>
                 <Link
                   href="/members"
-                  className="flex items-center gap-3 px-4 py-3 rounded-lg text-[15px] font-medium hover:bg-gray-50 hover:text-[#1520eb] transition-all duration-200"
+                  className={`flex items-center gap-3 px-4 py-3 rounded-lg text-[15px] font-medium transition-all duration-200 ${
+                    isActive("/members")
+                      ? "bg-blue-50 text-blue-600 font-semibold"
+                      : "text-gray-700 hover:bg-gray-50 hover:text-blue-600"
+                  }`}
                   onClick={onClose}
                 >
                   <LuUserPlus className="text-[20px]" />
@@ -133,7 +172,11 @@ const SideBar: React.FC<SideBarProps> = ({ isOpen, onClose }) => {
               <li>
                 <Link
                   href="/settings"
-                  className="flex items-center gap-3 px-4 py-3 rounded-lg text-[15px] font-medium hover:bg-gray-50 hover:text-[#1520eb] transition-all duration-200"
+                  className={`flex items-center gap-3 px-4 py-3 rounded-lg text-[15px] font-medium transition-all duration-200 ${
+                    isActive("/settings")
+                      ? "bg-blue-50 text-blue-600 font-semibold"
+                      : "text-gray-700 hover:bg-gray-50 hover:text-blue-600"
+                  }`}
                   onClick={onClose}
                 >
                   <IoSettingsOutline className="text-[20px]" />
