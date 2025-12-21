@@ -21,3 +21,19 @@ export async function fetchBalances(params: Object): Promise<PaginatedResult<Bal
         return Promise.reject(error);
     }
 }
+
+export async function exportBalances(params: {
+    date?: string;
+}): Promise<Balance[]> {
+    try {
+        const res = await DaybookApi.get<ApiResponse<PaginatedResult<Balance>>>("/balances", {
+            params: {
+                ...params,
+                limit: 10000, // Get all records
+            },
+        });
+        return res.data.data.items;
+    } catch (error: any) {
+        return Promise.reject(error);
+    }
+}

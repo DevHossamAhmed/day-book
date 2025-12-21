@@ -1,18 +1,21 @@
 import { ChevronRight } from "lucide-react";
 import { useEffect, useState } from "react";
 import CreateStore from "../modals/CreateStore";
-import { fetchStores } from "@/services/store.service";
+import { fetchStores, exportStores } from "@/services/store.service";
 import toast from "react-hot-toast";
 import { Store as StoreType } from "@/types/store";
 import SearchIcon from "@/lib/icons/Search.icon";
 import ExcelIcon from "@/lib/icons/Excel.icon";
 import FetchDataFromServer from "@/components/ui/FetchDataFromServer";
+import { exportToExcel } from "@/lib/utils/excel.util";
+import { formatDate } from "@/lib/utils/date.util";
 
 export default function Store() {
   const [isOpenStore, setOpenStore] = useState<boolean>(false);
   const [search, setSearch] = useState<string>("");
   const [stores, setStores] = useState<StoreType[]>([]);
   const [isFetching, setIsFetching] = useState(true);
+  const [isExporting, setIsExporting] = useState(false);
   const openStore = () => setOpenStore(true);
   const closeStore = () => setOpenStore(false);
 
@@ -29,6 +32,30 @@ export default function Store() {
       toast.error("Failed to fetch stores. Please try again later.");
     } finally {
       setIsFetching(false);
+    }
+  };
+
+  const handleExportExcel = async () => {
+    try {
+      setIsExporting(true);
+      const data = await exportStores();
+      
+      const exportData = data.map((store) => ({
+        "Store Name": store.name,
+        "Sales Person": store.sales_person_fullname || "—",
+        "Default Currency": store.default_currency || "—",
+        "Description": store.description || "—",
+        "Added By": store.added_by_fullname || "—",
+        "Created At": formatDate(new Date(store.created_at), "YYYY-MM-DD HH:mm:ss"),
+        "Updated At": store.updated_at ? formatDate(new Date(store.updated_at), "YYYY-MM-DD HH:mm:ss") : "—",
+      }));
+
+      exportToExcel(exportData, `stores-${formatDate(new Date(), "YYYY-MM-DD")}`);
+      toast.success("Stores exported successfully!");
+    } catch (error) {
+      toast.error("Failed to export stores. Please try again later.");
+    } finally {
+      setIsExporting(false);
     }
   };
 
@@ -57,10 +84,12 @@ export default function Store() {
           {/* Actions */}
           <div className="flex gap-3">
             <button
-              className="px-6 py-3 border border-green-600 text-green-700 rounded-lg hover:bg-green-50 font-medium flex items-center gap-2"
+              onClick={handleExportExcel}
+              disabled={isExporting}
+              className="px-6 py-3 border border-green-600 text-green-700 rounded-lg hover:bg-green-50 font-medium flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <ExcelIcon />
-              Export Excel
+              {isExporting ? "Exporting..." : "Export Excel"}
             </button>
 
             <button

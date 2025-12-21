@@ -12,9 +12,10 @@ import DataTable from "@/components/ui/DataTable";
 import DataCard from "@/components/ui/DataCard";
 import EmptyState from "@/components/ui/EmptyState";
 import ExcelIcon from "@/lib/icons/Excel.icon";
-import { fetchExpenses } from "@/services/expense.service";
+import { fetchExpenses, exportExpenses } from "@/services/expense.service";
 import { Expense } from "@/types/expense";
 import toast from "react-hot-toast";
+import { exportToExcel } from "@/lib/utils/excel.util";
 import { PaginationMeta } from "@/types/pagination";
 import { Pagination } from "@/components/ui/Pagination";
 import ExpenseDetails from "@/components/expense/modals/ExpenseDetails";
@@ -31,6 +32,7 @@ const ExpensesPage = () => {
   const [limit] = useState<number>(10);
   const [selectedExpense, setSelectedExpense] = useState<Expense | null>(null);
   const [isDetailsOpen, setIsDetailsOpen] = useState<boolean>(false);
+  const [isExporting, setIsExporting] = useState(false);
 
   useEffect(() => {
     fetchData(1);
@@ -72,6 +74,33 @@ const ExpensesPage = () => {
   const handleRowClick = (expense: Expense) => {
     setSelectedExpense(expense);
     setIsDetailsOpen(true);
+  };
+
+  const handleExportExcel = async () => {
+    try {
+      setIsExporting(true);
+      const data = await exportExpenses({
+        date: dateFilter,
+        search: search || undefined,
+      });
+      
+      const exportData = data.map((expense) => ({
+        "Date": formatDate(new Date(expense.date), "YYYY-MM-DD"),
+        "Vendor": expense.vendor?.name || "—",
+        "Expense Type": expense.expense_type?.name || "—",
+        "Amount": formatMoney(expense.amount),
+        "Payment Method": expense.payment_method || "—",
+        "Note": expense.note || "—",
+        "Added By": expense.added_by_fullname || "—",
+      }));
+
+      exportToExcel(exportData, `expenses-${formatDate(new Date(), "YYYY-MM-DD")}`);
+      toast.success("Expenses exported successfully!");
+    } catch (error) {
+      toast.error("Failed to export expenses. Please try again later.");
+    } finally {
+      setIsExporting(false);
+    }
   };
 
   const tableColumns = [
@@ -144,9 +173,15 @@ const ExpensesPage = () => {
 
   const headerActions = (
     <>
-      <Button variant="outline" className="border-green-600 text-green-700 hover:bg-green-50">
+      <Button 
+        variant="outline" 
+        className="border-green-600 text-green-700 hover:bg-green-50"
+        onClick={handleExportExcel}
+        disabled={isExporting}
+        isLoading={isExporting}
+      >
         <ExcelIcon />
-        Export Excel
+        {isExporting ? "Exporting..." : "Export Excel"}
       </Button>
       <Button variant="primary" onClick={openCreateExpense}>
         Create Expense

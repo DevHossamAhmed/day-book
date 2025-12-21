@@ -3,16 +3,18 @@ import React, { useEffect, useState } from "react";
 import CreateMember from "@/components/members/modals/CreateMember";
 import SearchIcon from "@/lib/icons/Search.icon";
 import ExcelIcon from "@/lib/icons/Excel.icon";
-import { fetchMembers } from "@/services/user.service";
+import { fetchMembers, exportMembers } from "@/services/user.service";
 import { Member } from "@/types/member";
 import toast from "react-hot-toast";
 import { formatMoney } from "@/lib/utils/money.util";
 import { formatDate } from "@/lib/utils/date.util";
+import { exportToExcel } from "@/lib/utils/excel.util";
 
 const MembersManagement = () => {
   const [isOpenCreateMember, setOpenCreateMember] = useState<boolean>(false);
   const [members, setMembers] = useState<Member[]>([]);
   const [search, setSearch] = useState<string>("");
+  const [isExporting, setIsExporting] = useState(false);
 
   const openCreateMember = () => setOpenCreateMember(true);
   const closeCreateMember = () => setOpenCreateMember(false);
@@ -35,6 +37,34 @@ const MembersManagement = () => {
     await fetchData();
   };
 
+  const handleExportExcel = async () => {
+    try {
+      setIsExporting(true);
+      const data = await exportMembers();
+      
+      const exportData = data.map((member) => ({
+        "First Name": member.first_name,
+        "Last Name": member.last_name,
+        "Full Name": `${member.first_name} ${member.last_name}`,
+        "Email": member.email,
+        "Joining Date": member.joining_date ? formatDate(new Date(member.joining_date), "YYYY-MM-DD") : "—",
+        "Salary": member.salary_amount ? formatMoney(member.salary_amount) : "—",
+        "Designation": member.designation || "—",
+        "Role": member.role || "—",
+        "Additional Info": member.additional_info || "—",
+        "Created At": member.created_at ? formatDate(new Date(member.created_at), "YYYY-MM-DD HH:mm:ss") : "—",
+        "Updated At": member.updated_at ? formatDate(new Date(member.updated_at), "YYYY-MM-DD HH:mm:ss") : "—",
+      }));
+
+      exportToExcel(exportData, `members-${formatDate(new Date(), "YYYY-MM-DD")}`);
+      toast.success("Members exported successfully!");
+    } catch (error) {
+      toast.error("Failed to export members. Please try again later.");
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto">
@@ -55,10 +85,12 @@ const MembersManagement = () => {
             {/* Actions */}
             <div className="flex gap-3">
               <button
-                className="px-6 py-3 border border-green-600 text-green-700 rounded-lg hover:bg-green-50 font-medium flex items-center gap-2"
+                onClick={handleExportExcel}
+                disabled={isExporting}
+                className="px-6 py-3 border border-green-600 text-green-700 rounded-lg hover:bg-green-50 font-medium flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <ExcelIcon />
-                Export Excel
+                {isExporting ? "Exporting..." : "Export Excel"}
               </button>
 
               <button

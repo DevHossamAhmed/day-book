@@ -10,9 +10,11 @@ import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
 import DataCard from "@/components/ui/DataCard";
 import ExcelIcon from "@/lib/icons/Excel.icon";
-import { fetchIncomes } from "@/services/income.service";
+import { fetchIncomes, exportIncomes } from "@/services/income.service";
 import { Income } from "@/types/income";
 import toast from "react-hot-toast";
+import { exportToExcel } from "@/lib/utils/excel.util";
+import { formatMoney } from "@/lib/utils/money.util";
 import IncomeRow from "@/components/income/ui/IncomeRow";
 import { PaginationMeta } from "@/types/pagination";
 import { Pagination } from "@/components/ui/Pagination";
@@ -26,6 +28,7 @@ const IncomePage = () => {
   const [meta, setMeta] = useState<PaginationMeta>();
   const [page, setPage] = useState<number>(1);
   const [limit] = useState<number>(10);
+  const [isExporting, setIsExporting] = useState(false);
 
   useEffect(() => {
     fetchData(1);
@@ -64,11 +67,44 @@ const IncomePage = () => {
     fetchData(1);
   };
 
+  const handleExportExcel = async () => {
+    try {
+      setIsExporting(true);
+      const data = await exportIncomes({
+        date: dateFilter,
+        search: search || undefined,
+      });
+      
+      const exportData = data.map((income) => ({
+        "Date": formatDate(new Date(income.date), "YYYY-MM-DD"),
+        "Store": income.source || "—",
+        "Sales Person": income.sales_person_fullname || "—",
+        "Amount": formatMoney(income.amount),
+        "Payment Method": income.payment_method || "—",
+        "Note": income.note || "—",
+        "Added By": income.added_by_fullname || "—",
+      }));
+
+      exportToExcel(exportData, `income-${formatDate(new Date(), "YYYY-MM-DD")}`);
+      toast.success("Income records exported successfully!");
+    } catch (error) {
+      toast.error("Failed to export income records. Please try again later.");
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
   const headerActions = (
     <>
-      <Button variant="outline" className="border-green-600 text-green-700 hover:bg-green-50">
+      <Button 
+        variant="outline" 
+        className="border-green-600 text-green-700 hover:bg-green-50"
+        onClick={handleExportExcel}
+        disabled={isExporting}
+        isLoading={isExporting}
+      >
         <ExcelIcon />
-        Export Excel
+        {isExporting ? "Exporting..." : "Export Excel"}
       </Button>
       <Button variant="primary" onClick={openCreateIncome}>
         Create Sale

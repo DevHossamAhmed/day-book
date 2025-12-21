@@ -21,6 +21,23 @@ export async function fetchIncomes(params: Object): Promise<PaginatedResult<Inco
     }
 }
 
+export async function exportIncomes(params: {
+    date?: string;
+    search?: string;
+}): Promise<Income[]> {
+    try {
+        const res = await DaybookApi.get<ApiResponse<PaginatedResult<Income>>>("/incomes", {
+            params: {
+                ...params,
+                limit: 10000, // Get all records
+            },
+        });
+        return res.data.data.items;
+    } catch (error: any) {
+        return Promise.reject(error);
+    }
+}
+
 export async function update(id: number, form: any): Promise<Income> {
     try {
         const res = await DaybookApi.put(`/incomes/${id}`, form);

@@ -41,6 +41,7 @@ const SideBar: React.FC<SideBarProps> = ({ isOpen, onClose }) => {
             width={160}
             height={45}
             className="w-auto h-auto"
+            priority
           />
           <button
             onClick={onClose}

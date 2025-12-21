@@ -34,3 +34,16 @@ export async function fetchGetIdNameList(): Promise<ApiResponse<MemberIdNameList
     return Promise.reject(error);
   }
 }
+
+export async function exportMembers(): Promise<Member[]> {
+  try {
+    const res = await UsersApi.get<ApiResponse<Member[]>>("/v1/users", {
+      params: {
+        search: "",
+      },
+    });
+    return res.data.data;
+  } catch (error: any) {
+    return Promise.reject(error);
+  }
+}

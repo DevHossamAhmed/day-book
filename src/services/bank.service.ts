@@ -32,3 +32,16 @@ export async function update(id: number, form: any): Promise<BankAccount> {
     return Promise.reject(error);
   }
 }
+
+export async function exportBankAccounts(): Promise<BankAccount[]> {
+  try {
+    const res = await DaybookApi.get<ApiResponse<BankAccount[]>>("/banks", {
+      params: {
+        search: "",
+      },
+    });
+    return res.data.data;
+  } catch (error: any) {
+    return Promise.reject(error);
+  }
+}

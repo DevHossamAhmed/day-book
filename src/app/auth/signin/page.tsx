@@ -1,7 +1,5 @@
 "use client";
 import React, { useState } from "react";
-import logo from "../../../../public/assets/images/Logo.png";
-import sidePic from "../../../../public/assets/images/leftsideLogin2.png";
 import Image from "next/image";
 import Loading from "@/components/ui/Loading";
 import { Save } from "lucide-react";
@@ -58,8 +56,10 @@ const LoginPage = () => {
               <div className="relative max-w-2xl mx-auto">
                 {/* Dashboard preview image placeholder */}
                 <Image
-                  src={sidePic}
+                  src="/assets/images/leftsideLogin2.png"
                   alt="Dashboard Preview"
+                  width={800}
+                  height={600}
                   className="w-full rounded-lg shadow-2xl"
                 />
               </div>
@@ -73,7 +73,14 @@ const LoginPage = () => {
           {/* Logo */}
           <div className="mb-8">
             <div className="flex items-center justify-start gap-2.5 mb-2">
-              <Image src={logo} alt="logo" className="ml-[-50px] "></Image>
+              <Image 
+                src="/assets/images/Logo.png" 
+                alt="logo" 
+                width={160}
+                height={45}
+                className="ml-[-50px] w-auto h-auto"
+                priority
+              />
             </div>
 
             <h2 className="text-3xl font-semibold text-gray-900">

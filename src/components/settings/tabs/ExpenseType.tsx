@@ -1,13 +1,15 @@
 import { ChevronRight } from "lucide-react";
 import { useEffect, useState } from "react";
 import CreateExpenseType from "../modals/CreateExpenseType";
-import { fetchExpenseTypes } from "@/services/expense-type.service";
+import { fetchExpenseTypes, exportExpenseTypes } from "@/services/expense-type.service";
 import toast from "react-hot-toast";
 import { ExpenseType as ExpenseTypes } from "@/types/expense-type";
 import SearchIcon from "@/lib/icons/Search.icon";
 import ExcelIcon from "@/lib/icons/Excel.icon";
 import ShowExpenseType from "../modals/ShowExpenseType";
 import FetchDataFromServer from "@/components/ui/FetchDataFromServer";
+import { exportToExcel } from "@/lib/utils/excel.util";
+import { formatDate } from "@/lib/utils/date.util";
 
 export default function ExpenseType() {
   const [isOpenExpenseType, setOpenExpenseType] = useState<boolean>(false);
@@ -15,6 +17,7 @@ export default function ExpenseType() {
   const [search, setSearch] = useState<string>("");
   const [expenseTypes, setExpenseTypes] = useState<ExpenseTypes[]>([]);
   const [isFetching, setIsFetching] = useState(true);
+  const [isExporting, setIsExporting] = useState(false);
   const openExpenseType = () => setOpenExpenseType(true);
   const closeExpenseType = () => setOpenExpenseType(false);
 
@@ -31,6 +34,34 @@ export default function ExpenseType() {
       toast.error("Failed to fetch expense types. Please try again later.");
     } finally {
       setIsFetching(false);
+    }
+  };
+
+  const handleExportExcel = async () => {
+    try {
+      setIsExporting(true);
+      const data = await exportExpenseTypes();
+      
+      // Format data for export
+      const exportData = data.map((expenseType) => ({
+        "Expense Type": expenseType.name,
+        "Added By": expenseType.added_by_fullname || "—",
+        "Created At": formatDate(new Date(expenseType.created_at), "YYYY-MM-DD HH:mm:ss"),
+        "Updated At": formatDate(new Date(expenseType.updated_at), "YYYY-MM-DD HH:mm:ss"),
+      }));
+
+      exportToExcel(exportData, `expense-types-${formatDate(new Date(), "YYYY-MM-DD")}`, {
+        "Expense Type": "Expense Type",
+        "Added By": "Added By",
+        "Created At": "Created At",
+        "Updated At": "Updated At",
+      });
+
+      toast.success("Expense types exported successfully!");
+    } catch (error) {
+      toast.error("Failed to export expense types. Please try again later.");
+    } finally {
+      setIsExporting(false);
     }
   };
 
@@ -58,10 +89,12 @@ export default function ExpenseType() {
           {/* Actions */}
           <div className="flex gap-3">
             <button
-              className="px-6 py-3 border border-green-600 text-green-700 rounded-lg hover:bg-green-50 font-medium flex items-center gap-2"
+              onClick={handleExportExcel}
+              disabled={isExporting}
+              className="px-6 py-3 border border-green-600 text-green-700 rounded-lg hover:bg-green-50 font-medium flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <ExcelIcon />
-              Export Excel
+              {isExporting ? "Exporting..." : "Export Excel"}
             </button>
 
             <button

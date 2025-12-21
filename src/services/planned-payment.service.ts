@@ -38,6 +38,23 @@ export async function destroy(id: number): Promise<void> {
     }
 }
 
+export async function exportPlannedPayments(params: {
+    date?: string;
+    search?: string;
+}): Promise<PlannedPayment[]> {
+    try {
+        const res = await DaybookApi.get<ApiResponse<PaginatedResult<PlannedPayment>>>("/planned-payments", {
+            params: {
+                ...params,
+                limit: 10000, // Get all records
+            },
+        });
+        return res.data.data.items;
+    } catch (error: any) {
+        return Promise.reject(error);
+    }
+}
+
 
 
 

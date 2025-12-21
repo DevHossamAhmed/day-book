@@ -37,3 +37,20 @@ export async function destroy(id: number): Promise<void> {
         return Promise.reject(error);
     }
 }
+
+export async function exportExpenses(params: {
+    date?: string;
+    search?: string;
+}): Promise<Expense[]> {
+    try {
+        const res = await DaybookApi.get<ApiResponse<PaginatedResult<Expense>>>("/expenses", {
+            params: {
+                ...params,
+                limit: 10000, // Get all records
+            },
+        });
+        return res.data.data.items;
+    } catch (error: any) {
+        return Promise.reject(error);
+    }
+}

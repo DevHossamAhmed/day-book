@@ -25,6 +25,7 @@ const PlannedPaymentPage = () => {
   const [meta, setMeta] = useState<PaginationMeta>();
   const [page, setPage] = useState<number>(1);
   const [limit, setLimit] = useState<number>(10);
+  const [isExporting, setIsExporting] = useState(false);
 
   useEffect(() => {
     fetchData(1);
@@ -63,6 +64,34 @@ const PlannedPaymentPage = () => {
     fetchData(1);
   };
 
+  const handleExportExcel = async () => {
+    try {
+      setIsExporting(true);
+      const data = await exportPlannedPayments({
+        date: dateFilter,
+        search: search || undefined,
+      });
+      
+      const exportData = data.map((payment) => ({
+        "Due Date": formatDate(new Date(payment.due_date), "YYYY-MM-DD"),
+        "Vendor": payment.vendor_name || "—",
+        "Purpose": payment.purpose || "—",
+        "Amount": formatMoney(payment.amount),
+        "Payment Method": payment.payment_method || "—",
+        "Status": payment.status || "—",
+        "Note": payment.note || "—",
+        "Added By": payment.added_by_fullname || "—",
+      }));
+
+      exportToExcel(exportData, `planned-payments-${formatDate(new Date(), "YYYY-MM-DD")}`);
+      toast.success("Planned payments exported successfully!");
+    } catch (error) {
+      toast.error("Failed to export planned payments. Please try again later.");
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto">
@@ -88,10 +117,12 @@ const PlannedPaymentPage = () => {
           {/* Actions */}
           <div className="flex gap-3">
             <button
-              className="px-6 py-3 border border-green-600 text-green-700 rounded-lg hover:bg-green-50 font-medium flex items-center gap-2"
+              onClick={handleExportExcel}
+              disabled={isExporting}
+              className="px-6 py-3 border border-green-600 text-green-700 rounded-lg hover:bg-green-50 font-medium flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <ExcelIcon />
-              Export Excel
+              {isExporting ? "Exporting..." : "Export Excel"}
             </button>
 
             <button

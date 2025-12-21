@@ -41,3 +41,16 @@ export async function update(id: number, form: any): Promise<Store> {
     return Promise.reject(error);
   }
 }
+
+export async function exportStores(): Promise<Store[]> {
+  try {
+    const res = await DaybookApi.get<ApiResponse<Store[]>>("/stores", {
+      params: {
+        search: "",
+      },
+    });
+    return res.data.data;
+  } catch (error: any) {
+    return Promise.reject(error);
+  }
+}

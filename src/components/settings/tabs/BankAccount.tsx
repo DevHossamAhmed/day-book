@@ -2,12 +2,14 @@ import { ChevronRight } from "lucide-react";
 import { useEffect, useState } from "react";
 import CreateBankAccount from "../modals/CreateBankAccount";
 import { BankAccount as Bank } from "@/types/bank-account";
-import { fetchBanks } from "@/services/bank.service";
+import { fetchBanks, exportBankAccounts } from "@/services/bank.service";
 import toast from "react-hot-toast";
 import SearchIcon from "@/lib/icons/Search.icon";
 import ExcelIcon from "@/lib/icons/Excel.icon";
 import ShowBankAccount from "../modals/ShowBankAccount";
 import FetchDataFromServer from "@/components/ui/FetchDataFromServer";
+import { exportToExcel } from "@/lib/utils/excel.util";
+import { formatDate } from "@/lib/utils/date.util";
 
 export default function BankAccount() {
   const [isOpenBanckAccount, setOpenBanckAccount] = useState<boolean>(false);
@@ -15,6 +17,7 @@ export default function BankAccount() {
   const [search, setSearch] = useState<string>("");
   const [banks, setBanks] = useState<Bank[]>([]);
   const [isFetching, setIsFetching] = useState(true);
+  const [isExporting, setIsExporting] = useState(false);
   const openBanckAccount = () => setOpenBanckAccount(true);
   const closeBanckAccount = () => setOpenBanckAccount(false);
 
@@ -31,6 +34,30 @@ export default function BankAccount() {
       toast.error("Failed to fetch bank accounts. Please try again later.");
     } finally {
       setIsFetching(false);
+    }
+  };
+
+  const handleExportExcel = async () => {
+    try {
+      setIsExporting(true);
+      const data = await exportBankAccounts();
+      
+      const exportData = data.map((bank) => ({
+        "Bank Account Name": bank.name,
+        "Account Number": bank.account_number || "—",
+        "IBAN": bank.iban || "—",
+        "Note": bank.note || "—",
+        "Added By": bank.added_by_fullname || "—",
+        "Created At": formatDate(new Date(bank.created_at), "YYYY-MM-DD HH:mm:ss"),
+        "Updated At": formatDate(new Date(bank.updated_at), "YYYY-MM-DD HH:mm:ss"),
+      }));
+
+      exportToExcel(exportData, `bank-accounts-${formatDate(new Date(), "YYYY-MM-DD")}`);
+      toast.success("Bank accounts exported successfully!");
+    } catch (error) {
+      toast.error("Failed to export bank accounts. Please try again later.");
+    } finally {
+      setIsExporting(false);
     }
   };
 
@@ -58,10 +85,12 @@ export default function BankAccount() {
           {/* Actions */}
           <div className="flex gap-3">
             <button
-              className="px-6 py-3 border border-green-600 text-green-700 rounded-lg hover:bg-green-50 font-medium flex items-center gap-2"
+              onClick={handleExportExcel}
+              disabled={isExporting}
+              className="px-6 py-3 border border-green-600 text-green-700 rounded-lg hover:bg-green-50 font-medium flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <ExcelIcon />
-              Export Excel
+              {isExporting ? "Exporting..." : "Export Excel"}
             </button>
 
             <button

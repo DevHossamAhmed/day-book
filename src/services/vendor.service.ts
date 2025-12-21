@@ -42,3 +42,16 @@ export async function fetchGetIdNameList(): Promise<ApiResponse<VendorIdNameList
     return Promise.reject(error);
   }
 }
+
+export async function exportVendors(): Promise<Vendor[]> {
+  try {
+    const res = await DaybookApi.get<ApiResponse<Vendor[]>>("/vendors/", {
+      params: {
+        search: "",
+      },
+    });
+    return res.data.data;
+  } catch (error: any) {
+    return Promise.reject(error);
+  }
+}

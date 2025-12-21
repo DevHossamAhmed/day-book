@@ -49,3 +49,17 @@ export async function fetchGetIdNameList(): Promise<ApiResponse<ExpenseTypeIdNam
     return Promise.reject(error);
   }
 }
+
+export async function exportExpenseTypes(): Promise<ExpenseType[]> {
+  try {
+    // Fetch all expense types by using empty search string
+    const res = await DaybookApi.get<ApiResponse<ExpenseType[]>>("/expense-types/export/excel", {
+      params: {
+        search: "", // Empty search to get all records
+      },
+    });
+    return res.data.data;
+  } catch (error: any) {
+    return Promise.reject(error);
+  }
+}

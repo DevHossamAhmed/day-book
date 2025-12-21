@@ -1,13 +1,15 @@
 import { ChevronRight } from "lucide-react";
 import { useEffect, useState } from "react";
 import CreateVendor from "../modals/CreateVendor";
-import { fetchVendors } from "@/services/vendor.service";
+import { fetchVendors, exportVendors } from "@/services/vendor.service";
 import toast from "react-hot-toast";
 import { Vendor as Vendors } from "@/types/vendor";
 import SearchIcon from "@/lib/icons/Search.icon";
 import ExcelIcon from "@/lib/icons/Excel.icon";
 import ShowVendor from "../modals/ShowVendor";
 import FetchDataFromServer from "@/components/ui/FetchDataFromServer";
+import { exportToExcel } from "@/lib/utils/excel.util";
+import { formatDate } from "@/lib/utils/date.util";
 
 export default function Vendor() {
   const [isOpenVendor, setOpenVendor] = useState<boolean>(false);
@@ -15,6 +17,7 @@ export default function Vendor() {
   const [search, setSearch] = useState<string>("");
   const [vendors, setVendors] = useState<Vendors[]>([]);
   const [isFetching, setIsFetching] = useState(true);
+  const [isExporting, setIsExporting] = useState(false);
   const openVendor = () => setOpenVendor(true);
   const closeVendor = () => setOpenVendor(false);
 
@@ -31,6 +34,32 @@ export default function Vendor() {
       toast.error("Failed to fetch vendors. Please try again later.");
     } finally {
       setIsFetching(false);
+    }
+  };
+
+  const handleExportExcel = async () => {
+    try {
+      setIsExporting(true);
+      const data = await exportVendors();
+      
+      const exportData = data.map((vendor) => ({
+        "Vendor Name": vendor.name,
+        "Contact Person": vendor.contact_person || "—",
+        "Phone": vendor.phone || "—",
+        "Email": vendor.email || "—",
+        "Address": vendor.address || "—",
+        "Note": vendor.note || "—",
+        "Added By": vendor.added_by_fullname || "—",
+        "Created At": formatDate(new Date(vendor.created_at), "YYYY-MM-DD HH:mm:ss"),
+        "Updated At": formatDate(new Date(vendor.updated_at), "YYYY-MM-DD HH:mm:ss"),
+      }));
+
+      exportToExcel(exportData, `vendors-${formatDate(new Date(), "YYYY-MM-DD")}`);
+      toast.success("Vendors exported successfully!");
+    } catch (error) {
+      toast.error("Failed to export vendors. Please try again later.");
+    } finally {
+      setIsExporting(false);
     }
   };
 
@@ -58,10 +87,12 @@ export default function Vendor() {
           {/* Actions */}
           <div className="flex gap-3">
             <button
-              className="px-6 py-3 border border-green-600 text-green-700 rounded-lg hover:bg-green-50 font-medium flex items-center gap-2"
+              onClick={handleExportExcel}
+              disabled={isExporting}
+              className="px-6 py-3 border border-green-600 text-green-700 rounded-lg hover:bg-green-50 font-medium flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <ExcelIcon />
-              Export Excel
+              {isExporting ? "Exporting..." : "Export Excel"}
             </button>
 
             <button

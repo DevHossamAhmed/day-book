@@ -11,13 +11,17 @@ import {
 } from "lucide-react";
 import CreateDailyRecord from "@/components/daily-record/modals/CreateDialyRecord";
 import CreateTransfer from "@/components/daily-record/modals/CreateTransfer";
-import { fetchBalances } from "@/services/balance.service";
+import { fetchBalances, exportBalances } from "@/services/balance.service";
 import type { Balance } from "@/types/balance";
 import toast from "react-hot-toast";
 import { formatDate, getDateByLabel } from "@/lib/utils/date.util";
 import Row from "@/components/daily-record/ui/Row";
 import { PaginationMeta } from "@/types/pagination";
 import { Pagination } from "@/components/ui/Pagination";
+import ExcelIcon from "@/lib/icons/Excel.icon";
+import { exportToExcel } from "@/lib/utils/excel.util";
+import { formatMoney } from "@/lib/utils/money.util";
+import { CapitalizeFirst } from "@/lib/utils/string.util";
 
 const OpeningBalancePage = () => {
   const [activeTab, setActiveTab] = useState<string>("Today");
@@ -26,6 +30,7 @@ const OpeningBalancePage = () => {
   const [meta, setMeta] = useState<PaginationMeta>();
   const [page, setPage] = useState<number>(1);
   const [limit, setLimit] = useState<number>(2);
+  const [isExporting, setIsExporting] = useState(false);
 
   const [isOpenCreateRecord, setOpenCreateRecord] = useState<boolean>(false);
   const [isOpenCreateTransfer, setOpenCreateTransfer] = useState<boolean>(false);
@@ -68,6 +73,31 @@ const OpeningBalancePage = () => {
     }
   };
 
+  const handleExportExcel = async () => {
+    try {
+      setIsExporting(true);
+      const data = await exportBalances({
+        date: dateFilter,
+      });
+      
+      const exportData = data.map((balance) => ({
+        "Date": formatDate(new Date(balance.date), "YYYY-MM-DD"),
+        "Source": balance.source || "—",
+        "Type": CapitalizeFirst(balance.type) || "—",
+        "Amount": formatMoney(balance.amount),
+        "Note": balance.note || "—",
+        "Added By": balance.added_by_fullname || "—",
+      }));
+
+      exportToExcel(exportData, `daily-records-${formatDate(new Date(), "YYYY-MM-DD")}`);
+      toast.success("Daily records exported successfully!");
+    } catch (error) {
+      toast.error("Failed to export daily records. Please try again later.");
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto">
@@ -104,6 +134,14 @@ const OpeningBalancePage = () => {
               >
                 <ArrowLeftRight size={18} />
                 Transfer
+              </button>
+              <button
+                onClick={handleExportExcel}
+                disabled={isExporting}
+                className="flex cursor-pointer items-center gap-2 border border-green-600 text-green-700 px-6 py-3 rounded-lg hover:bg-green-50 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <ExcelIcon />
+                {isExporting ? "Exporting..." : "Export Excel"}
               </button>
               <button className="flex items-center justify-center w-10 h-10 bg-white text-gray-700 rounded-lg hover:bg-gray-50 transition-colors border border-gray-300">
                 <MoreVertical size={18} />
