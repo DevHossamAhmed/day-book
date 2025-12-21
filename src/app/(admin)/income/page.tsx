@@ -1,19 +1,14 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import {
-  ChevronLeft,
-  ChevronRight,
-  Search,
-  SlidersHorizontal,
-  X,
-  Calendar,
-  ChevronDown,
-  Image,
-  Save,
-} from "lucide-react";
+import { SlidersHorizontal, Search } from "lucide-react";
 import { formatDate, getDateByLabel } from "@/lib/utils/date.util";
 import CreateIncome from "@/components/income/modals/CreateIncome";
-import SearchIcon from "@/lib/icons/Search.icon";
+import SearchBar from "@/components/ui/SearchBar";
+import DateFilterTabs from "@/components/ui/DateFilterTabs";
+import PageHeader from "@/components/ui/PageHeader";
+import Button from "@/components/ui/Button";
+import Card from "@/components/ui/Card";
+import DataCard from "@/components/ui/DataCard";
 import ExcelIcon from "@/lib/icons/Excel.icon";
 import { fetchIncomes } from "@/services/income.service";
 import { Income } from "@/types/income";
@@ -30,11 +25,11 @@ const IncomePage = () => {
   const [incomes, setIncomes] = useState<Income[]>([]);
   const [meta, setMeta] = useState<PaginationMeta>();
   const [page, setPage] = useState<number>(1);
-  const [limit, setLimit] = useState<number>(10);
+  const [limit] = useState<number>(10);
 
   useEffect(() => {
     fetchData(1);
-  }, [activeTab, search]);
+  }, [activeTab, search, dateFilter]);
 
   const openCreateIncome = () => setIsCreateIcomeOpen(true);
   const closeCreateIncome = () => setIsCreateIcomeOpen(false);
@@ -69,113 +64,59 @@ const IncomePage = () => {
     fetchData(1);
   };
 
+  const headerActions = (
+    <>
+      <Button variant="outline" className="border-green-600 text-green-700 hover:bg-green-50">
+        <ExcelIcon />
+        Export Excel
+      </Button>
+      <Button variant="primary" onClick={openCreateIncome}>
+        Create Sale
+      </Button>
+    </>
+  );
+
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto">
-        {/* Title */}
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-900">Income</h1>
-        </div>
+      <div className="max-w-7xl mx-auto p-6">
+        <PageHeader title="Income" actions={headerActions} />
 
-        {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
-          {/* Search */}
-          <div className="relative w-full sm:max-w-sm">
-            <input
-              type="text"
-              placeholder="Search income..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            />
-            <SearchIcon />
-          </div>
-
-          {/* Actions */}
+          <SearchBar
+            value={search}
+            onChange={setSearch}
+            placeholder="Search income..."
+          />
           <div className="flex gap-3">
-            <button
-              className="px-6 py-3 border border-green-600 text-green-700 rounded-lg hover:bg-green-50 font-medium flex items-center gap-2"
-            >
-              <ExcelIcon />
-              Export Excel
-            </button>
-
-            <button
-              onClick={openCreateIncome}
-              className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium"
-            >
-              Create Sale
-            </button>
+            <Button variant="outline" icon={<SlidersHorizontal size={16} />}>
+              Filter
+            </Button>
+            <Button variant="outline" icon={<Search size={18} />} size="sm" />
           </div>
         </div>
 
-        {/* Main Content Card */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100">
-          {/* Date Navigation */}
-          <div className="p-6 border-b border-gray-200">
-            <div className="flex items-center justify-between gap-6">
-              <div className="flex gap-6">
-                <button className="px-4 py-2 bg-gray-900 text-white rounded-lg font-medium text-sm">
-                  Day
-                </button>
-                <button className="flex items-center gap-2 text-gray-700 font-medium text-sm">
-                  {formatDate(new Date(), "Do MMMM, YYYY")}
-                  <ChevronRight size={16} className="rotate-90" />
-                </button>
-              </div>
-              <div className="flex gap-6">
-                {["Yesterday", "Today", "Tomorrow"].map((tab) => (
-                  <button
-                    key={tab}
-                    onClick={() => setDateToFilter(tab)}
-                    className={`font-medium text-sm pb-1 transition-colors ${
-                      activeTab === tab
-                        ? "text-blue-600 border-b-2 border-blue-600"
-                        : "text-gray-500 hover:text-gray-700"
-                    }`}
-                  >
-                    {tab}
-                  </button>
-                ))}
-              </div>
-              <div className="flex gap-3">
-                <button className="flex items-center gap-2 px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium">
-                  <SlidersHorizontal size={16} />
-                  Filter
-                </button>
-                <button className="flex items-center justify-center w-10 h-10 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
-                  <Search size={18} />
-                </button>
-              </div>
-            </div>
-          </div>
+        <Card padding={false}>
+          <DateFilterTabs
+            activeTab={activeTab}
+            onTabChange={setDateToFilter}
+          />
 
-          {/* Income List */}
           <div className="p-6">
-            <div className="space-y-3">
-              {incomes.length === 0 ? (
-                <div className="text-center py-12 text-gray-500">
-                  No income records found
-                </div>
-              ) : (
-                incomes.map((income: Income) => (
-                  <IncomeRow key={income.id} income={income} onSave={onSave} />
-                ))
+            <DataCard
+              data={incomes}
+              renderItem={(income) => (
+                <IncomeRow key={income.id} income={income} onSave={onSave} />
               )}
-            </div>
+              emptyMessage="No income records found"
+            />
           </div>
 
-          {/* Pagination */}
           {meta && (
-            <Pagination
-              meta={meta}
-              onPageChange={(newPage) => onPageChange(newPage)}
-            />
+            <Pagination meta={meta} onPageChange={onPageChange} />
           )}
-        </div>
+        </Card>
       </div>
 
-      {/* Create Income Side Panel */}
       {isCreateIncomeOpen && (
         <CreateIncome onClose={closeCreateIncome} onSave={onSave} />
       )}

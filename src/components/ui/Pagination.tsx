@@ -1,11 +1,4 @@
-type PaginationMeta = {
-    total: number;
-    page: number;
-    limit: number;
-    totalPages: number;
-    hasNextPage: boolean;
-    hasPrevPage: boolean;
-};
+import { PaginationMeta } from "@/types/pagination";
 
 type PaginationProps = {
     meta?: PaginationMeta;
