@@ -1,5 +1,4 @@
 import { PaymentMethod } from "@/data/payment-method";
-import { ExpenseTypes } from "@/data/expense-types";
 import z from "zod";
 
 export const CreateExpenseValidationSchema = z.object({
@@ -16,9 +15,13 @@ export const CreateExpenseValidationSchema = z.object({
         .refine((val) => !isNaN(val) && val > 0, {
             message: "Please select a Vendor",
         }),
-    expense_type: z.enum(ExpenseTypes, {
-        error: "Expense Type is required",
-    }),
+    expense_type_id: z
+        .string()
+        .min(1, "Expense Type is required")
+        .transform((val) => Number(val))
+        .refine((val) => !isNaN(val) && val > 0, {
+            message: "Please select an Expense Type",
+        }),
     amount: z
         .string()
         .min(1, { message: "Amount is required" })

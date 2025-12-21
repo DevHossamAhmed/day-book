@@ -18,9 +18,12 @@ import ExcelIcon from "@/lib/icons/Excel.icon";
 import { fetchExpenses } from "@/services/expense.service";
 import { Expense } from "@/types/expense";
 import toast from "react-hot-toast";
-import ExpenseRow from "@/components/expense/ui/ExpenseRow";
 import { PaginationMeta } from "@/types/pagination";
 import { Pagination } from "@/components/ui/Pagination";
+import { fetchGetIdNameList as fetchExpenseTypeIdNameList } from "@/services/expense-type.service";
+import { ExpenseTypeIdNameList } from "@/types/expense-type";
+import ExpenseDetails from "@/components/expense/modals/ExpenseDetails";
+import { formatMoney } from "@/lib/utils/money.util";
 
 const ExpensesPage = () => {
   const [activeTab, setActiveTab] = useState<string>("Today");
@@ -31,9 +34,13 @@ const ExpensesPage = () => {
   const [meta, setMeta] = useState<PaginationMeta>();
   const [page, setPage] = useState<number>(1);
   const [limit, setLimit] = useState<number>(10);
+  const [expenseTypes, setExpenseTypes] = useState<ExpenseTypeIdNameList[]>([]);
+  const [selectedExpense, setSelectedExpense] = useState<Expense | null>(null);
+  const [isDetailsOpen, setIsDetailsOpen] = useState<boolean>(false);
 
   useEffect(() => {
     fetchData(1);
+    fetchExpenseTypes();
   }, [activeTab, search]);
 
   const openCreateExpense = () => setIsCreateExpenseOpen(true);
@@ -62,6 +69,15 @@ const ExpensesPage = () => {
       setPage(meta.page);
     } catch (error) {
       toast.error("Failed to fetch expense records. Please try again later.");
+    }
+  };
+
+  const fetchExpenseTypes = async () => {
+    try {
+      const response = await fetchExpenseTypeIdNameList();
+      setExpenseTypes(response.data);
+    } catch (error) {
+      toast.error("Failed to fetch expense types. Please try again later.");
     }
   };
 
@@ -150,16 +166,135 @@ const ExpensesPage = () => {
             </div>
           </div>
 
-          {/* Expenses List */}
+          {/* Expenses Table */}
           <div className="p-6">
-            <div className="space-y-3">
+            {/* Desktop / Tablet Table */}
+            <div className="hidden sm:block bg-white rounded-lg border border-gray-200 overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">
+                        Date
+                      </th>
+                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">
+                        Vendor
+                      </th>
+                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">
+                        Expense Type
+                      </th>
+                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">
+                        Amount
+                      </th>
+                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">
+                        Payment Method
+                      </th>
+                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">
+                        Note
+                      </th>
+                      <th className="px-6 py-4 text-right text-sm font-semibold text-gray-700">
+                        Action
+                      </th>
+                    </tr>
+                  </thead>
+
+                  <tbody className="divide-y divide-gray-200 bg-white">
+                    {expenses.length === 0 ? (
+                      <tr>
+                        <td colSpan={7} className="px-6 py-12 text-center text-gray-500">
+                          No expense records found
+                        </td>
+                      </tr>
+                    ) : (
+                      expenses.map((expense: Expense) => (
+                        <tr
+                          key={expense.id}
+                          className="hover:bg-gray-50 cursor-pointer"
+                          onClick={() => {
+                            setSelectedExpense(expense);
+                            setIsDetailsOpen(true);
+                          }}
+                        >
+                          <td className="px-6 py-4">
+                            <div className="text-sm text-gray-900">
+                              {formatDate(new Date(expense.date), "MMM DD, YYYY")}
+                            </div>
+                          </td>
+                          <td className="px-6 py-4">
+                            <div className="font-semibold text-gray-900">
+                              {expense.vendor?.name || "—"}
+                            </div>
+                          </td>
+                          <td className="px-6 py-4">
+                            <div className="text-sm text-gray-900">
+                              {expense.expense_type?.name || "—"}
+                            </div>
+                          </td>
+                          <td className="px-6 py-4">
+                            <div className="font-semibold text-gray-900">
+                              {formatMoney(expense.amount)}
+                            </div>
+                          </td>
+                          <td className="px-6 py-4">
+                            <div className="text-sm text-gray-700">
+                              {expense.payment_method || "—"}
+                            </div>
+                          </td>
+                          <td className="px-6 py-4">
+                            {expense.note ? (
+                              <span className="text-sm text-gray-700 line-clamp-1">
+                                {expense.note}
+                              </span>
+                            ) : (
+                              <span className="text-sm text-gray-400">—</span>
+                            )}
+                          </td>
+                          <td className="px-6 py-4 text-right">
+                            <ChevronRight className="w-5 h-5 text-gray-400 inline" />
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* Mobile Cards */}
+            <div className="sm:hidden space-y-3">
               {expenses.length === 0 ? (
                 <div className="text-center py-12 text-gray-500">
                   No expense records found
                 </div>
               ) : (
                 expenses.map((expense: Expense) => (
-                  <ExpenseRow key={expense.id} expense={expense} onSave={onSave} />
+                  <div
+                    key={expense.id}
+                    onClick={() => {
+                      setSelectedExpense(expense);
+                      setIsDetailsOpen(true);
+                    }}
+                    className="flex items-center justify-between p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors cursor-pointer"
+                  >
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-semibold text-gray-900 mb-1 truncate">
+                        {expense.expense_type?.name || "Expense"}
+                      </h3>
+                      <div className="flex items-center gap-2 text-sm text-gray-600">
+                        <span>{expense.vendor?.name || "—"}</span>
+                        <span>•</span>
+                        <span>{formatDate(new Date(expense.date), "MMM DD, YYYY")}</span>
+                      </div>
+                      {expense.payment_method && (
+                        <div className="text-sm text-gray-500 mt-1">
+                          {expense.payment_method}
+                        </div>
+                      )}
+                    </div>
+                    <div className="text-xl font-bold text-gray-900 ml-4">
+                      {formatMoney(expense.amount)}
+                    </div>
+                  </div>
                 ))
               )}
             </div>
@@ -178,6 +313,19 @@ const ExpensesPage = () => {
       {/* Create Expense Side Panel */}
       {isCreateExpenseOpen && (
         <CreateExpense onClose={closeCreateExpense} onSave={onSave} />
+      )}
+
+      {/* Expense Details Modal */}
+      {selectedExpense && (
+        <ExpenseDetails
+          expense={selectedExpense}
+          isOpen={isDetailsOpen}
+          onClose={() => {
+            setIsDetailsOpen(false);
+            setSelectedExpense(null);
+          }}
+          onSave={onSave}
+        />
       )}
     </div>
   );

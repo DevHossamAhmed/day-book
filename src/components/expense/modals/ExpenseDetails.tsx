@@ -96,10 +96,10 @@ export default function ExpenseDetails({ isOpen, onClose, expense, onSave }: Pro
                         <div className="flex items-start justify-between mb-8">
                             <div>
                                 <p className="text-sm text-gray-500 mb-1">{expense.date}</p>
-                                <h2 className="text-xl font-semibold text-gray-900">{expense.expense_type}</h2>
+                                <h2 className="text-xl font-semibold text-gray-900">{expense.expense_type?.name || "Expense"}</h2>
                                 <div className="mt-2 space-y-1">
-                                    {expense.vendor_name && (
-                                        <p className="text-sm text-gray-500">Vendor: {expense.vendor_name}</p>
+                                    {expense.vendor?.name && (
+                                        <p className="text-sm text-gray-500">Vendor: {expense.vendor.name}</p>
                                     )}
                                     {expense.payment_method && (
                                         <p className="text-sm text-gray-500">Payment Method: {expense.payment_method}</p>

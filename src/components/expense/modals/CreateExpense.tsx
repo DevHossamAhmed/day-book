@@ -9,9 +9,10 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { PaymentMethod } from "@/data/payment-method";
-import { ExpenseTypes } from "@/data/expense-types";
 import { fetchGetIdNameList as fetchVendorIdNameList } from "@/services/vendor.service";
 import { VendorIdNameList } from "@/types/vendor";
+import { fetchGetIdNameList as fetchExpenseTypeIdNameList } from "@/services/expense-type.service";
+import { ExpenseTypeIdNameList } from "@/types/expense-type";
 
 type Props = {
     onClose: () => void;
@@ -22,7 +23,9 @@ export default function CreateExpense({ onClose, onSave }: Props) {
     const [isLoading, setIsLoading] = useState(false);
     const [serverErrors, setServerErrors] = useState<string[]>([]);
     const [vendors, setVendors] = useState<VendorIdNameList[]>([]);
+    const [expenseTypes, setExpenseTypes] = useState<ExpenseTypeIdNameList[]>([]);
     const [isLoadingVendors, setIsLoadingVendors] = useState(true);
+    const [isLoadingExpenseTypes, setIsLoadingExpenseTypes] = useState(true);
 
     const {
         register,
@@ -43,12 +46,18 @@ export default function CreateExpense({ onClose, onSave }: Props) {
     const fetchData = async () => {
         try {
             setIsLoadingVendors(true);
-            const vendorsRes = await fetchVendorIdNameList();
+            setIsLoadingExpenseTypes(true);
+            const [vendorsRes, expenseTypesRes] = await Promise.all([
+                fetchVendorIdNameList(),
+                fetchExpenseTypeIdNameList()
+            ]);
             setVendors(vendorsRes.data);
+            setExpenseTypes(expenseTypesRes.data);
         } catch (error) {
             toast.error("Failed to fetch data. Please try again later.");
         } finally {
             setIsLoadingVendors(false);
+            setIsLoadingExpenseTypes(false);
         }
     };
 
@@ -65,10 +74,14 @@ export default function CreateExpense({ onClose, onSave }: Props) {
                 (vendor) => vendor.id === Number(data.vendor_id)
             );
 
-            // Add vendor_name to the payload
+            // Find the selected expense type's name
+            const selectedExpenseType = expenseTypes.find(
+                (expenseType) => expenseType.id === Number(data.expense_type_id)
+            );
+
+            // Add vendor_name and expense_type to the payload
             const payload = {
                 ...data,
-                vendor_name: selectedVendor?.name || "",
             };
 
             await store(payload);
@@ -167,20 +180,22 @@ export default function CreateExpense({ onClose, onSave }: Props) {
                             </label>
                             <div className="relative">
                                 <select
-                                    {...register("expense_type")}
-                                    className={`w-full px-4 py-3 border rounded-lg appearance-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white ${errors.expense_type ? "border-red-300" : "border-gray-300"
-                                        }`}
+                                    {...register("expense_type_id")}
+                                    disabled={isLoadingExpenseTypes}
+                                    className={`w-full px-4 py-3 border rounded-lg appearance-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                                        errors.expense_type_id ? "border-red-300" : "border-gray-300"
+                                    } ${isLoadingExpenseTypes ? "bg-gray-100 cursor-not-allowed" : "bg-white"}`}
                                 >
-                                    <option value="">Select expense type</option>
-                                    {ExpenseTypes.map((type) => (
-                                        <option key={type} value={type}>
-                                            {type}
+                                    <option value="">{isLoadingExpenseTypes ? "Loading..." : "Select expense type"}</option>
+                                    {expenseTypes.map((expenseType) => (
+                                        <option key={expenseType.id} value={expenseType.id}>
+                                            {expenseType.name}
                                         </option>
                                     ))}
                                 </select>
                                 <ChevronDown className="absolute right-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
                             </div>
-                            <ErrorMessage message={errors.expense_type?.message as string} />
+                            <ErrorMessage message={errors.expense_type_id?.message as string} />
                         </div>
                         <div>
                             <label className="block text-sm font-medium text-gray-900 mb-2">

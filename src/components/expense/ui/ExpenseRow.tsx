@@ -21,11 +21,11 @@ export default function ExpenseRow({ expense, onSave }: Props) {
                 <div className="flex items-center gap-4">
                     <div>
                         <h3 className="font-semibold text-gray-900 mb-1">
-                            {expense.expense_type}
+                            {expense.expense_type?.name || "Expense"}
                         </h3>
                         <div className="flex items-center gap-2 text-sm">
                             <span className="text-gray-600">
-                                {expense.vendor_name} • {expense.date}
+                                {expense.vendor?.name || "—"} • {expense.date}
                             </span>
                         </div>
                     </div>
