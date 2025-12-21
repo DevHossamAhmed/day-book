@@ -2,10 +2,14 @@ import LeftSide from "@/components/dashboard/LeftSide";
 import OverView from "@/components/dashboard/OverView";
 import RightSide from "@/components/dashboard/RightSide";
 import React from "react";
+import PageTitle from "@/components/ui/PageTitle";
 
 const page = () => {
   return (
     <div className="bg-[#fcfcfc]">
+      <PageTitle 
+        title="Dashboard"
+      />
       <OverView />
       
       <div className="flex flex-col lg:flex-row gap-6 mt-6">

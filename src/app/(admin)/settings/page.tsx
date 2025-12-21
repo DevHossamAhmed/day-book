@@ -6,6 +6,7 @@ import Vendor from "@/components/settings/tabs/Vendor";
 import Store from "@/components/settings/tabs/Store";
 import Company from "@/components/settings/tabs/Company";
 import ExpenseType from "@/components/settings/tabs/ExpenseType";
+import PageTitle from "@/components/ui/PageTitle";
 
 const CompanySettings = () => {
   const [activeTab, setActiveTab] = useState("company");
@@ -20,19 +21,28 @@ const CompanySettings = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div>
+      <PageTitle 
+        title="Settings"
+        breadcrumbs={[
+          { label: "Dashboard", href: "/dashboard" },
+          { label: "Settings" }
+        ]}
+      />
+
       {/* Tabs Navigation */}
-      <div className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="flex gap-1">
+      <div className="bg-white border-b border-gray-200 -mx-6 -mt-6 mb-6">
+        <div className="px-6">
+          <div className="flex gap-8 overflow-x-auto">
             {tabs.map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`px-6 py-4 font-medium transition-colors relative ${activeTab === tab.id
-                    ? "text-white bg-blue-600 rounded-t-lg"
-                    : "text-gray-600 hover:text-gray-900"
-                  }`}
+                className={`px-1 py-4 font-semibold text-sm transition-all relative whitespace-nowrap border-b-2 ${
+                  activeTab === tab.id
+                    ? "text-blue-600 border-blue-600"
+                    : "text-gray-500 border-transparent hover:text-gray-700 hover:border-gray-300"
+                }`}
               >
                 {tab.label}
               </button>
@@ -41,7 +51,7 @@ const CompanySettings = () => {
         </div>
       </div>
       {/* Content Area */}
-      <div className="max-w-7xl mx-auto px-6 py-6">
+      <div>
         {activeTab === "company" && <Company />}
         {activeTab === "stores" && <Store />}
         {activeTab === "vendors" && <Vendor />}

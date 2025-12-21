@@ -13,6 +13,7 @@ import { formatDate } from "@/lib/utils/date.util";
 import SearchIcon from "@/lib/icons/Search.icon";
 import ExcelIcon from "@/lib/icons/Excel.icon";
 import CreateSalary from "@/components/salary/modals/CreateSalary";
+import PageTitle from "@/components/ui/PageTitle";
 
 const SalaryPage = () => {
   const [isCreateSalaryOpen, setIsCreateSalaryOpen] = useState(false);
@@ -71,84 +72,83 @@ const SalaryPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto">
-        {/* Title */}
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-900">Salary</h1>
+    <div>
+      <PageTitle 
+        title="Salary"
+        breadcrumbs={[
+          { label: "Dashboard", href: "/dashboard" },
+          { label: "Salary" }
+        ]}
+      />
+
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
+        {/* Search */}
+        <div className="relative w-full sm:max-w-sm">
+          <input
+            type="text"
+            placeholder="Search salary..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          />
+          <SearchIcon />
         </div>
 
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
-          {/* Search */}
-          <div className="relative w-full sm:max-w-sm">
-            <input
-              type="text"
-              placeholder="Search salary..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            />
-            <SearchIcon />
-          </div>
+        {/* Actions */}
+        <div className="flex gap-3">
+          <button
+            className="px-6 py-3 border border-green-600 text-green-700 rounded-lg hover:bg-green-50 font-medium flex items-center gap-2"
+          >
+            <ExcelIcon />
+            Export Excel
+          </button>
 
-          {/* Actions */}
-          <div className="flex gap-3">
-            <button
-              className="px-6 py-3 border border-green-600 text-green-700 rounded-lg hover:bg-green-50 font-medium flex items-center gap-2"
-            >
-              <ExcelIcon />
-              Export Excel
-            </button>
-
-            <button
-              onClick={() => setIsCreateSalaryOpen(true)}
-              className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium"
-            >
-              Create Salary
-            </button>
-          </div>
+          <button
+            onClick={() => setIsCreateSalaryOpen(true)}
+            className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium"
+          >
+            Create Salary
+          </button>
         </div>
+      </div>
 
-        {/* Main Content Card */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100">
-          {/* Date Navigation */}
-          <div className="p-6 border-b border-gray-200">
-            <div className="flex items-center justify-between gap-6">
-              <div className="flex gap-6">
-                <button className="px-4 py-2 bg-gray-900 text-white rounded-lg font-medium text-sm">
-                  Day
+      {/* Main Content Card */}
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100">
+        {/* Date Navigation */}
+        <div className="p-6 border-b border-gray-200">
+          <div className="flex items-center justify-between gap-6">
+            <div className="flex gap-6">
+              <button className="px-4 py-2 bg-gray-900 text-white rounded-lg font-medium text-sm">
+                Day
+              </button>
+              <button className="flex items-center gap-2 text-gray-700 font-medium text-sm">
+                {formatDate(new Date(), "Do MMMM, YYYY")}
+                <ChevronRight size={16} className="rotate-90" />
+              </button>
+            </div>
+            <div className="flex gap-6">
+              {["Yesterday", "Today", "Tomorrow"].map((tab) => (
+                <button
+                  key={tab}
+                  className="font-medium text-sm pb-1 transition-colors text-gray-500 hover:text-gray-700"
+                >
+                  {tab}
                 </button>
-                <button className="flex items-center gap-2 text-gray-700 font-medium text-sm">
-                  {formatDate(new Date(), "Do MMMM, YYYY")}
-                  <ChevronRight size={16} className="rotate-90" />
-                </button>
-              </div>
-              <div className="flex gap-6">
-                {["Yesterday", "Today", "Tomorrow"].map((tab) => (
-                  <button
-                    key={tab}
-                    className="font-medium text-sm pb-1 transition-colors text-gray-500 hover:text-gray-700"
-                  >
-                    {tab}
-                  </button>
-                ))}
-              </div>
-              <div className="flex gap-3">
-                <button className="flex items-center gap-2 px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium">
-                  <SlidersHorizontal size={16} />
-                  Filter
-                </button>
-                <button className="flex items-center justify-center w-10 h-10 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
-                  <Search size={18} />
-                </button>
-              </div>
+              ))}
+            </div>
+            <div className="flex gap-3">
+              <button className="flex items-center gap-2 px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium">
+                <SlidersHorizontal size={16} />
+                Filter
+              </button>
             </div>
           </div>
+        </div>
 
-          {/* Salaries List */}
-          <div className="p-6">
-            <div className="space-y-1">
+        {/* Salaries List */}
+        <div className="p-6">
+          <div className="space-y-1">
             {salaries.map((salary) => (
               <div
                 key={salary.id}
@@ -188,7 +188,6 @@ const SalaryPage = () => {
                 </div>
               </div>
             ))}
-            </div>
           </div>
         </div>
       </div>

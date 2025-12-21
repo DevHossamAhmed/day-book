@@ -1,16 +1,13 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { SlidersHorizontal, Search, ChevronRight } from "lucide-react";
+import {
+  ChevronRight,
+  Search,
+  SlidersHorizontal,
+} from "lucide-react";
 import { formatDate, getDateByLabel } from "@/lib/utils/date.util";
 import CreateExpense from "@/components/expense/modals/CreateExpense";
-import SearchBar from "@/components/ui/SearchBar";
-import DateFilterTabs from "@/components/ui/DateFilterTabs";
-import PageHeader from "@/components/ui/PageHeader";
-import Button from "@/components/ui/Button";
-import Card from "@/components/ui/Card";
-import DataTable from "@/components/ui/DataTable";
-import DataCard from "@/components/ui/DataCard";
-import EmptyState from "@/components/ui/EmptyState";
+import SearchIcon from "@/lib/icons/Search.icon";
 import ExcelIcon from "@/lib/icons/Excel.icon";
 import { fetchExpenses, exportExpenses } from "@/services/expense.service";
 import { Expense } from "@/types/expense";
@@ -20,6 +17,7 @@ import { PaginationMeta } from "@/types/pagination";
 import { Pagination } from "@/components/ui/Pagination";
 import ExpenseDetails from "@/components/expense/modals/ExpenseDetails";
 import { formatMoney } from "@/lib/utils/money.util";
+import PageTitle from "@/components/ui/PageTitle";
 
 const ExpensesPage = () => {
   const [activeTab, setActiveTab] = useState<string>("Today");
@@ -103,172 +101,158 @@ const ExpensesPage = () => {
     }
   };
 
-  const tableColumns = [
-    {
-      key: "date",
-      header: "Date",
-      render: (expense: Expense) => (
-        <div className="text-sm text-gray-900">
-          {formatDate(new Date(expense.date), "MMM DD, YYYY")}
-        </div>
-      ),
-    },
-    {
-      key: "vendor",
-      header: "Vendor",
-      render: (expense: Expense) => (
-        <div className="font-semibold text-gray-900">
-          {expense.vendor?.name || "—"}
-        </div>
-      ),
-    },
-    {
-      key: "expense_type",
-      header: "Expense Type",
-      render: (expense: Expense) => (
-        <div className="text-sm text-gray-900">
-          {expense.expense_type?.name || "—"}
-        </div>
-      ),
-    },
-    {
-      key: "amount",
-      header: "Amount",
-      render: (expense: Expense) => (
-        <div className="font-semibold text-gray-900">
-          {formatMoney(expense.amount)}
-        </div>
-      ),
-    },
-    {
-      key: "payment_method",
-      header: "Payment Method",
-      render: (expense: Expense) => (
-        <div className="text-sm text-gray-700">
-          {expense.payment_method || "—"}
-        </div>
-      ),
-    },
-    {
-      key: "note",
-      header: "Note",
-      render: (expense: Expense) =>
-        expense.note ? (
-          <span className="text-sm text-gray-700 line-clamp-1">
-            {expense.note}
-          </span>
-        ) : (
-          <span className="text-sm text-gray-400">—</span>
-        ),
-    },
-    {
-      key: "action",
-      header: "Action",
-      className: "text-right",
-      render: () => (
-        <ChevronRight className="w-5 h-5 text-gray-400 inline" />
-      ),
-    },
-  ];
-
-  const headerActions = (
-    <>
-      <Button 
-        variant="outline" 
-        className="border-green-600 text-green-700 hover:bg-green-50"
-        onClick={handleExportExcel}
-        disabled={isExporting}
-        isLoading={isExporting}
-      >
-        <ExcelIcon />
-        {isExporting ? "Exporting..." : "Export Excel"}
-      </Button>
-      <Button variant="primary" onClick={openCreateExpense}>
-        Create Expense
-      </Button>
-    </>
-  );
-
-  const renderMobileCard = (expense: Expense) => (
-    <div
-      onClick={() => handleRowClick(expense)}
-      className="flex items-center justify-between p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors cursor-pointer"
-    >
-      <div className="flex-1 min-w-0">
-        <h3 className="font-semibold text-gray-900 mb-1 truncate">
-          {expense.expense_type?.name || "Expense"}
-        </h3>
-        <div className="flex items-center gap-2 text-sm text-gray-600">
-          <span>{expense.vendor?.name || "—"}</span>
-          <span>•</span>
-          <span>{formatDate(new Date(expense.date), "MMM DD, YYYY")}</span>
-        </div>
-        {expense.payment_method && (
-          <div className="text-sm text-gray-500 mt-1">
-            {expense.payment_method}
-          </div>
-        )}
-      </div>
-      <div className="text-xl font-bold text-gray-900 ml-4">
-        {formatMoney(expense.amount)}
-      </div>
-    </div>
-  );
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto p-6">
-        <PageHeader title="Expenses" actions={headerActions} />
+    <div>
+      <PageTitle 
+        title="Expenses"
+        breadcrumbs={[
+          { label: "Dashboard", href: "/dashboard" },
+          { label: "Expenses" }
+        ]}
+      />
 
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
-          <SearchBar
-            value={search}
-            onChange={setSearch}
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
+        {/* Search */}
+        <div className="relative w-full sm:max-w-sm">
+          <input
+            type="text"
             placeholder="Search expenses..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
-          <div className="flex gap-3">
-            <Button variant="outline" icon={<SlidersHorizontal size={16} />}>
-              Filter
-            </Button>
-            <Button variant="outline" icon={<Search size={18} />} size="sm" />
+          <SearchIcon />
+        </div>
+
+        {/* Actions */}
+        <div className="flex gap-3">
+          <button
+            onClick={handleExportExcel}
+            disabled={isExporting}
+            className="px-6 py-3 border border-green-600 text-green-700 rounded-lg hover:bg-green-50 font-medium flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <ExcelIcon />
+            {isExporting ? "Exporting..." : "Export Excel"}
+          </button>
+
+          <button
+            onClick={() => setIsCreateExpenseOpen(true)}
+            className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium"
+          >
+            Create Expense
+          </button>
+        </div>
+      </div>
+
+      {/* Main Content Card */}
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100">
+        {/* Date Navigation */}
+        <div className="p-6 border-b border-gray-200">
+          <div className="flex items-center justify-between gap-6">
+            <div className="flex gap-6">
+              <button className="px-4 py-2 bg-gray-900 text-white rounded-lg font-medium text-sm">
+                Day
+              </button>
+              <button className="flex items-center gap-2 text-gray-700 font-medium text-sm">
+                {formatDate(new Date(), "Do MMMM, YYYY")}
+                <ChevronRight size={16} className="rotate-90" />
+              </button>
+            </div>
+            <div className="flex gap-6">
+              {["Yesterday", "Today", "Tomorrow"].map((tab) => (
+                <button
+                  key={tab}
+                  onClick={() => setDateToFilter(tab)}
+                  className={`font-medium text-sm pb-1 transition-colors ${
+                    activeTab === tab
+                      ? "text-blue-600 border-b-2 border-blue-600"
+                      : "text-gray-500 hover:text-gray-700"
+                  }`}
+                >
+                  {tab}
+                </button>
+              ))}
+            </div>
+            <div className="flex gap-3">
+              <button className="flex items-center gap-2 px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium">
+                <SlidersHorizontal size={16} />
+                Filter
+              </button>
+            </div>
           </div>
         </div>
 
-        <Card padding={false}>
-          <DateFilterTabs
-            activeTab={activeTab}
-            onTabChange={setDateToFilter}
-          />
-
-          <div className="p-6">
-            <div className="hidden sm:block">
-              <DataTable
-                data={expenses}
-                columns={tableColumns}
-                onRowClick={handleRowClick}
-                emptyMessage="No expense records found"
-              />
-            </div>
-
-            <div className="sm:hidden">
-              <DataCard
-                data={expenses}
-                renderItem={renderMobileCard}
-                emptyMessage="No expense records found"
-              />
-            </div>
+        {/* Expenses List */}
+        <div className="p-6">
+          <div className="space-y-1">
+            {expenses.length === 0 ? (
+              <div className="text-center py-12 text-gray-500">
+                No expense records found
+              </div>
+            ) : (
+              expenses.map((expense) => (
+                <div
+                  key={expense.id}
+                  onClick={() => handleRowClick(expense)}
+                  className="flex items-center justify-between py-4 px-2 hover:bg-gray-50 rounded-lg transition-colors cursor-pointer"
+                >
+                  <div className="flex items-center gap-4">
+                    <div>
+                      <div className="flex items-center gap-2 mb-1">
+                        <h3 className="font-semibold text-gray-900">
+                          {expense.vendor?.name || expense.expense_type?.name || "Expense"}
+                        </h3>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        {expense.expense_type?.name && (
+                          <span className="text-xs px-2 py-0.5 rounded bg-blue-100 text-blue-700">
+                            {expense.expense_type.name}
+                          </span>
+                        )}
+                        {expense.vendor?.name && expense.expense_type?.name && (
+                          <span className="text-sm text-gray-600">
+                            {expense.vendor.name}
+                          </span>
+                        )}
+                        <span className="text-sm text-gray-600">
+                          {formatDate(new Date(expense.date), "MMM DD, YYYY")}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    {expense.payment_method && (
+                      <span className="text-sm font-medium text-gray-600">
+                        {expense.payment_method}
+                      </span>
+                    )}
+                    <div className="text-xl font-bold text-gray-900">
+                      {formatMoney(expense.amount)}
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
+        </div>
 
-          {meta && (
-            <Pagination meta={meta} onPageChange={onPageChange} />
-          )}
-        </Card>
+        {/* Pagination */}
+        {meta && (
+          <Pagination
+            meta={meta}
+            onPageChange={(newPage) => onPageChange(newPage)}
+          />
+        )}
       </div>
 
+      {/* Create Expense Modal */}
       {isCreateExpenseOpen && (
         <CreateExpense onClose={closeCreateExpense} onSave={onSave} />
       )}
 
+      {/* Expense Details Modal */}
       {selectedExpense && (
         <ExpenseDetails
           expense={selectedExpense}

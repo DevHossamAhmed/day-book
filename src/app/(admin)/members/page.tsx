@@ -9,6 +9,7 @@ import toast from "react-hot-toast";
 import { formatMoney } from "@/lib/utils/money.util";
 import { formatDate } from "@/lib/utils/date.util";
 import { exportToExcel } from "@/lib/utils/excel.util";
+import PageTitle from "@/components/ui/PageTitle";
 
 const MembersManagement = () => {
   const [isOpenCreateMember, setOpenCreateMember] = useState<boolean>(false);
@@ -66,10 +67,15 @@ const MembersManagement = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto">
-        <div className="space-y-6">
-          <h1 className="text-3xl font-bold text-gray-900">Members</h1>
+    <div>
+      <PageTitle 
+        title="Members"
+        breadcrumbs={[
+          { label: "Dashboard", href: "/dashboard" },
+          { label: "Members" }
+        ]}
+      />
+      <div className="space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             {/* Search */}
             <div className="relative w-full sm:max-w-sm">
@@ -255,7 +261,6 @@ const MembersManagement = () => {
             })}
           </div>
         </div>
-      </div>
 
       {/* Create Member Modal */}
       {isOpenCreateMember && (
