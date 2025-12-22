@@ -11,6 +11,8 @@ import toast from "react-hot-toast";
 import { PaymentMethod } from "@/data/payment-method";
 import { fetchGetIdNameList } from "@/services/user.service";
 import { MemberIdNameList } from "@/types/member";
+import FormField from "@/components/ui/form/FormField";
+import FileUpload from "@/components/ui/form/FileUpload";
 
 type Props = {
   onClose: () => void;
@@ -22,6 +24,7 @@ export default function CreateSalary({ onClose, onSave }: Props) {
   const [serverErrors, setServerErrors] = useState<string[]>([]);
   const [members, setMembers] = useState<MemberIdNameList[]>([]);
   const [isLoadingMembers, setIsLoadingMembers] = useState(true);
+  const [attachments, setAttachments] = useState<File[]>([]);
 
   const {
     register,
@@ -61,16 +64,18 @@ export default function CreateSalary({ onClose, onSave }: Props) {
     setIsLoading(true);
     try {
       // TODO: Replace with actual salary service call
-      // await storeSalary(data);
+      // await storeSalary({ ...data, attachments });
       toast.success("Salary record added successfully!");
       if (onSave) await onSave();
       if (close) {
+        setAttachments([]);
         closeDialog();
       } else {
         reset({
           payment_date: new Date().toISOString().split("T")[0],
           period: new Date().toISOString().split("T")[0],
         });
+        setAttachments([]);
       }
     } catch (error) {
       if (
@@ -300,6 +305,14 @@ export default function CreateSalary({ onClose, onSave }: Props) {
               />
               <ErrorMessage message={errors.note?.message as string} />
             </div>
+
+            {/* Attachments */}
+            <FormField label="Attachments">
+              <FileUpload
+                value={attachments}
+                onChange={setAttachments}
+              />
+            </FormField>
           </div>
           <div className="p-6 border-t border-gray-200 flex justify-end gap-3 sticky bottom-0 bg-white z-10">
             <button

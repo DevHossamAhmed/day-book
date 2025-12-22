@@ -5,11 +5,13 @@ import TextInput from "@/components/ui/form/TextInput";
 import Select from "@/components/ui/form/Select";
 import Textarea from "@/components/ui/form/Textarea";
 import DateInput from "@/components/ui/form/DateInput";
+import FileUpload from "@/components/ui/form/FileUpload";
 import Button from "@/components/ui/Button";
 import { store } from "@/services/expense.service";
 import { CreateExpenseValidationSchema } from "@/validations/expense.validation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Save } from "lucide-react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { PaymentMethod } from "@/data/payment-method";
 import { fetchGetIdNameList as fetchVendorIdNameList } from "@/services/vendor.service";
@@ -25,6 +27,7 @@ type Props = {
 };
 
 export default function CreateExpense({ onClose, onSave }: Props) {
+    const [attachments, setAttachments] = useState<File[]>([]);
     const {
         register,
         handleSubmit,
@@ -65,7 +68,7 @@ export default function CreateExpense({ onClose, onSave }: Props) {
     const { handleSubmit: submitForm, isLoading, serverErrors } =
         useFormSubmission({
             onSubmit: async (data: any) => {
-                await store(data);
+                await store({ ...data, attachments });
             },
             onSuccess: () => {
                 onSave();
@@ -75,6 +78,7 @@ export default function CreateExpense({ onClose, onSave }: Props) {
 
     const onSubmit = async (data: any) => {
         await submitForm(data);
+        setAttachments([]);
         onClose();
     };
 
@@ -83,6 +87,7 @@ export default function CreateExpense({ onClose, onSave }: Props) {
         reset({
             date: new Date().toISOString().split("T")[0],
         });
+        setAttachments([]);
     };
 
     const footer = (
@@ -198,6 +203,13 @@ export default function CreateExpense({ onClose, onSave }: Props) {
                             register={register("note")}
                             placeholder="Receipt Info (optional)"
                             rows={4}
+                        />
+                    </FormField>
+
+                    <FormField label="Attachments">
+                        <FileUpload
+                            value={attachments}
+                            onChange={setAttachments}
                         />
                     </FormField>
                 </div>

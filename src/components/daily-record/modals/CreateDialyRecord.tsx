@@ -8,6 +8,7 @@ import { ChevronRight, X, Save } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
+import { FormField, FileUpload } from "@/components/ui/form";
 
 type Props = {
   onClose: () => void;
@@ -17,6 +18,7 @@ type Props = {
 export default function CreateDailyRecord({ onClose, onSave }: Props) {
   const [isLoading, setIsLoading] = useState(false);
   const [serverErrors, setServerErrors] = useState<string[]>([]);
+  const [attachments, setAttachments] = useState<File[]>([]);
 
   const {
     register,
@@ -36,10 +38,11 @@ export default function CreateDailyRecord({ onClose, onSave }: Props) {
       setServerErrors([]);
       setIsLoading(true);
 
-      await store({ type: "added", ...data });
+      await store({ type: "added", ...data, attachments });
 
       toast.success("Record added successfully!");
       reset();
+      setAttachments([]);
       onSave();
       closeDailog();
     } catch (error) {
@@ -152,6 +155,12 @@ export default function CreateDailyRecord({ onClose, onSave }: Props) {
                 />
                 <ErrorMessage message={errors.note?.message as string} />
               </div>
+              <FormField label="Attachments">
+                <FileUpload
+                  value={attachments}
+                  onChange={setAttachments}
+                />
+              </FormField>
             </div>
             {/* Modal Footer */}
             <div className="p-6 border-t border-gray-200 bg-gray-50">

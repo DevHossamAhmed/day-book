@@ -12,6 +12,8 @@ import { fetchGetIdNameList } from "@/services/vendor.service";
 import { VendorIdNameList } from "@/types/vendor";
 import { store } from "@/services/planned-payment.service";
 import toast from "react-hot-toast";
+import FormField from "@/components/ui/form/FormField";
+import FileUpload from "@/components/ui/form/FileUpload";
 
 type Props = {
   onClose: () => void;
@@ -23,6 +25,7 @@ export default function CreatePayment({ onClose, onSave }: Props) {
   const [serverErrors, setServerErrors] = useState<string[]>([]);
   const [vendors, setVendors] = useState<VendorIdNameList[]>([]);
   const [isLoadingVendors, setIsLoadingVendors] = useState(true);
+  const [attachments, setAttachments] = useState<File[]>([]);
 
   const {
     register,
@@ -60,15 +63,17 @@ export default function CreatePayment({ onClose, onSave }: Props) {
     setServerErrors([]);
     setIsLoading(true);
     try {
-      await store(data);
+      await store({ ...data, attachments });
       toast.success("Planned payment created successfully!");
       if (onSave) await onSave();
       if (close) {
+        setAttachments([]);
         closeDialog();
       } else {
         reset({
           due_date: new Date().toISOString().split("T")[0],
         });
+        setAttachments([]);
       }
     } catch (error) {
       if (
@@ -261,6 +266,14 @@ export default function CreatePayment({ onClose, onSave }: Props) {
               />
               <ErrorMessage message={errors.note?.message as string} />
             </div>
+
+            {/* Attachments */}
+            <FormField label="Attachments">
+              <FileUpload
+                value={attachments}
+                onChange={setAttachments}
+              />
+            </FormField>
           </div>
 
           {/* Footer Buttons */}

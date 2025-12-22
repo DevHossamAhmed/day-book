@@ -64,6 +64,11 @@ const OpeningBalancePage = () => {
     fetchData(page);
   }
 
+  const handleRowClick = (balance: Balance) => {
+    setSelectedBalance(balance);
+    setIsEntryDetailsOpen(true);
+  };
+
   const fetchData = async (newPage: number) => {
     try {
       setIsLoading(true);
@@ -226,44 +231,45 @@ const OpeningBalancePage = () => {
                 </div>
               ) : (
                 balances.map((balance: Balance) => (
-                <div
-                  key={balance.id}
-                  onClick={() => handleRowClick(balance)}
-                  className="flex items-center justify-between py-4 px-2 hover:bg-gray-50 rounded-lg transition-colors cursor-pointer"
-                >
-                  <div className="flex items-center gap-4">
-                    <div>
-                      <div className="flex items-center gap-2 mb-1">
-                        <h3 className="font-semibold text-gray-900">
-                          {balance.source}
-                        </h3>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <span
-                          className={`text-xs px-2 py-0.5 rounded font-medium ${
-                            balance.type === "Added"
-                              ? "bg-green-100 text-green-700"
-                              : "bg-purple-100 text-purple-700"
-                          }`}
-                        >
-                          {CapitalizeFirst(balance.type)}
-                        </span>
-                        <span className="text-sm text-gray-600">
-                          {balance.added_by_fullname}
-                        </span>
-                        <span className="text-sm text-gray-600">
-                          {formatDate(new Date(balance.date), "MMM DD, YYYY")}
-                        </span>
+                  <div
+                    key={balance.id}
+                    onClick={() => handleRowClick(balance)}
+                    className="flex items-center justify-between py-4 px-2 hover:bg-gray-50 rounded-lg transition-colors cursor-pointer"
+                  >
+                    <div className="flex items-center gap-4">
+                      <div>
+                        <div className="flex items-center gap-2 mb-1">
+                          <h3 className="font-semibold text-gray-900">
+                            {balance.source}
+                          </h3>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span
+                            className={`text-xs px-2 py-0.5 rounded font-medium ${
+                              balance.type === "Added"
+                                ? "bg-green-100 text-green-700"
+                                : "bg-purple-100 text-purple-700"
+                            }`}
+                          >
+                            {CapitalizeFirst(balance.type)}
+                          </span>
+                          <span className="text-sm text-gray-600">
+                            {balance.added_by_fullname}
+                          </span>
+                          <span className="text-sm text-gray-600">
+                            {formatDate(new Date(balance.date), "MMM DD, YYYY")}
+                          </span>
+                        </div>
                       </div>
                     </div>
+                    <div className="text-xl font-bold text-gray-900">
+                      {formatMoney(balance.amount)}
+                    </div>
                   </div>
-                  <div className="text-xl font-bold text-gray-900">
-                    {formatMoney(balance.amount)}
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
+                ))
+              )}
+            </div>
+          )}
         </div>
 
         {/* Pagination */}

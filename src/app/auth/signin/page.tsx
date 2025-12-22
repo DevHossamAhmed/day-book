@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LoginValidationSchema } from "@/validations/login.validation";
 import ErrorMessage from "@/components/ui/ErrorMessage";
-import { signIn } from "next-auth/react";
+import { signIn, getSession } from "next-auth/react";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 
@@ -36,7 +36,21 @@ const LoginPage = () => {
       setIsLoading(false);
       toast.error(res.error);
     } else {
-      toast.success("Welcome back 👋 You’re logged in successfully!");
+      // Get session and store in localStorage
+      const session = await getSession();
+      if (session) {
+        const accessToken = (session as any)?.accessToken;
+        const orgId = (session as any)?.user?.org_id;
+        
+        if (accessToken) {
+          localStorage.setItem("access_token", accessToken);
+        }
+        if (orgId) {
+          localStorage.setItem("org_id", String(orgId));
+        }
+      }
+      
+      toast.success("Welcome back 👋 You're logged in successfully!");
       router.push("/dashboard");
     }
   };
