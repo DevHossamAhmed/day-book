@@ -31,7 +31,6 @@ export default function CreateIncome({ onClose, onSave }: Props) {
         handleSubmit,
         formState: { errors },
         reset,
-        watch,
     } = useForm({
         resolver: zodResolver(CreateIncomeValidationSchema),
         defaultValues: {
@@ -63,7 +62,6 @@ export default function CreateIncome({ onClose, onSave }: Props) {
 
     const members = membersData || [];
     const stores = storesData || [];
-    const salesPersonId = watch("sales_person_id");
 
     const { handleSubmit: submitForm, isLoading, serverErrors } =
         useFormSubmission({
@@ -71,6 +69,7 @@ export default function CreateIncome({ onClose, onSave }: Props) {
                 const selectedMember = members.find(
                     (member) => member.id === Number(data.sales_person_id)
                 );
+                console.log(data);
                 const payload = {
                     ...data,
                     sales_person_fullname: selectedMember?.full_name || "",
@@ -85,12 +84,14 @@ export default function CreateIncome({ onClose, onSave }: Props) {
         });
 
     const onSubmit = async (data: any) => {
+        console.log(attachments);
         await submitForm(data);
         setAttachments([]);
         onClose();
     };
 
     const onSaveAndNew = async (data: any) => {
+        console.log(data);
         await submitForm(data);
         reset({
             date: new Date().toISOString().split("T")[0],
