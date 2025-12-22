@@ -69,7 +69,6 @@ export default function CreateIncome({ onClose, onSave }: Props) {
                 const selectedMember = members.find(
                     (member) => member.id === Number(data.sales_person_id)
                 );
-                console.log(data);
                 const payload = {
                     ...data,
                     sales_person_fullname: selectedMember?.full_name || "",
@@ -84,19 +83,17 @@ export default function CreateIncome({ onClose, onSave }: Props) {
         });
 
     const onSubmit = async (data: any) => {
-        console.log(attachments);
         await submitForm(data);
-        setAttachments([]);
-        onClose();
+        //setAttachments([]);
+        //onClose();
     };
 
     const onSaveAndNew = async (data: any) => {
-        console.log(data);
         await submitForm(data);
         reset({
             date: new Date().toISOString().split("T")[0],
         });
-        setAttachments([]);
+        //setAttachments([]);
     };
 
     const footer = (
@@ -112,6 +109,7 @@ export default function CreateIncome({ onClose, onSave }: Props) {
             <Button
                 type="submit"
                 variant="primary"
+                onClick={handleSubmit(onSubmit)}
                 icon={<Save className="w-5 h-5" />}
                 disabled={isLoading}
                 isLoading={isLoading}

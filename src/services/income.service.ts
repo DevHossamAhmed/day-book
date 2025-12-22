@@ -5,38 +5,26 @@ import { PaginatedResult } from "@/types/pagination";
 
 export async function store(form: any): Promise<Income> {
     try {
-        // If form contains File objects (attachments), use FormData
-        const hasFiles = form.attachments && Array.isArray(form.attachments) && form.attachments.length > 0;
-        
-        let payload: any;
-        
-        if (hasFiles) {
-            const formData = new FormData();
-            
-            // Append all form fields
-            Object.keys(form).forEach((key) => {
-                if (key !== 'attachments') {
-                    const value = form[key];
-                    // Convert values to string for FormData
-                    if (value !== null && value !== undefined) {
-                        formData.append(key, String(value));
-                    }
+        const formData = new FormData();
+
+        // Append all form fields
+        Object.keys(form).forEach((key) => {
+            if (key !== 'attachments') {
+                const value = form[key];
+                // Convert values to string for FormData
+                if (value !== null && value !== undefined) {
+                    formData.append(key, String(value));
                 }
-            });
-            
-            // Append attachments
-            form.attachments.forEach((file: File, index: number) => {
-                formData.append(`attachments[${index}]`, file);
-            });
-            
-            payload = formData;
-        } else {
-            // Remove attachments if empty and send as JSON
-            const { attachments, ...jsonPayload } = form;
-            payload = jsonPayload;
-        }
-        
-        const res = await DaybookApi.post("/incomes", payload);
+            }
+        });
+
+        // Append attachments
+        form.attachments.forEach((file: File, index: number) => {
+            formData.append(`attachments[${index}]`, file);
+        });
+
+
+        const res = await DaybookApi.post("/incomes", formData);
         return res.data.data as Income;
     } catch (error: any) {
         return Promise.reject(error);
