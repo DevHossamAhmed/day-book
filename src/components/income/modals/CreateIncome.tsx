@@ -84,8 +84,8 @@ export default function CreateIncome({ onClose, onSave }: Props) {
 
     const onSubmit = async (data: any) => {
         await submitForm(data);
-        //setAttachments([]);
-        //onClose();
+        setAttachments([]);
+        onClose();
     };
 
     const onSaveAndNew = async (data: any) => {
@@ -93,7 +93,7 @@ export default function CreateIncome({ onClose, onSave }: Props) {
         reset({
             date: new Date().toISOString().split("T")[0],
         });
-        //setAttachments([]);
+        setAttachments([]);
     };
 
     const footer = (
@@ -101,6 +101,7 @@ export default function CreateIncome({ onClose, onSave }: Props) {
             <Button
                 variant="outline"
                 onClick={handleSubmit(onSaveAndNew)}
+                icon={<Save className="w-5 h-5" />}
                 disabled={isLoading}
                 isLoading={isLoading}
             >
