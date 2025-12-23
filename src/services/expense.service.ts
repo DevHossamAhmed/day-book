@@ -71,6 +71,13 @@ export async function destroy(id: number): Promise<void> {
 export async function exportExpenses(params: {
     date?: string;
     search?: string;
+    from_date?: string;
+    to_date?: string;
+    vendor_id?: string;
+    expense_type_id?: string;
+    payment_method?: string;
+    amount_min?: string;
+    amount_max?: string;
 }): Promise<Expense[]> {
     try {
         const res = await DaybookApi.get<ApiResponse<PaginatedResult<Expense>>>("/expenses", {

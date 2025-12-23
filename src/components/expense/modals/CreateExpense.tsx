@@ -14,19 +14,20 @@ import { Save } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { PaymentMethod } from "@/data/payment-method";
-import { fetchGetIdNameList as fetchVendorIdNameList } from "@/services/vendor.service";
 import { VendorIdNameList } from "@/types/vendor";
-import { fetchGetIdNameList as fetchExpenseTypeIdNameList } from "@/services/expense-type.service";
 import { ExpenseTypeIdNameList } from "@/types/expense-type";
 import { useFormSubmission } from "@/hooks/useFormSubmission";
-import { useAsyncData } from "@/hooks/useAsyncData";
 
 type Props = {
     onClose: () => void;
     onSave: () => void;
+    vendors: VendorIdNameList[];
+    expenseTypes: ExpenseTypeIdNameList[];
+    isLoadingVendors?: boolean;
+    isLoadingExpenseTypes?: boolean;
 };
 
-export default function CreateExpense({ onClose, onSave }: Props) {
+export default function CreateExpense({ onClose, onSave, vendors, expenseTypes, isLoadingVendors = false, isLoadingExpenseTypes = false }: Props) {
     const [attachments, setAttachments] = useState<File[]>([]);
     const {
         register,
@@ -39,31 +40,6 @@ export default function CreateExpense({ onClose, onSave }: Props) {
             date: new Date().toISOString().split("T")[0],
         },
     });
-
-    // Fetch vendors
-    const {
-        data: vendorsData,
-        isLoading: isLoadingVendors,
-    } = useAsyncData({
-        fetchFn: async () => {
-            const res = await fetchVendorIdNameList();
-            return res.data;
-        },
-    });
-
-    // Fetch expense types
-    const {
-        data: expenseTypesData,
-        isLoading: isLoadingExpenseTypes,
-    } = useAsyncData({
-        fetchFn: async () => {
-            const res = await fetchExpenseTypeIdNameList();
-            return res.data;
-        },
-    });
-
-    const vendors = vendorsData || [];
-    const expenseTypes = expenseTypesData || [];
 
     const { handleSubmit: submitForm, isLoading, serverErrors } =
         useFormSubmission({

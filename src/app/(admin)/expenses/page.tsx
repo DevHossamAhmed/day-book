@@ -15,10 +15,14 @@ import toast from "react-hot-toast";
 import { exportToExcel } from "@/lib/utils/excel.util";
 import { PaginationMeta } from "@/types/pagination";
 import { Pagination } from "@/components/ui/Pagination";
-import ExpenseDetails from "@/components/expense/modals/ExpenseDetails";
-import { formatMoney } from "@/lib/utils/money.util";
+import ExpenseRow from "@/components/expense/ui/ExpenseRow";
 import PageTitle from "@/components/ui/PageTitle";
 import PageLoading from "@/components/ui/PageLoading";
+import { formatMoney } from "@/lib/utils/money.util";
+import { PaymentMethod } from "@/data/payment-method";
+import { fetchGetIdNameList as fetchVendorIdNameList } from "@/services/vendor.service";
+import { fetchGetIdNameList as fetchExpenseTypeIdNameList } from "@/services/expense-type.service";
+import { useAsyncData } from "@/hooks/useAsyncData";
 
 const ExpensesPage = () => {
   const [activeTab, setActiveTab] = useState<string>("Today");
@@ -29,14 +33,46 @@ const ExpensesPage = () => {
   const [meta, setMeta] = useState<PaginationMeta>();
   const [page, setPage] = useState<number>(1);
   const [limit] = useState<number>(10);
-  const [selectedExpense, setSelectedExpense] = useState<Expense | null>(null);
-  const [isDetailsOpen, setIsDetailsOpen] = useState<boolean>(false);
   const [isExporting, setIsExporting] = useState(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isFilterOpen, setIsFilterOpen] = useState<boolean>(false);
+  
+  // Filter states
+  const [filterFromDate, setFilterFromDate] = useState<string>("");
+  const [filterToDate, setFilterToDate] = useState<string>("");
+  const [filterVendorId, setFilterVendorId] = useState<string>("");
+  const [filterExpenseTypeId, setFilterExpenseTypeId] = useState<string>("");
+  const [filterPaymentMethod, setFilterPaymentMethod] = useState<string>("");
+  const [filterAmountMin, setFilterAmountMin] = useState<string>("");
+  const [filterAmountMax, setFilterAmountMax] = useState<string>("");
+
+  // Fetch vendors and expense types for filters
+  const {
+    data: vendorsData,
+    isLoading: isLoadingVendors,
+  } = useAsyncData({
+    fetchFn: async () => {
+      const res = await fetchVendorIdNameList();
+      return res.data;
+    },
+  });
+
+  const {
+    data: expenseTypesData,
+    isLoading: isLoadingExpenseTypes,
+  } = useAsyncData({
+    fetchFn: async () => {
+      const res = await fetchExpenseTypeIdNameList();
+      return res.data;
+    },
+  });
+
+  const vendors = vendorsData || [];
+  const expenseTypes = expenseTypesData || [];
 
   useEffect(() => {
     fetchData(1);
-  }, [activeTab, search, dateFilter]);
+  }, [activeTab, search, dateFilter, filterFromDate, filterToDate, filterVendorId, filterExpenseTypeId, filterPaymentMethod, filterAmountMin, filterAmountMax]);
 
   const openCreateExpense = () => setIsCreateExpenseOpen(true);
   const closeCreateExpense = () => setIsCreateExpenseOpen(false);
@@ -53,12 +89,23 @@ const ExpensesPage = () => {
   const fetchData = async (newPage: number) => {
     try {
       setIsLoading(true);
-      const { items, meta } = await fetchExpenses({
+      const params: any = {
         date: dateFilter,
         page: newPage,
         limit,
         search: search || undefined,
-      });
+      };
+
+      // Add filter parameters
+      if (filterFromDate) params.from_date = filterFromDate;
+      if (filterToDate) params.to_date = filterToDate;
+      if (filterVendorId) params.vendor_id = filterVendorId;
+      if (filterExpenseTypeId) params.expense_type_id = filterExpenseTypeId;
+      if (filterPaymentMethod) params.payment_method = filterPaymentMethod;
+      if (filterAmountMin) params.amount_min = filterAmountMin;
+      if (filterAmountMax) params.amount_max = filterAmountMax;
+
+      const { items, meta } = await fetchExpenses(params);
 
       setExpenses(items);
       setMeta(meta);
@@ -74,18 +121,24 @@ const ExpensesPage = () => {
     fetchData(1);
   };
 
-  const handleRowClick = (expense: Expense) => {
-    setSelectedExpense(expense);
-    setIsDetailsOpen(true);
-  };
-
   const handleExportExcel = async () => {
     try {
       setIsExporting(true);
-      const data = await exportExpenses({
+      const params: any = {
         date: dateFilter,
         search: search || undefined,
-      });
+      };
+
+      // Add filter parameters for export
+      if (filterFromDate) params.from_date = filterFromDate;
+      if (filterToDate) params.to_date = filterToDate;
+      if (filterVendorId) params.vendor_id = filterVendorId;
+      if (filterExpenseTypeId) params.expense_type_id = filterExpenseTypeId;
+      if (filterPaymentMethod) params.payment_method = filterPaymentMethod;
+      if (filterAmountMin) params.amount_min = filterAmountMin;
+      if (filterAmountMax) params.amount_max = filterAmountMax;
+
+      const data = await exportExpenses(params);
       
       const exportData = data.map((expense) => ({
         "Date": formatDate(new Date(expense.date), "YYYY-MM-DD"),
@@ -105,6 +158,18 @@ const ExpensesPage = () => {
       setIsExporting(false);
     }
   };
+
+  const handleClearFilters = () => {
+    setFilterFromDate("");
+    setFilterToDate("");
+    setFilterVendorId("");
+    setFilterExpenseTypeId("");
+    setFilterPaymentMethod("");
+    setFilterAmountMin("");
+    setFilterAmountMax("");
+  };
+
+  const hasActiveFilters = filterFromDate || filterToDate || filterVendorId || filterExpenseTypeId || filterPaymentMethod || filterAmountMin || filterAmountMax;
 
 
   return (
@@ -157,15 +222,6 @@ const ExpensesPage = () => {
         <div className="p-6 border-b border-gray-200">
           <div className="flex items-center justify-between gap-6">
             <div className="flex gap-6">
-              <button className="px-4 py-2 bg-gray-900 text-white rounded-lg font-medium text-sm">
-                Day
-              </button>
-              <button className="flex items-center gap-2 text-gray-700 font-medium text-sm">
-                {formatDate(new Date(), "Do MMMM, YYYY")}
-                <ChevronRight size={16} className="rotate-90" />
-              </button>
-            </div>
-            <div className="flex gap-6">
               {["Yesterday", "Today", "Tomorrow"].map((tab) => (
                 <button
                   key={tab}
@@ -181,67 +237,182 @@ const ExpensesPage = () => {
               ))}
             </div>
             <div className="flex gap-3">
-              <button className="flex items-center gap-2 px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium">
+              <button 
+                onClick={() => setIsFilterOpen(!isFilterOpen)}
+                className={`flex items-center gap-2 px-4 py-2 border rounded-lg transition-colors text-sm font-medium ${
+                  isFilterOpen || hasActiveFilters
+                    ? "bg-blue-600 text-white border-blue-600 hover:bg-blue-700"
+                    : "text-gray-700 border-gray-300 hover:bg-gray-50"
+                }`}
+              >
                 <SlidersHorizontal size={16} />
                 Filter
+                {hasActiveFilters && (
+                  <span className="ml-1 px-1.5 py-0.5 bg-white text-blue-600 rounded-full text-xs font-semibold">
+                    {[
+                      filterFromDate && "1",
+                      filterToDate && "1",
+                      filterVendorId && "1",
+                      filterExpenseTypeId && "1",
+                      filterPaymentMethod && "1",
+                      filterAmountMin && "1",
+                      filterAmountMax && "1",
+                    ].filter(Boolean).length}
+                  </span>
+                )}
               </button>
             </div>
           </div>
         </div>
+
+        {/* Filter Panel */}
+        {isFilterOpen && (
+          <div className="p-6 border-b border-gray-200 bg-gray-50">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {/* Period From */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Period From
+                </label>
+                <input
+                  type="date"
+                  value={filterFromDate}
+                  onChange={(e) => setFilterFromDate(e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+
+              {/* Period To */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Period To
+                </label>
+                <input
+                  type="date"
+                  value={filterToDate}
+                  onChange={(e) => setFilterToDate(e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+
+              {/* Vendor */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Vendor
+                </label>
+                <select
+                  value={filterVendorId}
+                  onChange={(e) => setFilterVendorId(e.target.value)}
+                  disabled={isLoadingVendors}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white disabled:bg-gray-100 disabled:cursor-not-allowed"
+                >
+                  <option value="">All Vendors</option>
+                  {vendors.map((vendor) => (
+                    <option key={vendor.id} value={vendor.id}>
+                      {vendor.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Expense Type */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Expense Type
+                </label>
+                <select
+                  value={filterExpenseTypeId}
+                  onChange={(e) => setFilterExpenseTypeId(e.target.value)}
+                  disabled={isLoadingExpenseTypes}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white disabled:bg-gray-100 disabled:cursor-not-allowed"
+                >
+                  <option value="">All Expense Types</option>
+                  {expenseTypes.map((expenseType) => (
+                    <option key={expenseType.id} value={expenseType.id}>
+                      {expenseType.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Payment Method */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Payment Method
+                </label>
+                <select
+                  value={filterPaymentMethod}
+                  onChange={(e) => setFilterPaymentMethod(e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+                >
+                  <option value="">All Payment Methods</option>
+                  {PaymentMethod.map((method) => (
+                    <option key={method} value={method}>
+                      {method}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Amount Min */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Amount Min
+                </label>
+                <input
+                  type="number"
+                  value={filterAmountMin}
+                  onChange={(e) => setFilterAmountMin(e.target.value)}
+                  placeholder="Minimum amount"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+
+              {/* Amount Max */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Amount Max
+                </label>
+                <input
+                  type="number"
+                  value={filterAmountMax}
+                  onChange={(e) => setFilterAmountMax(e.target.value)}
+                  placeholder="Maximum amount"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+            </div>
+
+            {/* Filter Actions */}
+            <div className="flex justify-end gap-3 mt-4">
+              <button
+                onClick={handleClearFilters}
+                className="px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium"
+              >
+                Clear Filters
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Expenses List */}
         <div className="p-6">
           {isLoading ? (
             <PageLoading />
           ) : (
-            <div className="space-y-1">
+            <div className="space-y-3">
               {expenses.length === 0 ? (
                 <div className="text-center py-12 text-gray-500">
                   No expense records found
                 </div>
               ) : (
                 expenses.map((expense) => (
-                <div
-                  key={expense.id}
-                  onClick={() => handleRowClick(expense)}
-                  className="flex items-center justify-between py-4 px-2 hover:bg-gray-50 rounded-lg transition-colors cursor-pointer"
-                >
-                  <div className="flex items-center gap-4">
-                    <div>
-                      <div className="flex items-center gap-2 mb-1">
-                        <h3 className="font-semibold text-gray-900">
-                          {expense.vendor?.name || expense.expense_type?.name || "Expense"}
-                        </h3>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        {expense.expense_type?.name && (
-                          <span className="text-xs px-2 py-0.5 rounded bg-blue-100 text-blue-700">
-                            {expense.expense_type.name}
-                          </span>
-                        )}
-                        {expense.vendor?.name && expense.expense_type?.name && (
-                          <span className="text-sm text-gray-600">
-                            {expense.vendor.name}
-                          </span>
-                        )}
-                        <span className="text-sm text-gray-600">
-                          {formatDate(new Date(expense.date), "MMM DD, YYYY")}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    {expense.payment_method && (
-                      <span className="text-sm font-medium text-gray-600">
-                        {expense.payment_method}
-                      </span>
-                    )}
-                    <div className="text-xl font-bold text-gray-900">
-                      {formatMoney(expense.amount)}
-                    </div>
-                  </div>
-                </div>
-              ))
+                  <ExpenseRow
+                    key={expense.id}
+                    expense={expense}
+                    onSave={onSave}
+                  />
+                ))
               )}
             </div>
           )}
@@ -258,21 +429,16 @@ const ExpensesPage = () => {
 
       {/* Create Expense Modal */}
       {isCreateExpenseOpen && (
-        <CreateExpense onClose={closeCreateExpense} onSave={onSave} />
-      )}
-
-      {/* Expense Details Modal */}
-      {selectedExpense && (
-        <ExpenseDetails
-          expense={selectedExpense}
-          isOpen={isDetailsOpen}
-          onClose={() => {
-            setIsDetailsOpen(false);
-            setSelectedExpense(null);
-          }}
+        <CreateExpense 
+          onClose={closeCreateExpense} 
           onSave={onSave}
+          vendors={vendors}
+          expenseTypes={expenseTypes}
+          isLoadingVendors={isLoadingVendors}
+          isLoadingExpenseTypes={isLoadingExpenseTypes}
         />
       )}
+
     </div>
   );
 };
