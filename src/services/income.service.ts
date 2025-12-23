@@ -43,6 +43,13 @@ export async function fetchIncomes(params: Object): Promise<PaginatedResult<Inco
 export async function exportIncomes(params: {
     date?: string;
     search?: string;
+    from_date?: string;
+    to_date?: string;
+    store_id?: string;
+    sales_person_id?: string;
+    payment_method?: string;
+    amount_min?: string;
+    amount_max?: string;
 }): Promise<Income[]> {
     try {
         const res = await DaybookApi.get<ApiResponse<PaginatedResult<Income>>>("/incomes", {

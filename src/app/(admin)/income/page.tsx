@@ -4,6 +4,7 @@ import {
   ChevronRight,
   Search,
   SlidersHorizontal,
+  X,
 } from "lucide-react";
 import { formatDate, getDateByLabel } from "@/lib/utils/date.util";
 import CreateIncome from "@/components/income/modals/CreateIncome";
@@ -19,6 +20,10 @@ import { Pagination } from "@/components/ui/Pagination";
 import PageTitle from "@/components/ui/PageTitle";
 import PageLoading from "@/components/ui/PageLoading";
 import IncomeRow from "@/components/income/ui/IncomeRow";
+import { PaymentMethod } from "@/data/payment-method";
+import { fetchGetIdNameList } from "@/services/user.service";
+import { fetchStoreIdNameList } from "@/services/store.service";
+import { useAsyncData } from "@/hooks/useAsyncData";
 
 const IncomePage = () => {
   const [activeTab, setActiveTab] = useState<string>("Today");
@@ -31,10 +36,44 @@ const IncomePage = () => {
   const [limit] = useState<number>(10);
   const [isExporting, setIsExporting] = useState(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isFilterOpen, setIsFilterOpen] = useState<boolean>(false);
+  
+  // Filter states
+  const [filterFromDate, setFilterFromDate] = useState<string>("");
+  const [filterToDate, setFilterToDate] = useState<string>("");
+  const [filterStoreId, setFilterStoreId] = useState<string>("");
+  const [filterSalesPersonId, setFilterSalesPersonId] = useState<string>("");
+  const [filterPaymentMethod, setFilterPaymentMethod] = useState<string>("");
+  const [filterAmountMin, setFilterAmountMin] = useState<string>("");
+  const [filterAmountMax, setFilterAmountMax] = useState<string>("");
+
+  // Fetch members and stores for filters
+  const {
+    data: membersData,
+    isLoading: isLoadingMembers,
+  } = useAsyncData({
+    fetchFn: async () => {
+      const res = await fetchGetIdNameList();
+      return res.data;
+    },
+  });
+
+  const {
+    data: storesData,
+    isLoading: isLoadingStores,
+  } = useAsyncData({
+    fetchFn: async () => {
+      const res = await fetchStoreIdNameList();
+      return res.data;
+    },
+  });
+
+  const members = membersData || [];
+  const stores = storesData || [];
 
   useEffect(() => {
     fetchData(1);
-  }, [activeTab, search, dateFilter]);
+  }, [activeTab, search, dateFilter, filterFromDate, filterToDate, filterStoreId, filterSalesPersonId, filterPaymentMethod, filterAmountMin, filterAmountMax]);
 
   const openCreateIncome = () => setIsCreateIcomeOpen(true);
   const closeCreateIncome = () => setIsCreateIcomeOpen(false);
@@ -51,12 +90,23 @@ const IncomePage = () => {
   const fetchData = async (newPage: number) => {
     try {
       setIsLoading(true);
-      const { items, meta } = await fetchIncomes({
+      const params: any = {
         date: dateFilter,
         page: newPage,
         limit,
         search: search || undefined,
-      });
+      };
+
+      // Add filter parameters
+      if (filterFromDate) params.from_date = filterFromDate;
+      if (filterToDate) params.to_date = filterToDate;
+      if (filterStoreId) params.store_id = filterStoreId;
+      if (filterSalesPersonId) params.sales_person_id = filterSalesPersonId;
+      if (filterPaymentMethod) params.payment_method = filterPaymentMethod;
+      if (filterAmountMin) params.amount_min = filterAmountMin;
+      if (filterAmountMax) params.amount_max = filterAmountMax;
+
+      const { items, meta } = await fetchIncomes(params);
 
       setIncomes(items);
       setMeta(meta);
@@ -75,10 +125,21 @@ const IncomePage = () => {
   const handleExportExcel = async () => {
     try {
       setIsExporting(true);
-      const data = await exportIncomes({
+      const params: any = {
         date: dateFilter,
         search: search || undefined,
-      });
+      };
+
+      // Add filter parameters for export
+      if (filterFromDate) params.from_date = filterFromDate;
+      if (filterToDate) params.to_date = filterToDate;
+      if (filterStoreId) params.store_id = filterStoreId;
+      if (filterSalesPersonId) params.sales_person_id = filterSalesPersonId;
+      if (filterPaymentMethod) params.payment_method = filterPaymentMethod;
+      if (filterAmountMin) params.amount_min = filterAmountMin;
+      if (filterAmountMax) params.amount_max = filterAmountMax;
+
+      const data = await exportIncomes(params);
       
       const exportData = data.map((income) => ({
         "Date": formatDate(new Date(income.date), "YYYY-MM-DD"),
@@ -98,6 +159,18 @@ const IncomePage = () => {
       setIsExporting(false);
     }
   };
+
+  const handleClearFilters = () => {
+    setFilterFromDate("");
+    setFilterToDate("");
+    setFilterStoreId("");
+    setFilterSalesPersonId("");
+    setFilterPaymentMethod("");
+    setFilterAmountMin("");
+    setFilterAmountMax("");
+  };
+
+  const hasActiveFilters = filterFromDate || filterToDate || filterStoreId || filterSalesPersonId || filterPaymentMethod || filterAmountMin || filterAmountMax;
 
 
   return (
@@ -174,13 +247,169 @@ const IncomePage = () => {
               ))}
             </div>
             <div className="flex gap-3">
-              <button className="flex items-center gap-2 px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium">
+              <button 
+                onClick={() => setIsFilterOpen(!isFilterOpen)}
+                className={`flex items-center gap-2 px-4 py-2 border rounded-lg transition-colors text-sm font-medium ${
+                  isFilterOpen || hasActiveFilters
+                    ? "bg-blue-600 text-white border-blue-600 hover:bg-blue-700"
+                    : "text-gray-700 border-gray-300 hover:bg-gray-50"
+                }`}
+              >
                 <SlidersHorizontal size={16} />
                 Filter
+                {hasActiveFilters && (
+                  <span className="ml-1 px-1.5 py-0.5 bg-white text-blue-600 rounded-full text-xs font-semibold">
+                    {[
+                      filterFromDate && "1",
+                      filterToDate && "1",
+                      filterStoreId && "1",
+                      filterSalesPersonId && "1",
+                      filterPaymentMethod && "1",
+                      filterAmountMin && "1",
+                      filterAmountMax && "1",
+                    ].filter(Boolean).length}
+                  </span>
+                )}
               </button>
             </div>
           </div>
         </div>
+
+        {/* Filter Panel */}
+        {isFilterOpen && (
+          <div className="p-6 border-b border-gray-200 bg-gray-50">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {/* Period From */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Period From
+                </label>
+                <input
+                  type="date"
+                  value={filterFromDate}
+                  onChange={(e) => setFilterFromDate(e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+
+              {/* Period To */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Period To
+                </label>
+                <input
+                  type="date"
+                  value={filterToDate}
+                  onChange={(e) => setFilterToDate(e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+
+              {/* Store */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Store
+                </label>
+                <select
+                  value={filterStoreId}
+                  onChange={(e) => setFilterStoreId(e.target.value)}
+                  disabled={isLoadingStores}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white disabled:bg-gray-100 disabled:cursor-not-allowed"
+                >
+                  <option value="">All Stores</option>
+                  {stores.map((store) => (
+                    <option key={store.id} value={store.id}>
+                      {store.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Sales Person */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Sales Person
+                </label>
+                <select
+                  value={filterSalesPersonId}
+                  onChange={(e) => setFilterSalesPersonId(e.target.value)}
+                  disabled={isLoadingMembers}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white disabled:bg-gray-100 disabled:cursor-not-allowed"
+                >
+                  <option value="">All Sales Persons</option>
+                  {members.map((member) => (
+                    <option key={member.id} value={member.id}>
+                      {member.full_name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Payment Method */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Payment Method
+                </label>
+                <select
+                  value={filterPaymentMethod}
+                  onChange={(e) => setFilterPaymentMethod(e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+                >
+                  <option value="">All Payment Methods</option>
+                  {PaymentMethod.map((method) => (
+                    <option key={method} value={method}>
+                      {method}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Amount Min */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Amount Min
+                </label>
+                <input
+                  type="number"
+                  value={filterAmountMin}
+                  onChange={(e) => setFilterAmountMin(e.target.value)}
+                  placeholder="Minimum amount"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+
+              {/* Amount Max */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Amount Max
+                </label>
+                <input
+                  type="number"
+                  value={filterAmountMax}
+                  onChange={(e) => setFilterAmountMax(e.target.value)}
+                  placeholder="Maximum amount"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+            </div>
+
+            {/* Filter Actions */}
+            <div className="flex justify-end gap-3 mt-4">
+              <button
+                onClick={handleClearFilters}
+                className="px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium"
+              >
+                Clear Filters
+              </button>
+              <button
+                onClick={() => setIsFilterOpen(false)}
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+              >
+                Apply Filters
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Income List */}
         <div className="p-6">
