@@ -1,10 +1,11 @@
 import { Media } from "./media";
+import { Store } from "./store";
 
 export interface Income {
     id: number;
     date: string; // ISO date string
     store_id?: number | null;
-    source?: string | null; // Store name (for display)
+    store?: Store | null;
     sales_person_id?: number | null;
     sales_person_fullname?: string | null;
     amount: number;

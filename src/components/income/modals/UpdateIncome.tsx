@@ -87,16 +87,9 @@ export default function UpdateIncome({ onClose, onSave, income }: Props) {
                 (member) => member.id === Number(data.sales_person_id)
             );
 
-            // Find the selected store's name
-            const selectedStore = stores.find(
-                (store) => store.id === Number(data.store_id)
-            );
-
-            // Add sales_person_fullname and source (store name) to the payload
             const payload = {
                 ...data,
                 sales_person_fullname: selectedMember?.full_name || "",
-                source: selectedStore?.name || "",
             };
 
             await update(income.id, payload);

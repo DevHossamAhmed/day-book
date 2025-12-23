@@ -133,7 +133,9 @@ export default function IncomeDetails({ isOpen, onClose, income, onSave }: Props
                         <div className="flex items-start justify-between mb-8">
                             <div>
                                 <p className="text-sm text-gray-500 mb-1">{income.date}</p>
-                                <h2 className="text-xl font-semibold text-gray-900">{income.source}</h2>
+                                <h2 className="text-xl font-semibold text-gray-900">
+                                    {income.store?.name || income.sales_person_fullname || "Income"}
+                                </h2>
                                 <div className="mt-2 space-y-1">
                                     {income.sales_person_fullname && (
                                         <p className="text-sm text-gray-500">Sales Person: {income.sales_person_fullname}</p>

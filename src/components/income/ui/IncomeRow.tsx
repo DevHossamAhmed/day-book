@@ -23,14 +23,9 @@ export default function IncomeRow({ income, onSave }: Props) {
                 <div className="flex items-center gap-4 flex-1">
                     <div className="flex-1">
                         <h3 className="font-semibold text-gray-900 mb-1">
-                            {income.source || income.sales_person_fullname || "Income"}
+                            {income.store?.name || income.sales_person_fullname || "Income"}
                         </h3>
                         <div className="flex items-center gap-2 text-sm">
-                            {income.source && (
-                                <span className="text-xs px-2 py-0.5 rounded bg-green-100 text-green-700">
-                                    {income.source}
-                                </span>
-                            )}
                             {income.sales_person_fullname && (
                                 <span className="text-gray-600">
                                     {income.sales_person_fullname}

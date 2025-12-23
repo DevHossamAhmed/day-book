@@ -14,17 +14,27 @@ import { Save } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { PaymentMethod } from "@/data/payment-method";
-import { fetchGetIdNameList } from "@/services/user.service";
-import { fetchStoreIdNameList } from "@/services/store.service";
 import { useFormSubmission } from "@/hooks/useFormSubmission";
-import { useAsyncData } from "@/hooks/useAsyncData";
+import { MemberIdNameList } from "@/types/member";
+import { StoreIdNameList } from "@/types/store";
 
 type Props = {
     onClose: () => void;
     onSave: () => void;
+    members: MemberIdNameList[];
+    stores: StoreIdNameList[];
+    isLoadingMembers?: boolean;
+    isLoadingStores?: boolean;
 };
 
-export default function CreateIncome({ onClose, onSave }: Props) {
+export default function CreateIncome({
+    onClose,
+    onSave,
+    members,
+    stores,
+    isLoadingMembers = false,
+    isLoadingStores = false,
+}: Props) {
     const [attachments, setAttachments] = useState<File[]>([]);
     const {
         register,
@@ -37,31 +47,6 @@ export default function CreateIncome({ onClose, onSave }: Props) {
             date: new Date().toISOString().split("T")[0],
         },
     });
-
-    // Fetch members
-    const {
-        data: membersData,
-        isLoading: isLoadingMembers,
-    } = useAsyncData({
-        fetchFn: async () => {
-            const res = await fetchGetIdNameList();
-            return res.data;
-        },
-    });
-
-    // Fetch stores
-    const {
-        data: storesData,
-        isLoading: isLoadingStores,
-    } = useAsyncData({
-        fetchFn: async () => {
-            const res = await fetchStoreIdNameList();
-            return res.data;
-        },
-    });
-
-    const members = membersData || [];
-    const stores = storesData || [];
 
     const { handleSubmit: submitForm, isLoading, serverErrors } =
         useFormSubmission({

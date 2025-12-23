@@ -143,7 +143,7 @@ const IncomePage = () => {
       
       const exportData = data.map((income) => ({
         "Date": formatDate(new Date(income.date), "YYYY-MM-DD"),
-        "Store": income.source || "—",
+        "Store": income.store?.name || "—",
         "Sales Person": income.sales_person_fullname || "—",
         "Amount": formatMoney(income.amount),
         "Payment Method": income.payment_method || "—",
@@ -222,15 +222,6 @@ const IncomePage = () => {
         {/* Date Navigation */}
         <div className="p-6 border-b border-gray-200">
           <div className="flex items-center justify-between gap-6">
-            <div className="flex gap-6">
-              <button className="px-4 py-2 bg-gray-900 text-white rounded-lg font-medium text-sm">
-                Day
-              </button>
-              <button className="flex items-center gap-2 text-gray-700 font-medium text-sm">
-                {formatDate(new Date(), "Do MMMM, YYYY")}
-                <ChevronRight size={16} className="rotate-90" />
-              </button>
-            </div>
             <div className="flex gap-6">
               {["Yesterday", "Today", "Tomorrow"].map((tab) => (
                 <button
@@ -401,12 +392,6 @@ const IncomePage = () => {
               >
                 Clear Filters
               </button>
-              <button
-                onClick={() => setIsFilterOpen(false)}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
-              >
-                Apply Filters
-              </button>
             </div>
           </div>
         )}
@@ -445,7 +430,14 @@ const IncomePage = () => {
 
       {/* Create Income Modal */}
       {isCreateIncomeOpen && (
-        <CreateIncome onClose={closeCreateIncome} onSave={onSave} />
+        <CreateIncome
+          onClose={closeCreateIncome}
+          onSave={onSave}
+          members={members}
+          stores={stores}
+          isLoadingMembers={isLoadingMembers}
+          isLoadingStores={isLoadingStores}
+        />
       )}
     </div>
   );
