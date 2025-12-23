@@ -1,3 +1,5 @@
+import { Media } from "./media";
+
 export interface Income {
     id: number;
     date: string; // ISO date string
@@ -9,6 +11,7 @@ export interface Income {
     payment_method: string;
     note?: string | null;
     added_by_fullname?: string | null;
+    media?: Media[] | null; // Array of media objects
     created_at?: string; // ISO date string
     updated_at?: string; // ISO date string
 }

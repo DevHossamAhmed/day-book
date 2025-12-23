@@ -18,6 +18,7 @@ import { PaginationMeta } from "@/types/pagination";
 import { Pagination } from "@/components/ui/Pagination";
 import PageTitle from "@/components/ui/PageTitle";
 import PageLoading from "@/components/ui/PageLoading";
+import IncomeRow from "@/components/income/ui/IncomeRow";
 
 const IncomePage = () => {
   const [activeTab, setActiveTab] = useState<string>("Today");
@@ -98,10 +99,6 @@ const IncomePage = () => {
     }
   };
 
-  const handleRowClick = (income: Income) => {
-    // TODO: Implement income details view if needed
-    console.log("Income clicked:", income);
-  };
 
   return (
     <div>
@@ -190,54 +187,19 @@ const IncomePage = () => {
           {isLoading ? (
             <PageLoading />
           ) : (
-            <div className="space-y-1">
+            <div className="space-y-3">
               {incomes.length === 0 ? (
                 <div className="text-center py-12 text-gray-500">
                   No income records found
                 </div>
               ) : (
                 incomes.map((income) => (
-                <div
-                  key={income.id}
-                  onClick={() => handleRowClick(income)}
-                  className="flex items-center justify-between py-4 px-2 hover:bg-gray-50 rounded-lg transition-colors cursor-pointer"
-                >
-                  <div className="flex items-center gap-4">
-                    <div>
-                      <div className="flex items-center gap-2 mb-1">
-                        <h3 className="font-semibold text-gray-900">
-                          {income.source || income.sales_person_fullname || "Income"}
-                        </h3>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        {income.source && (
-                          <span className="text-xs px-2 py-0.5 rounded bg-green-100 text-green-700">
-                            {income.source}
-                          </span>
-                        )}
-                        {income.sales_person_fullname && (
-                          <span className="text-sm text-gray-600">
-                            {income.sales_person_fullname}
-                          </span>
-                        )}
-                        <span className="text-sm text-gray-600">
-                          {formatDate(new Date(income.date), "MMM DD, YYYY")}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    {income.payment_method && (
-                      <span className="text-sm font-medium text-gray-600">
-                        {income.payment_method}
-                      </span>
-                    )}
-                    <div className="text-xl font-bold text-gray-900">
-                      {formatMoney(income.amount)}
-                    </div>
-                  </div>
-                </div>
-              ))
+                  <IncomeRow
+                    key={income.id}
+                    income={income}
+                    onSave={onSave}
+                  />
+                ))
               )}
             </div>
           )}

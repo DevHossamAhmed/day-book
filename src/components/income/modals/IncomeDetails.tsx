@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { X, Trash2, Edit } from 'lucide-react';
+import { X, Trash2, Edit, Download, File, Image, FileText, Video } from 'lucide-react';
 import { Income } from '@/types/income';
+import { Media } from '@/types/media';
 import { formatMoney } from '@/lib/utils/money.util';
 import { destroy } from '@/services/income.service';
 import toast from 'react-hot-toast';
@@ -49,6 +50,42 @@ export default function IncomeDetails({ isOpen, onClose, income, onSave }: Props
         onSave?.();
         setIsUpdateOpen(false);
         onClose();
+    };
+
+    const handleDownloadMedia = async (media: Media, e: React.MouseEvent) => {
+        e.stopPropagation();
+        try {
+            // Create a blob URL and trigger download
+            const link = document.createElement('a');
+            link.href = media.url;
+            link.download = media.file_name;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(media.url);
+            
+            toast.success('File downloaded successfully');
+        } catch (error) {
+            toast.error('Failed to download file');
+            console.error('Download error:', error);
+        }
+    };
+
+    const formatFileSize = (bytes: string): string => {
+        const size = parseInt(bytes);
+        if (size < 1024) return `${size} B`;
+        if (size < 1024 * 1024) return `${(size / 1024).toFixed(2)} KB`;
+        return `${(size / (1024 * 1024)).toFixed(2)} MB`;
+    };
+
+    const getFileIcon = (mimeType: string) => {
+        if (mimeType.startsWith('image/')) {
+            return <Image size={20} className="text-blue-500" />;
+        } else if (mimeType.startsWith('video/')) {
+            return <Video size={20} className="text-purple-500" />;
+        } else {
+            return <FileText size={20} className="text-gray-500" />;
+        }
     };
 
     return (
@@ -120,6 +157,46 @@ export default function IncomeDetails({ isOpen, onClose, income, onSave }: Props
                                     <p className="text-sm text-gray-700">
                                         {income.note}
                                     </p>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Media Section */}
+                        {income.media && income.media.length > 0 && (
+                            <div className="mb-8">
+                                <h3 className="text-base font-semibold text-gray-900 mb-3">Media</h3>
+                                <div className="space-y-3">
+                                    {income.media.map((mediaItem) => (
+                                        <div
+                                            key={mediaItem.id}
+                                            className="flex items-center justify-between bg-gray-50 rounded-lg p-4 border border-gray-200 hover:bg-gray-100 transition-colors"
+                                        >
+                                            <div className="flex items-center gap-3 flex-1 min-w-0">
+                                                {getFileIcon(mediaItem.file_mime_type)}
+                                                <div className="flex-1 min-w-0">
+                                                    <p className="text-sm font-medium text-gray-900 truncate">
+                                                        {mediaItem.file_name}
+                                                    </p>
+                                                    <div className="flex items-center gap-2 mt-1">
+                                                        <span className="text-xs text-gray-500">
+                                                            {formatFileSize(mediaItem.file_size)}
+                                                        </span>
+                                                        <span className="text-xs text-gray-400">•</span>
+                                                        <span className="text-xs text-gray-500">
+                                                            {mediaItem.file_mime_type}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <button
+                                                onClick={(e) => handleDownloadMedia(mediaItem, e)}
+                                                className="flex items-center gap-2 px-3 py-2 text-blue-600 border border-blue-600 rounded-lg hover:bg-blue-50 transition-colors ml-4 flex-shrink-0"
+                                            >
+                                                <Download size={16} />
+                                                Download
+                                            </button>
+                                        </div>
+                                    ))}
                                 </div>
                             </div>
                         )}
