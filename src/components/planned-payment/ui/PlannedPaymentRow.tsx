@@ -37,7 +37,7 @@ export default function PlannedPaymentRow({ payment, onSave }: Props) {
                         </h3>
                         <div className="flex items-center gap-2 text-sm">
                             <span className="text-gray-600">
-                                {payment.vendor_name || "Vendor"} • {payment.due_date ? formatDate(new Date(payment.due_date), "Do MMMM, YYYY") : ""}
+                                {payment.vendor?.name || payment.vendor_name || "Vendor"} • {payment.due_date ? formatDate(new Date(payment.due_date), "Do MMMM, YYYY") : ""}
                             </span>
                             <span className={`text-xs font-medium ${getStatusColor(payment.status)}`}>
                                 • {payment.status}
@@ -58,6 +58,7 @@ export default function PlannedPaymentRow({ payment, onSave }: Props) {
         </>
     );
 }
+
 
 
 

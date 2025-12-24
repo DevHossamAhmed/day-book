@@ -56,6 +56,11 @@ export default function CreatePayment({ onClose, onSave }: Props) {
   };
 
   const closeDialog = () => {
+    reset({
+      due_date: new Date().toISOString().split("T")[0],
+    });
+    setAttachments([]);
+    setServerErrors([]);
     onClose();
   };
 
@@ -66,14 +71,22 @@ export default function CreatePayment({ onClose, onSave }: Props) {
       await store({ ...data, attachments });
       toast.success("Planned payment created successfully!");
       if (onSave) await onSave();
+      
+      // Reset form to default values
+      reset({
+        vendor_id: "",
+        purpose: "",
+        amount: "",
+        due_date: new Date().toISOString().split("T")[0],
+        payment_method: "",
+        status: "",
+        note: "",
+      });
+      setAttachments([]);
+      setServerErrors([]);
+      
       if (close) {
-        setAttachments([]);
         closeDialog();
-      } else {
-        reset({
-          due_date: new Date().toISOString().split("T")[0],
-        });
-        setAttachments([]);
       }
     } catch (error) {
       if (
