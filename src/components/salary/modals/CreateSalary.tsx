@@ -13,6 +13,7 @@ import { fetchGetIdNameList } from "@/services/user.service";
 import { MemberIdNameList } from "@/types/member";
 import FormField from "@/components/ui/form/FormField";
 import FileUpload from "@/components/ui/form/FileUpload";
+import { store } from "@/services/salary.service";
 
 type Props = {
   onClose: () => void;
@@ -56,6 +57,12 @@ export default function CreateSalary({ onClose, onSave }: Props) {
   };
 
   const closeDialog = () => {
+    reset({
+      payment_date: new Date().toISOString().split("T")[0],
+      period: new Date().toISOString().split("T")[0],
+    });
+    setAttachments([]);
+    setServerErrors([]);
     onClose();
   };
 
@@ -63,19 +70,27 @@ export default function CreateSalary({ onClose, onSave }: Props) {
     setServerErrors([]);
     setIsLoading(true);
     try {
-      // TODO: Replace with actual salary service call
-      // await storeSalary({ ...data, attachments });
+      await store({ ...data, attachments });
       toast.success("Salary record added successfully!");
       if (onSave) await onSave();
+      
+      // Reset form to default values
+      reset({
+        employee_id: "",
+        salary_amount: "",
+        deductions: "",
+        deduction_reason: "",
+        payment_date: new Date().toISOString().split("T")[0],
+        period: new Date().toISOString().split("T")[0],
+        payment_method: "",
+        status: "",
+        note: "",
+      });
+      setAttachments([]);
+      setServerErrors([]);
+      
       if (close) {
-        setAttachments([]);
         closeDialog();
-      } else {
-        reset({
-          payment_date: new Date().toISOString().split("T")[0],
-          period: new Date().toISOString().split("T")[0],
-        });
-        setAttachments([]);
       }
     } catch (error) {
       if (

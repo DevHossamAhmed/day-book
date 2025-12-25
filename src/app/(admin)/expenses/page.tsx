@@ -1,14 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import {
-  ChevronRight,
-  Search,
-  SlidersHorizontal,
-} from "lucide-react";
 import { formatDate, getDateByLabel } from "@/lib/utils/date.util";
 import CreateExpense from "@/components/expense/modals/CreateExpense";
-import SearchIcon from "@/lib/icons/Search.icon";
-import ExcelIcon from "@/lib/icons/Excel.icon";
 import { fetchExpenses, exportExpenses } from "@/services/expense.service";
 import { Expense } from "@/types/expense";
 import toast from "react-hot-toast";
@@ -23,6 +16,11 @@ import { PaymentMethod } from "@/data/payment-method";
 import { fetchGetIdNameList as fetchVendorIdNameList } from "@/services/vendor.service";
 import { fetchGetIdNameList as fetchExpenseTypeIdNameList } from "@/services/expense-type.service";
 import { useAsyncData } from "@/hooks/useAsyncData";
+import PageActions from "@/components/ui/PageActions";
+import ExportButton from "@/components/ui/ExportButton";
+import FilterButton from "@/components/ui/FilterButton";
+import FilterPanel, { FilterField } from "@/components/ui/FilterPanel";
+import DateFilterTabs from "@/components/ui/DateFilterTabs";
 
 const ExpensesPage = () => {
   const [activeTab, setActiveTab] = useState<string>("Today");
@@ -169,7 +167,82 @@ const ExpensesPage = () => {
     setFilterAmountMax("");
   };
 
-  const hasActiveFilters = filterFromDate || filterToDate || filterVendorId || filterExpenseTypeId || filterPaymentMethod || filterAmountMin || filterAmountMax;
+  const activeFilterCount = [
+    filterFromDate,
+    filterToDate,
+    filterVendorId,
+    filterExpenseTypeId,
+    filterPaymentMethod,
+    filterAmountMin,
+    filterAmountMax,
+  ].filter(Boolean).length;
+
+  const filterFields: FilterField[] = [
+    {
+      type: "date",
+      label: "Period From",
+      value: filterFromDate,
+      onChange: setFilterFromDate,
+    },
+    {
+      type: "date",
+      label: "Period To",
+      value: filterToDate,
+      onChange: setFilterToDate,
+    },
+    {
+      type: "select",
+      label: "Vendor",
+      value: filterVendorId,
+      onChange: setFilterVendorId,
+      options: [
+        { value: "", label: "All Vendors" },
+        ...vendors.map((vendor) => ({
+          value: String(vendor.id),
+          label: vendor.name,
+        })),
+      ],
+      disabled: isLoadingVendors,
+    },
+    {
+      type: "select",
+      label: "Expense Type",
+      value: filterExpenseTypeId,
+      onChange: setFilterExpenseTypeId,
+      options: [
+        { value: "", label: "All Expense Types" },
+        ...expenseTypes.map((expenseType) => ({
+          value: String(expenseType.id),
+          label: expenseType.name,
+        })),
+      ],
+      disabled: isLoadingExpenseTypes,
+    },
+    {
+      type: "select",
+      label: "Payment Method",
+      value: filterPaymentMethod,
+      onChange: setFilterPaymentMethod,
+      options: [
+        { value: "", label: "All Payment Methods" },
+        ...PaymentMethod.map((method) => ({ value: method, label: method })),
+      ],
+    },
+    {
+      type: "number",
+      label: "Amount Min",
+      value: filterAmountMin,
+      onChange: setFilterAmountMin,
+      placeholder: "Minimum amount",
+    },
+    {
+      type: "number",
+      label: "Amount Max",
+      value: filterAmountMax,
+      onChange: setFilterAmountMax,
+      placeholder: "Maximum amount",
+    },
+  ];
 
 
   return (
@@ -182,218 +255,49 @@ const ExpensesPage = () => {
         ]}
       />
 
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
-        {/* Search */}
-        <div className="relative w-full sm:max-w-sm">
-          <input
-            type="text"
-            placeholder="Search expenses..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          />
-          <SearchIcon />
-        </div>
-
-        {/* Actions */}
-        <div className="flex gap-3">
-          <button
-            onClick={handleExportExcel}
-            disabled={isExporting}
-            className="px-6 py-3 border border-green-600 text-green-700 rounded-lg hover:bg-green-50 font-medium flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <ExcelIcon />
-            {isExporting ? "Exporting..." : "Export Excel"}
-          </button>
-
-          <button
-            onClick={() => setIsCreateExpenseOpen(true)}
-            className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium"
-          >
-            Create Expense
-          </button>
-        </div>
-      </div>
+      <PageActions
+        search={search}
+        onSearchChange={setSearch}
+        searchPlaceholder="Search expenses..."
+        actions={
+          <>
+            <ExportButton onClick={handleExportExcel} isExporting={isExporting} />
+            <button
+              onClick={() => setIsCreateExpenseOpen(true)}
+              className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium"
+            >
+              Create Expense
+            </button>
+          </>
+        }
+      />
 
       {/* Main Content Card */}
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100">
         {/* Date Navigation */}
         <div className="p-6 border-b border-gray-200">
           <div className="flex items-center justify-between gap-6">
-            <div className="flex gap-6">
-              {["Yesterday", "Today", "Tomorrow"].map((tab) => (
-                <button
-                  key={tab}
-                  onClick={() => setDateToFilter(tab)}
-                  className={`font-medium text-sm pb-1 transition-colors ${
-                    activeTab === tab
-                      ? "text-blue-600 border-b-2 border-blue-600"
-                      : "text-gray-500 hover:text-gray-700"
-                  }`}
-                >
-                  {tab}
-                </button>
-              ))}
-            </div>
+            <DateFilterTabs
+              activeTab={activeTab}
+              onTabChange={setDateToFilter}
+              showDatePicker={false}
+            />
             <div className="flex gap-3">
-              <button 
+              <FilterButton
+                isOpen={isFilterOpen}
                 onClick={() => setIsFilterOpen(!isFilterOpen)}
-                className={`flex items-center gap-2 px-4 py-2 border rounded-lg transition-colors text-sm font-medium ${
-                  isFilterOpen || hasActiveFilters
-                    ? "bg-blue-600 text-white border-blue-600 hover:bg-blue-700"
-                    : "text-gray-700 border-gray-300 hover:bg-gray-50"
-                }`}
-              >
-                <SlidersHorizontal size={16} />
-                Filter
-                {hasActiveFilters && (
-                  <span className="ml-1 px-1.5 py-0.5 bg-white text-blue-600 rounded-full text-xs font-semibold">
-                    {[
-                      filterFromDate && "1",
-                      filterToDate && "1",
-                      filterVendorId && "1",
-                      filterExpenseTypeId && "1",
-                      filterPaymentMethod && "1",
-                      filterAmountMin && "1",
-                      filterAmountMax && "1",
-                    ].filter(Boolean).length}
-                  </span>
-                )}
-              </button>
+                activeFilterCount={activeFilterCount}
+              />
             </div>
           </div>
         </div>
 
         {/* Filter Panel */}
-        {isFilterOpen && (
-          <div className="p-6 border-b border-gray-200 bg-gray-50">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {/* Period From */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Period From
-                </label>
-                <input
-                  type="date"
-                  value={filterFromDate}
-                  onChange={(e) => setFilterFromDate(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-              </div>
-
-              {/* Period To */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Period To
-                </label>
-                <input
-                  type="date"
-                  value={filterToDate}
-                  onChange={(e) => setFilterToDate(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-              </div>
-
-              {/* Vendor */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Vendor
-                </label>
-                <select
-                  value={filterVendorId}
-                  onChange={(e) => setFilterVendorId(e.target.value)}
-                  disabled={isLoadingVendors}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white disabled:bg-gray-100 disabled:cursor-not-allowed"
-                >
-                  <option value="">All Vendors</option>
-                  {vendors.map((vendor) => (
-                    <option key={vendor.id} value={vendor.id}>
-                      {vendor.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Expense Type */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Expense Type
-                </label>
-                <select
-                  value={filterExpenseTypeId}
-                  onChange={(e) => setFilterExpenseTypeId(e.target.value)}
-                  disabled={isLoadingExpenseTypes}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white disabled:bg-gray-100 disabled:cursor-not-allowed"
-                >
-                  <option value="">All Expense Types</option>
-                  {expenseTypes.map((expenseType) => (
-                    <option key={expenseType.id} value={expenseType.id}>
-                      {expenseType.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Payment Method */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Payment Method
-                </label>
-                <select
-                  value={filterPaymentMethod}
-                  onChange={(e) => setFilterPaymentMethod(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
-                >
-                  <option value="">All Payment Methods</option>
-                  {PaymentMethod.map((method) => (
-                    <option key={method} value={method}>
-                      {method}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Amount Min */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Amount Min
-                </label>
-                <input
-                  type="number"
-                  value={filterAmountMin}
-                  onChange={(e) => setFilterAmountMin(e.target.value)}
-                  placeholder="Minimum amount"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-              </div>
-
-              {/* Amount Max */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Amount Max
-                </label>
-                <input
-                  type="number"
-                  value={filterAmountMax}
-                  onChange={(e) => setFilterAmountMax(e.target.value)}
-                  placeholder="Maximum amount"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-              </div>
-            </div>
-
-            {/* Filter Actions */}
-            <div className="flex justify-end gap-3 mt-4">
-              <button
-                onClick={handleClearFilters}
-                className="px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium"
-              >
-                Clear Filters
-              </button>
-            </div>
-          </div>
-        )}
+        <FilterPanel
+          isOpen={isFilterOpen}
+          fields={filterFields}
+          onClearFilters={handleClearFilters}
+        />
 
         {/* Expenses List */}
         <div className="p-6">
