@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import NotificationDropdown from "@/components/ui/NotificationDropdown";
 import { Notification } from "@/types/notification";
 import Avatar from "@/components/ui/Avatar";
+import ThemeToggle from "@/components/ui/ThemeToggle";
 
 interface HeaderBarProps {
   onMenuClick: () => void;
@@ -118,6 +119,9 @@ const HeaderBar: React.FC<HeaderBarProps> = ({ onMenuClick }) => {
         </button>
 
         <div className="flex gap-3 lg:pr-[30px] items-center">
+          {/* Theme Toggle */}
+          <ThemeToggle />
+
           {/* Enhanced Notification Icon */}
           <div className="relative" ref={notificationRef}>
             <button

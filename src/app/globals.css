@@ -1,1 +1,33 @@
 @import "tailwindcss";
+
+@theme {
+  /* Light Theme Colors */
+  --color-gray-50: #f9fafb;
+  --color-gray-100: #f3f4f6;
+  --color-gray-200: #e5e7eb;
+  --color-gray-300: #d1d5db;
+  --color-gray-400: #9ca3af;
+  --color-gray-500: #6b7280;
+  --color-gray-600: #4b5563;
+  --color-gray-700: #374151;
+  --color-gray-800: #1f2937;
+  --color-gray-900: #111827;
+  --color-gray-950: #030712;
+}
+
+/* Default to light theme */
+html {
+  color-scheme: light;
+}
+
+/* Dark theme */
+.dark {
+  color-scheme: dark;
+}
+
+/* Prevent system dark mode from overriding our theme preference */
+@media (prefers-color-scheme: dark) {
+  html:not(.dark) {
+    color-scheme: light;
+  }
+}
