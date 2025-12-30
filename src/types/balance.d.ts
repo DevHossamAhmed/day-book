@@ -6,5 +6,4 @@ export interface Balance {
     date: string;
     source: string;
     added_by_fullname: string;
-    type: string;
 }

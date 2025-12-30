@@ -1,5 +1,6 @@
 import { useState } from "react";
 import toast from "react-hot-toast";
+import { extractErrorMessages, getPrimaryErrorMessage } from "@/lib/utils/error.util";
 
 type UseFormSubmissionOptions<T> = {
   onSubmit: (data: T) => Promise<void>;
@@ -28,13 +29,13 @@ export function useFormSubmission<T>({
       toast.success(successMessage);
       onSuccess?.();
     } catch (error) {
-      const errors = extractErrors(error);
+      const errors = extractErrorMessages(error);
       setServerErrors(errors);
       onError?.(error);
       
-      if (errors.length === 0) {
-        toast.error(errorMessage);
-      }
+      // Show toast for primary error message
+      const primaryError = getPrimaryErrorMessage(error);
+      toast.error(primaryError);
     } finally {
       setIsLoading(false);
     }
@@ -46,25 +47,4 @@ export function useFormSubmission<T>({
     serverErrors,
     setServerErrors,
   };
-}
-
-function extractErrors(error: unknown): string[] {
-  if (
-    error instanceof Error &&
-    "response" in error &&
-    (error as any).response?.data?.errors
-  ) {
-    return (error as any).response.data.errors;
-  }
-
-  if (
-    error instanceof Error &&
-    "response" in error &&
-    (error as any).response?.data?.message
-  ) {
-    const message = (error as any).response.data.message;
-    return Array.isArray(message) ? message : [message];
-  }
-
-  return [];
 }

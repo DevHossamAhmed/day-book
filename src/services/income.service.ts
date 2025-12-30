@@ -3,7 +3,40 @@ import { ApiResponse } from "@/types/api";
 import { Income } from "@/types/income";
 import { PaginatedResult } from "@/types/pagination";
 
-export async function store(form: any): Promise<Income> {
+export interface CreateIncomeForm {
+    date: string;
+    store_id?: number | null;
+    sales_person_id?: number | null;
+    amount: string;
+    payment_method: string;
+    note?: string | null;
+    attachments: File[];
+}
+
+export interface UpdateIncomeForm {
+    date?: string;
+    store_id?: number | null;
+    sales_person_id?: number | null;
+    amount?: string;
+    payment_method?: string;
+    note?: string | null;
+}
+
+export interface IncomeQueryParams {
+    date?: string;
+    search?: string;
+    from_date?: string;
+    to_date?: string;
+    store_id?: string;
+    sales_person_id?: string;
+    payment_method?: string;
+    amount_min?: string;
+    amount_max?: string;
+    page?: number;
+    limit?: number;
+}
+
+export async function store(form: CreateIncomeForm): Promise<Income> {
     try {
         const formData = new FormData();
 
@@ -24,33 +57,23 @@ export async function store(form: any): Promise<Income> {
         });
 
 
-        const res = await DaybookApi.post("/incomes", formData);
-        return res.data.data as Income;
-    } catch (error: any) {
+        const res = await DaybookApi.post<ApiResponse<Income>>("/incomes", formData);
+        return res.data.data;
+    } catch (error) {
         return Promise.reject(error);
     }
 }
 
-export async function fetchIncomes(params: Object): Promise<PaginatedResult<Income>> {
+export async function fetchIncomes(params: IncomeQueryParams): Promise<PaginatedResult<Income>> {
     try {
         const res = await DaybookApi.get<ApiResponse<PaginatedResult<Income>>>("/incomes", { params });
         return res.data.data;
-    } catch (error: any) {
+    } catch (error) {
         return Promise.reject(error);
     }
 }
 
-export async function exportIncomes(params: {
-    date?: string;
-    search?: string;
-    from_date?: string;
-    to_date?: string;
-    store_id?: string;
-    sales_person_id?: string;
-    payment_method?: string;
-    amount_min?: string;
-    amount_max?: string;
-}): Promise<Income[]> {
+export async function exportIncomes(params: Omit<IncomeQueryParams, 'page' | 'limit'>): Promise<Income[]> {
     try {
         const res = await DaybookApi.get<ApiResponse<PaginatedResult<Income>>>("/incomes", {
             params: {
@@ -59,16 +82,16 @@ export async function exportIncomes(params: {
             },
         });
         return res.data.data.items;
-    } catch (error: any) {
+    } catch (error) {
         return Promise.reject(error);
     }
 }
 
-export async function update(id: number, form: any): Promise<Income> {
+export async function update(id: number, form: UpdateIncomeForm): Promise<Income> {
     try {
-        const res = await DaybookApi.put(`/incomes/${id}`, form);
-        return res.data.data as Income;
-    } catch (error: any) {
+        const res = await DaybookApi.put<ApiResponse<Income>>(`/incomes/${id}`, form);
+        return res.data.data;
+    } catch (error) {
         return Promise.reject(error);
     }
 }
@@ -76,7 +99,7 @@ export async function update(id: number, form: any): Promise<Income> {
 export async function destroy(id: number): Promise<void> {
     try {
         await DaybookApi.delete(`/incomes/${id}`);
-    } catch (error: any) {
+    } catch (error) {
         return Promise.reject(error);
     }
 }

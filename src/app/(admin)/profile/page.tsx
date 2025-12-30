@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useForm } from "react-hook-form";
@@ -10,6 +9,8 @@ import ErrorMessage from "@/components/ui/ErrorMessage";
 import { ChangePasswordValidationSchema } from "@/validations/change-password.validation";
 import { UpdateProfileValidationSchema } from "@/validations/update-profile.validation";
 import { changePassword, updateProfile, fetchProfile } from "@/services/user.service";
+import { useTheme } from "@/contexts/ThemeContext";
+import { extractErrorMessages } from "@/lib/utils/error.util";
 
 const UserProfilePage = () => {
   const { data: session } = useSession();
@@ -53,10 +54,11 @@ const UserProfilePage = () => {
         const profileData = await fetchProfile();
         
         // Populate form with fetched data
+        const sessionUser = session?.user as { email?: string; name?: string } | undefined;
         resetProfileForm({
           first_name: profileData.first_name || "",
           last_name: profileData.last_name || "",
-          email: profileData.email || (session?.user as any)?.email || "",
+          email: profileData.email || sessionUser?.email || "",
           designation: profileData.designation || "",
           additional_info: profileData.additional_info || "",
         });
@@ -65,9 +67,9 @@ const UserProfilePage = () => {
         if (profileData.avatar) {
           setAvatar(profileData.avatar);
         }
-      } catch (error: any) {
+      } catch (error) {
         // If fetch fails, use session data as fallback
-        const sessionUser = session?.user as any;
+        const sessionUser = session?.user as { email?: string; name?: string } | undefined;
         if (sessionUser) {
           const fullName = sessionUser.name || "";
           const nameParts = fullName.split(" ");
@@ -101,27 +103,31 @@ const UserProfilePage = () => {
     formState: { errors: passwordFormErrors },
     reset: resetPasswordForm,
     watch: watchPassword,
-  } = useForm({
+  } = useForm<{
+    current_password: string;
+    password: string;
+    confirm_password?: string;
+  }>({
     resolver: zodResolver(ChangePasswordValidationSchema),
   });
 
   const newPasswordValue = watchPassword("password");
   
-  // Appearance State
-  const [theme, setTheme] = useState('light');
+  // Appearance State - use ThemeContext
+  const { theme, setTheme: setThemeFromContext } = useTheme();
 
   // Helper function to parse error messages
-  const parseErrorMessage = useCallback((error: any): string[] => {
-    if (error instanceof Error) {
-      const errorMessage = error.message;
-      return errorMessage.includes(",") 
-        ? errorMessage.split(", ") 
-        : [errorMessage];
-    }
-    return ["Failed to update profile. Please try again."];
+  const parseErrorMessage = useCallback((error: unknown): string[] => {
+    return extractErrorMessages(error);
   }, []);
 
-  const handleProfileUpdate = useCallback(async (data: any) => {
+  const handleProfileUpdate = useCallback(async (data: {
+    first_name: string;
+    last_name: string;
+    email: string;
+    designation: string;
+    additional_info?: string | null;
+  }) => {
     try {
       setProfileErrors([]);
       setIsUpdatingProfile(true);
@@ -159,10 +165,12 @@ const UserProfilePage = () => {
         // Silently fail - profile was updated successfully
         console.error("Failed to reload profile:", error);
       }
-    } catch (error: any) {
+    } catch (error) {
       const errors = parseErrorMessage(error);
       setProfileErrors(errors);
-      toast.error(errors[0]);
+      if (errors.length > 0) {
+        toast.error(errors[0]);
+      }
     } finally {
       setIsUpdatingProfile(false);
     }
@@ -199,7 +207,11 @@ const UserProfilePage = () => {
     { id: "appearance", label: "Appearance" },
   ], []);
 
-  const handlePasswordChange = useCallback(async (data: any) => {
+  const handlePasswordChange = useCallback(async (data: {
+    current_password: string;
+    password: string;
+    confirm_password?: string;
+  }) => {
     try {
       setPasswordErrors([]);
       setIsChangingPassword(true);
@@ -211,17 +223,19 @@ const UserProfilePage = () => {
 
       toast.success("Password changed successfully!");
       resetPasswordForm();
-    } catch (error: any) {
+    } catch (error) {
       const errors = parseErrorMessage(error);
       setPasswordErrors(errors);
-      toast.error(errors[0]);
+      if (errors.length > 0) {
+        toast.error(errors[0]);
+      }
     } finally {
       setIsChangingPassword(false);
     }
   }, [resetPasswordForm, parseErrorMessage]);
 
   const handleAppearanceSave = useCallback(() => {
-    // TODO: Implement appearance settings save logic
+    // Theme is already saved via ThemeContext
     toast.success('Appearance settings saved successfully!');
   }, []);
 
@@ -234,7 +248,10 @@ const UserProfilePage = () => {
     { label: "Profile" }
   ], []);
 
-  const themeOptions = useMemo(() => ['light', 'dark', 'system'], []);
+  const themeOptions = useMemo(() => [
+    { value: 'light' as const, label: 'Light', description: 'Light mode' },
+    { value: 'dark' as const, label: 'Dark', description: 'Dark mode' },
+  ], []);
 
   return (
     <div>
@@ -488,7 +505,7 @@ const UserProfilePage = () => {
                   <div className="flex-1">
                     <input
                       type="password"
-                      {...registerPassword("confirm_password" as any, {
+                      {...registerPassword("confirm_password", {
                         validate: (value) =>
                           value === newPasswordValue || "Passwords do not match",
                       })}
@@ -497,7 +514,7 @@ const UserProfilePage = () => {
                     />
                     <ErrorMessage
                       message={
-                        (passwordFormErrors as any).confirm_password?.message as string
+                        passwordFormErrors.confirm_password?.message as string
                       }
                     />
                   </div>
@@ -525,37 +542,32 @@ const UserProfilePage = () => {
         {/* Appearance Tab */}
         {activeTab === "appearance" && (
           <div>
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 space-y-6">
+            <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-800 p-6 space-y-6">
               {/* Theme Selection */}
               <div className="flex flex-col sm:flex-row sm:items-start gap-3">
-                <label className="text-sm font-medium text-gray-700 sm:w-32 pt-3">
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-300 sm:w-32 pt-3">
                   Theme
                 </label>
                 <div className="flex-1">
-                  <div className="grid grid-cols-3 gap-4">
+                  <div className="grid grid-cols-2 gap-4">
                     {themeOptions.map((themeOption) => {
-                      const isSelected = theme === themeOption;
-                      const description = themeOption === 'system' 
-                        ? 'Follow system preference'
-                        : themeOption === 'light'
-                        ? 'Light mode'
-                        : 'Dark mode';
+                      const isSelected = theme === themeOption.value;
                       
                       return (
                         <button
-                          key={themeOption}
-                          onClick={() => setTheme(themeOption)}
+                          key={themeOption.value}
+                          onClick={() => setThemeFromContext(themeOption.value)}
                           className={`p-4 border-2 rounded-lg transition-all ${
                             isSelected
-                              ? 'border-blue-600 bg-blue-50'
-                              : 'border-gray-200 hover:border-gray-300'
+                              ? 'border-blue-600 dark:border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                              : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
                           }`}
                         >
-                          <div className="text-sm font-semibold text-gray-900 capitalize mb-1">
-                            {themeOption}
+                          <div className="text-sm font-semibold text-gray-900 dark:text-gray-100 capitalize mb-1">
+                            {themeOption.label}
                           </div>
-                          <div className="text-xs text-gray-600">
-                            {description}
+                          <div className="text-xs text-gray-600 dark:text-gray-400">
+                            {themeOption.description}
                           </div>
                         </button>
                       );

@@ -2,11 +2,20 @@ import UsersApi from "@/lib/api/users.api";
 import { ApiResponse } from "@/types/api";
 import { Member, MemberIdNameList } from "@/types/member";
 
-export async function store(form: any): Promise<void> {
+export interface CreateUserForm {
+    first_name: string;
+    last_name: string;
+    email: string;
+    password: string;
+    designation?: string;
+    additional_info?: string;
+}
+
+export async function store(form: CreateUserForm): Promise<void> {
   try {
     const res = await UsersApi.post("/v1/users", form);
     return res.data.data;
-  } catch (error: any) {
+  } catch (error) {
     return Promise.reject(error);
   }
 }
@@ -43,7 +52,7 @@ export async function exportMembers(): Promise<Member[]> {
       },
     });
     return res.data.data;
-  } catch (error: any) {
+  } catch (error) {
     return Promise.reject(error);
   }
 }

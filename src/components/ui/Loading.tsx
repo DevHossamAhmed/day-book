@@ -1,13 +1,25 @@
 "use client";
 
-export default function Loading() {
+interface LoadingProps {
+  size?: "sm" | "md" | "lg";
+  className?: string;
+}
+
+const sizeClasses = {
+  sm: "h-4 w-4",
+  md: "h-5 w-5",
+  lg: "h-8 w-8",
+};
+
+export default function Loading({ size = "md", className = "" }: LoadingProps) {
   return (
-    <span className="flex items-center justify-center gap-2">
+    <span className={`flex items-center justify-center gap-2 ${className}`}>
       <svg
-        className="animate-spin h-5 w-5 text-white"
+        className={`animate-spin ${sizeClasses[size]} text-current`}
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
         viewBox="0 0 24 24"
+        aria-label="Loading"
       >
         <circle
           className="opacity-25"
@@ -25,4 +37,4 @@ export default function Loading() {
       </svg>
     </span>
   );
-};
+}
