@@ -1,84 +1,220 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useSession } from "next-auth/react";
+import toast from "react-hot-toast";
 import PageTitle from "@/components/ui/PageTitle";
+import ErrorMessage from "@/components/ui/ErrorMessage";
+import { ChangePasswordValidationSchema } from "@/validations/change-password.validation";
+import { UpdateProfileValidationSchema } from "@/validations/update-profile.validation";
+import { changePassword, updateProfile, fetchProfile } from "@/services/user.service";
 
 const UserProfilePage = () => {
+  const { data: session } = useSession();
   const [activeTab, setActiveTab] = useState("update-profile");
   
   // Update Profile State
-  const [name, setName] = useState('Benjamin Canac');
-  const [email, setEmail] = useState('ben@nuxtlabs.com');
-  const [bio, setBio] = useState('');
-  const [avatar, setAvatar] = useState('https://api.dicebear.com/7.x/avataaars/svg?seed=Benjamin');
-  const [hasChanges, setHasChanges] = useState(false);
+  const [isUpdatingProfile, setIsUpdatingProfile] = useState(false);
+  const [isLoadingProfile, setIsLoadingProfile] = useState(true);
+  const [profileErrors, setProfileErrors] = useState<string[]>([]);
+  const [avatar, setAvatar] = useState<string>('https://api.dicebear.com/7.x/avataaars/svg?seed=Benjamin');
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+
+  const {
+    register: registerProfile,
+    handleSubmit: handleProfileSubmit,
+    formState: { errors: profileFormErrors },
+    reset: resetProfileForm,
+  } = useForm({
+    resolver: zodResolver(UpdateProfileValidationSchema),
+    defaultValues: {
+      first_name: "",
+      last_name: "",
+      email: "",
+      designation: "",
+      additional_info: "",
+    },
+  });
+
+  // Fetch current user profile data
+  useEffect(() => {
+    const loadProfile = async () => {
+      try {
+        setIsLoadingProfile(true);
+        const profileData = await fetchProfile();
+        
+        // Populate form with fetched data
+        resetProfileForm({
+          first_name: profileData.first_name || "",
+          last_name: profileData.last_name || "",
+          email: profileData.email || (session?.user as any)?.email || "",
+          designation: profileData.designation || "",
+          additional_info: profileData.additional_info || "",
+        });
+        
+        // Set avatar if available
+        if (profileData.avatar) {
+          setAvatar(profileData.avatar);
+        }
+      } catch (error: any) {
+        // If fetch fails, use session data as fallback
+        const sessionUser = session?.user as any;
+        if (sessionUser) {
+          const fullName = sessionUser.name || "";
+          const nameParts = fullName.split(" ");
+          resetProfileForm({
+            first_name: nameParts[0] || "",
+            last_name: nameParts.slice(1).join(" ") || "",
+            email: sessionUser.email || "",
+            designation: "",
+            additional_info: "",
+          });
+        }
+        console.error("Failed to load profile:", error);
+      } finally {
+        setIsLoadingProfile(false);
+      }
+    };
+
+    if (session) {
+      loadProfile();
+    }
+  }, [session, resetProfileForm]);
   
   // Change Password State
-  const [currentPassword, setCurrentPassword] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  
-  // Security/2FA State
-  const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
+  const [passwordErrors, setPasswordErrors] = useState<string[]>([]);
+
+  const {
+    register: registerPassword,
+    handleSubmit: handlePasswordSubmit,
+    formState: { errors: passwordFormErrors },
+    reset: resetPasswordForm,
+    watch: watchPassword,
+  } = useForm({
+    resolver: zodResolver(ChangePasswordValidationSchema),
+  });
+
+  const newPasswordValue = watchPassword("password");
   
   // Appearance State
   const [theme, setTheme] = useState('light');
-  const [language, setLanguage] = useState('en');
 
-  const handleSaveChanges = () => {
-    setHasChanges(false);
-    // Show success message
-    alert('Changes saved successfully!');
+  const handleProfileUpdate = async (data: any) => {
+    try {
+      setProfileErrors([]);
+      setIsUpdatingProfile(true);
+
+      await updateProfile({
+        first_name: data.first_name,
+        last_name: data.last_name,
+        email: data.email,
+        designation: data.designation,
+        additional_info: data.additional_info || null,
+        avatar: avatarFile,
+      });
+
+      toast.success("Profile updated successfully!");
+      
+      // Clear avatar file after successful upload
+      setAvatarFile(null);
+      
+      // Reload profile data after successful update
+      try {
+        const updatedProfile = await fetchProfile();
+        resetProfileForm({
+          first_name: updatedProfile.first_name || "",
+          last_name: updatedProfile.last_name || "",
+          email: updatedProfile.email || "",
+          designation: updatedProfile.designation || "",
+          additional_info: updatedProfile.additional_info || "",
+        });
+        // Update avatar preview if URL is returned
+        if (updatedProfile.avatar) {
+          setAvatar(updatedProfile.avatar);
+        }
+      } catch (error) {
+        // Silently fail - profile was updated successfully
+        console.error("Failed to reload profile:", error);
+      }
+    } catch (error: any) {
+      if (error instanceof Error) {
+        const errorMessage = error.message;
+        // Check if it's an array of errors or a single error
+        if (errorMessage.includes(",")) {
+          setProfileErrors(errorMessage.split(", "));
+        } else {
+          setProfileErrors([errorMessage]);
+        }
+        toast.error(errorMessage);
+      } else {
+        const defaultError = "Failed to update profile. Please try again.";
+        setProfileErrors([defaultError]);
+        toast.error(defaultError);
+      }
+    } finally {
+      setIsUpdatingProfile(false);
+    }
   };
 
   const handleAvatarUpload = (e: { target: { files: any[]; }; }) => {
     const file = e.target.files[0];
     if (file) {
       if (file.size > 1024 * 1024) {
-        alert('File size must be less than 1MB');
+        toast.error('File size must be less than 1MB');
         return;
       }
+      // Store the file for upload
+      setAvatarFile(file);
+      
+      // Create preview
       const reader = new FileReader();
       reader.onloadend = () => {
         //@ts-expect-error:res
         setAvatar(reader.result);
-        setHasChanges(true);
       };
       reader.readAsDataURL(file);
     }
-  };
-//@ts-expect-error:setter
-  const handleInputChange = (setter) => (e) => {
-    setter(e.target.value);
-    setHasChanges(true);
   };
 
   const tabs = [
     { id: "update-profile", label: "Update Profile" },
     { id: "change-password", label: "Change Password" },
-    { id: "security", label: "Security" },
     { id: "appearance", label: "Appearance" },
   ];
 
-  const handlePasswordChange = () => {
-    if (newPassword !== confirmPassword) {
-      alert('New passwords do not match');
-      return;
-    }
-    if (newPassword.length < 8) {
-      alert('Password must be at least 8 characters long');
-      return;
-    }
-    // TODO: Implement password change logic
-    alert('Password changed successfully!');
-    setCurrentPassword('');
-    setNewPassword('');
-    setConfirmPassword('');
-  };
+  const handlePasswordChange = async (data: any) => {
+    try {
+      setPasswordErrors([]);
+      setIsChangingPassword(true);
 
-  const handleSecuritySave = () => {
-    // TODO: Implement 2FA toggle logic
-    alert(twoFactorEnabled ? '2FA enabled successfully!' : '2FA disabled successfully!');
+      await changePassword({
+        current_password: data.current_password,
+        password: data.password,
+      });
+
+      toast.success("Password changed successfully!");
+      resetPasswordForm();
+    } catch (error: any) {
+      if (error instanceof Error) {
+        const errorMessage = error.message;
+        // Check if it's an array of errors or a single error
+        if (errorMessage.includes(",")) {
+          setPasswordErrors(errorMessage.split(", "));
+        } else {
+          setPasswordErrors([errorMessage]);
+        }
+        toast.error(errorMessage);
+      } else {
+        const defaultError = "Failed to change password. Please try again.";
+        setPasswordErrors([defaultError]);
+        toast.error(defaultError);
+      }
+    } finally {
+      setIsChangingPassword(false);
+    }
   };
 
   const handleAppearanceSave = () => {
@@ -97,7 +233,7 @@ const UserProfilePage = () => {
       />
 
       {/* Tabs Navigation */}
-      <div className="bg-white border-b border-gray-200 -mx-6 -mt-6 mb-6">
+      <div className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 -mx-6 -mt-6 mb-6">
         <div className="px-6">
           <div className="flex gap-8 overflow-x-auto">
             {tabs.map((tab) => (
@@ -106,8 +242,8 @@ const UserProfilePage = () => {
                 onClick={() => setActiveTab(tab.id)}
                 className={`px-1 py-4 font-semibold text-sm transition-all relative whitespace-nowrap border-b-2 ${
                   activeTab === tab.id
-                    ? "text-blue-600 border-blue-600"
-                    : "text-gray-500 border-transparent hover:text-gray-700 hover:border-gray-300"
+                    ? "text-blue-600 dark:text-blue-400 border-blue-600 dark:border-blue-400"
+                    : "text-gray-500 dark:text-gray-400 border-transparent hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600"
                 }`}
               >
                 {tab.label}
@@ -122,214 +258,254 @@ const UserProfilePage = () => {
         {/* Update Profile Tab */}
         {activeTab === "update-profile" && (
           <div>
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 space-y-6">
-              {/* Name Field */}
-              <div className="flex flex-col sm:flex-row sm:items-start gap-3">
-                <label className="text-sm font-medium text-gray-700 sm:w-32 pt-3">
-                  Name<span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  value={name}
-                  onChange={handleInputChange(setName)}
-                  className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-gray-900"
-                  placeholder="Enter your name"
-                />
-              </div>
-
-              {/* Email Field */}
-              <div className="flex flex-col sm:flex-row sm:items-start gap-3">
-                <label className="text-sm font-medium text-gray-700 sm:w-32 pt-3">
-                  Email<span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="email"
-                  value={email}
-                  onChange={handleInputChange(setEmail)}
-                  className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-gray-900"
-                  placeholder="Enter your email"
-                />
-              </div>
-
-              {/* Avatar Field */}
-              <div className="flex flex-col sm:flex-row sm:items-start gap-3">
-                <div className="sm:w-32">
-                  <label className="text-sm font-medium text-gray-700">Avatar</label>
-                  <p className="text-xs text-gray-500 mt-1">
-                    JPG, GIF or PNG. 1MB Max.
-                  </p>
-                </div>
-                <div className="flex items-center gap-4 flex-1">
-                  <div className="relative">
-                    <img
-                      src={avatar}
-                      alt="Avatar"
-                      className="w-16 h-16 rounded-full object-cover border-2 border-gray-200"
-                    />
+            {isLoadingProfile ? (
+              <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-800 p-6">
+                <div className="flex items-center justify-center py-12">
+                  <div className="text-center">
+                    <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                    <p className="mt-4 text-sm text-gray-600 dark:text-gray-400">Loading profile...</p>
                   </div>
-                  <label className="cursor-pointer">
-                    <input
-                      type="file"
-                      accept="image/png, image/jpeg, image/gif"
-                      //@ts-expect-error:onchange
-                      onChange={handleAvatarUpload}
-                      className="hidden"
-                    />
-                    <span className="inline-block px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors duration-200">
-                      Upload Avatar
-                    </span>
+                </div>
+              </div>
+            ) : (
+            <form onSubmit={handleProfileSubmit(handleProfileUpdate)}>
+              <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-800 p-6 space-y-6">
+                {/* Server Error Messages */}
+                {profileErrors.length > 0 && (
+                  <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
+                    <ul className="list-disc list-inside space-y-1">
+                      {profileErrors.map((error, index) => (
+                        <li key={index} className="text-sm text-red-600 dark:text-red-400">
+                          {error}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {/* First Name Field */}
+                <div className="flex flex-col sm:flex-row sm:items-start gap-3">
+                  <label className="text-sm font-medium text-gray-700 dark:text-gray-300 sm:w-32 pt-3">
+                    First Name<span className="text-red-500">*</span>
                   </label>
+                  <div className="flex-1">
+                    <input
+                      {...registerProfile("first_name")}
+                      type="text"
+                      className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-gray-900 dark:text-gray-100 dark:bg-gray-800 placeholder-gray-400 dark:placeholder-gray-500"
+                      placeholder="Enter your first name"
+                    />
+                    <ErrorMessage message={profileFormErrors.first_name?.message as string} />
+                  </div>
+                </div>
+
+                {/* Last Name Field */}
+                <div className="flex flex-col sm:flex-row sm:items-start gap-3">
+                  <label className="text-sm font-medium text-gray-700 dark:text-gray-300 sm:w-32 pt-3">
+                    Last Name<span className="text-red-500">*</span>
+                  </label>
+                  <div className="flex-1">
+                    <input
+                      {...registerProfile("last_name")}
+                      type="text"
+                      className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-gray-900 dark:text-gray-100 dark:bg-gray-800 placeholder-gray-400 dark:placeholder-gray-500"
+                      placeholder="Enter your last name"
+                    />
+                    <ErrorMessage message={profileFormErrors.last_name?.message as string} />
+                  </div>
+                </div>
+
+                {/* Email Field */}
+                <div className="flex flex-col sm:flex-row sm:items-start gap-3">
+                  <label className="text-sm font-medium text-gray-700 dark:text-gray-300 sm:w-32 pt-3">
+                    Email<span className="text-red-500">*</span>
+                  </label>
+                  <div className="flex-1">
+                    <input
+                      {...registerProfile("email")}
+                      type="email"
+                      className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-gray-900 dark:text-gray-100 dark:bg-gray-800 placeholder-gray-400 dark:placeholder-gray-500"
+                      placeholder="Enter your email"
+                    />
+                    <ErrorMessage message={profileFormErrors.email?.message as string} />
+                  </div>
+                </div>
+
+                {/* Designation Field */}
+                <div className="flex flex-col sm:flex-row sm:items-start gap-3">
+                  <label className="text-sm font-medium text-gray-700 dark:text-gray-300 sm:w-32 pt-3">
+                    Designation<span className="text-red-500">*</span>
+                  </label>
+                  <div className="flex-1">
+                    <input
+                      {...registerProfile("designation")}
+                      type="text"
+                      className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-gray-900 dark:text-gray-100 dark:bg-gray-800 placeholder-gray-400 dark:placeholder-gray-500"
+                      placeholder="Enter your designation"
+                    />
+                    <ErrorMessage message={profileFormErrors.designation?.message as string} />
+                  </div>
+                </div>
+
+                {/* Avatar Field */}
+                <div className="flex flex-col sm:flex-row sm:items-start gap-3">
+                  <div className="sm:w-32">
+                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Avatar</label>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                      JPG, GIF or PNG. 1MB Max.
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-4 flex-1">
+                    <div className="relative">
+                      <img
+                        src={avatar}
+                        alt="Avatar"
+                        className="w-16 h-16 rounded-full object-cover border-2 border-gray-200 dark:border-gray-700"
+                      />
+                    </div>
+                    <label className="cursor-pointer">
+                      <input
+                        type="file"
+                        accept="image/png, image/jpeg, image/gif"
+                        //@ts-expect-error:onchange
+                        onChange={handleAvatarUpload}
+                        className="hidden"
+                      />
+                      <span className="inline-block px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors duration-200">
+                        Upload Avatar
+                      </span>
+                    </label>
+                  </div>
+                </div>
+
+                {/* Additional Info Field */}
+                <div className="flex flex-col sm:flex-row sm:items-start gap-3">
+                  <label className="text-sm font-medium text-gray-700 dark:text-gray-300 sm:w-32 pt-3">
+                    Additional Info
+                  </label>
+                  <div className="flex-1">
+                    <textarea
+                      {...registerProfile("additional_info")}
+                      rows={6}
+                      className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-gray-900 dark:text-gray-100 dark:bg-gray-800 placeholder-gray-400 dark:placeholder-gray-500 resize-none"
+                      placeholder="Tell us about yourself..."
+                    />
+                    <ErrorMessage message={profileFormErrors.additional_info?.message as string} />
+                  </div>
                 </div>
               </div>
 
-              {/* Bio Field */}
-              <div className="flex flex-col sm:flex-row sm:items-start gap-3">
-                <label className="text-sm font-medium text-gray-700 sm:w-32 pt-3">
-                  Bio
-                </label>
-                <textarea
-                  value={bio}
-                  onChange={handleInputChange(setBio)}
-                  rows={6}
-                  className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-gray-900 resize-none"
-                  placeholder="Tell us about yourself..."
-                />
+              {/* Save Button */}
+              <div className="mt-6 flex justify-end">
+                <button
+                  type="submit"
+                  disabled={isUpdatingProfile || isLoadingProfile}
+                  className={`px-6 py-3 rounded-lg font-medium text-white transition-all duration-200 ${
+                    isUpdatingProfile || isLoadingProfile
+                      ? "bg-blue-400 cursor-not-allowed"
+                      : "bg-blue-600 hover:bg-blue-700 cursor-pointer"
+                  }`}
+                >
+                  {isUpdatingProfile ? "Updating Profile..." : "Save Changes"}
+                </button>
               </div>
-            </div>
-
-            {/* Save Button */}
-            <div className="mt-6 flex justify-end">
-              <button
-                onClick={handleSaveChanges}
-                disabled={!hasChanges}
-                className={`px-6 py-3 rounded-lg font-medium text-white transition-all duration-200 ${
-                  hasChanges
-                    ? 'bg-blue-600 hover:bg-blue-700 cursor-pointer'
-                    : 'bg-blue-400 cursor-not-allowed'
-                }`}
-              >
-                Save changes
-              </button>
-            </div>
+            </form>
+            )}
           </div>
         )}
 
         {/* Change Password Tab */}
         {activeTab === "change-password" && (
           <div>
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 space-y-6">
-              {/* Current Password */}
-              <div className="flex flex-col sm:flex-row sm:items-start gap-3">
-                <label className="text-sm font-medium text-gray-700 sm:w-32 pt-3">
-                  Current Password<span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="password"
-                  value={currentPassword}
-                  onChange={(e) => setCurrentPassword(e.target.value)}
-                  className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-gray-900"
-                  placeholder="Enter current password"
-                />
-              </div>
-
-              {/* New Password */}
-              <div className="flex flex-col sm:flex-row sm:items-start gap-3">
-                <label className="text-sm font-medium text-gray-700 sm:w-32 pt-3">
-                  New Password<span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="password"
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                  className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-gray-900"
-                  placeholder="Enter new password (min. 8 characters)"
-                />
-              </div>
-
-              {/* Confirm Password */}
-              <div className="flex flex-col sm:flex-row sm:items-start gap-3">
-                <label className="text-sm font-medium text-gray-700 sm:w-32 pt-3">
-                  Confirm Password<span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="password"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-gray-900"
-                  placeholder="Confirm new password"
-                />
-              </div>
-            </div>
-
-            {/* Save Button */}
-            <div className="mt-6 flex justify-end">
-              <button
-                onClick={handlePasswordChange}
-                disabled={!currentPassword || !newPassword || !confirmPassword}
-                className={`px-6 py-3 rounded-lg font-medium text-white transition-all duration-200 ${
-                  currentPassword && newPassword && confirmPassword
-                    ? 'bg-blue-600 hover:bg-blue-700 cursor-pointer'
-                    : 'bg-blue-400 cursor-not-allowed'
-                }`}
-              >
-                Change Password
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* Security Tab */}
-        {activeTab === "security" && (
-          <div>
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 space-y-6">
-              {/* 2FA Section */}
-              <div className="flex flex-col sm:flex-row sm:items-start gap-3">
-                <div className="sm:w-32">
-                  <label className="text-sm font-medium text-gray-700">Two-Factor Authentication</label>
-                  <p className="text-xs text-gray-500 mt-1">
-                    Add an extra layer of security to your account
-                  </p>
-                </div>
-                <div className="flex-1">
-                  <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200">
-                    <div>
-                      <h3 className="font-semibold text-gray-900 mb-1">Enable 2FA</h3>
-                      <p className="text-sm text-gray-600">
-                        {twoFactorEnabled 
-                          ? 'Two-factor authentication is currently enabled'
-                          : 'Two-factor authentication is currently disabled'}
-                      </p>
-                    </div>
-                    <label className="relative inline-flex items-center cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={twoFactorEnabled}
-                        onChange={(e) => setTwoFactorEnabled(e.target.checked)}
-                        className="sr-only peer"
-                      />
-                      <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-                    </label>
+            <form onSubmit={handlePasswordSubmit(handlePasswordChange)}>
+              <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-800 p-6 space-y-6">
+                {/* Server Error Messages */}
+                {passwordErrors.length > 0 && (
+                  <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
+                    <ul className="list-disc list-inside space-y-1">
+                      {passwordErrors.map((error, index) => (
+                        <li key={index} className="text-sm text-red-600 dark:text-red-400">
+                          {error}
+                        </li>
+                      ))}
+                    </ul>
                   </div>
-                  {twoFactorEnabled && (
-                    <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                      <p className="text-sm text-blue-800">
-                        <strong>Next steps:</strong> Scan the QR code with your authenticator app to complete setup.
-                      </p>
-                    </div>
-                  )}
+                )}
+
+                {/* Current Password */}
+                <div className="flex flex-col sm:flex-row sm:items-start gap-3">
+                  <label className="text-sm font-medium text-gray-700 dark:text-gray-300 sm:w-32 pt-3">
+                    Current Password<span className="text-red-500">*</span>
+                  </label>
+                  <div className="flex-1">
+                    <input
+                      {...registerPassword("current_password")}
+                      type="password"
+                      className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-gray-900 dark:text-gray-100 dark:bg-gray-800 placeholder-gray-400 dark:placeholder-gray-500"
+                      placeholder="Enter current password"
+                    />
+                    <ErrorMessage message={passwordFormErrors.current_password?.message as string} />
+                  </div>
+                </div>
+
+                {/* New Password */}
+                <div className="flex flex-col sm:flex-row sm:items-start gap-3">
+                  <label className="text-sm font-medium text-gray-700 dark:text-gray-300 sm:w-32 pt-3">
+                    New Password<span className="text-red-500">*</span>
+                  </label>
+                  <div className="flex-1">
+                    <input
+                      {...registerPassword("password")}
+                      type="password"
+                      className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-gray-900 dark:text-gray-100 dark:bg-gray-800 placeholder-gray-400 dark:placeholder-gray-500"
+                      placeholder="Enter new password (min. 8 characters)"
+                    />
+                    <ErrorMessage message={passwordFormErrors.password?.message as string} />
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                      Must contain at least one uppercase letter, one lowercase letter, and one number
+                    </p>
+                  </div>
+                </div>
+
+                {/* Confirm Password */}
+                <div className="flex flex-col sm:flex-row sm:items-start gap-3">
+                  <label className="text-sm font-medium text-gray-700 dark:text-gray-300 sm:w-32 pt-3">
+                    Confirm Password<span className="text-red-500">*</span>
+                  </label>
+                  <div className="flex-1">
+                    <input
+                      type="password"
+                      {...registerPassword("confirm_password" as any, {
+                        validate: (value) =>
+                          value === newPasswordValue || "Passwords do not match",
+                      })}
+                      className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-gray-900 dark:text-gray-100 dark:bg-gray-800 placeholder-gray-400 dark:placeholder-gray-500"
+                      placeholder="Confirm new password"
+                    />
+                    <ErrorMessage
+                      message={
+                        (passwordFormErrors as any).confirm_password?.message as string
+                      }
+                    />
+                  </div>
                 </div>
               </div>
-            </div>
 
-            {/* Save Button */}
-            <div className="mt-6 flex justify-end">
-              <button
-                onClick={handleSecuritySave}
-                className="px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
-              >
-                Save Security Settings
-              </button>
-            </div>
+              {/* Save Button */}
+              <div className="mt-6 flex justify-end">
+                <button
+                  type="submit"
+                  disabled={isChangingPassword}
+                  className={`px-6 py-3 rounded-lg font-medium text-white transition-all duration-200 ${
+                    isChangingPassword
+                      ? "bg-blue-400 cursor-not-allowed"
+                      : "bg-blue-600 hover:bg-blue-700 cursor-pointer"
+                  }`}
+                >
+                  {isChangingPassword ? "Changing Password..." : "Change Password"}
+                </button>
+              </div>
+            </form>
           </div>
         )}
 
@@ -368,23 +544,6 @@ const UserProfilePage = () => {
                     ))}
                   </div>
                 </div>
-              </div>
-
-              {/* Language Selection */}
-              <div className="flex flex-col sm:flex-row sm:items-start gap-3">
-                <label className="text-sm font-medium text-gray-700 sm:w-32 pt-3">
-                  Language
-                </label>
-                <select
-                  value={language}
-                  onChange={(e) => setLanguage(e.target.value)}
-                  className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-gray-900"
-                >
-                  <option value="en">English</option>
-                  <option value="ar">Arabic</option>
-                  <option value="fr">French</option>
-                  <option value="es">Spanish</option>
-                </select>
               </div>
             </div>
 
