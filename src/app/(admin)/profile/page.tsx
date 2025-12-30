@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useSession } from "next-auth/react";
@@ -38,10 +38,17 @@ const UserProfilePage = () => {
     },
   });
 
+  // Track if profile has been loaded to prevent unnecessary reloads
+  const hasLoadedProfile = useRef(false);
+
   // Fetch current user profile data
   useEffect(() => {
     const loadProfile = async () => {
+      // Prevent multiple simultaneous loads
+      if (hasLoadedProfile.current || !session) return;
+      
       try {
+        hasLoadedProfile.current = true;
         setIsLoadingProfile(true);
         const profileData = await fetchProfile();
         
@@ -81,7 +88,8 @@ const UserProfilePage = () => {
     if (session) {
       loadProfile();
     }
-  }, [session, resetProfileForm]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session]);
   
   // Change Password State
   const [isChangingPassword, setIsChangingPassword] = useState(false);
@@ -102,7 +110,18 @@ const UserProfilePage = () => {
   // Appearance State
   const [theme, setTheme] = useState('light');
 
-  const handleProfileUpdate = async (data: any) => {
+  // Helper function to parse error messages
+  const parseErrorMessage = useCallback((error: any): string[] => {
+    if (error instanceof Error) {
+      const errorMessage = error.message;
+      return errorMessage.includes(",") 
+        ? errorMessage.split(", ") 
+        : [errorMessage];
+    }
+    return ["Failed to update profile. Please try again."];
+  }, []);
+
+  const handleProfileUpdate = useCallback(async (data: any) => {
     try {
       setProfileErrors([]);
       setIsUpdatingProfile(true);
@@ -120,6 +139,7 @@ const UserProfilePage = () => {
       
       // Clear avatar file after successful upload
       setAvatarFile(null);
+      hasLoadedProfile.current = false; // Allow reload after update
       
       // Reload profile data after successful update
       try {
@@ -140,52 +160,46 @@ const UserProfilePage = () => {
         console.error("Failed to reload profile:", error);
       }
     } catch (error: any) {
-      if (error instanceof Error) {
-        const errorMessage = error.message;
-        // Check if it's an array of errors or a single error
-        if (errorMessage.includes(",")) {
-          setProfileErrors(errorMessage.split(", "));
-        } else {
-          setProfileErrors([errorMessage]);
-        }
-        toast.error(errorMessage);
-      } else {
-        const defaultError = "Failed to update profile. Please try again.";
-        setProfileErrors([defaultError]);
-        toast.error(defaultError);
-      }
+      const errors = parseErrorMessage(error);
+      setProfileErrors(errors);
+      toast.error(errors[0]);
     } finally {
       setIsUpdatingProfile(false);
     }
-  };
+  }, [avatarFile, resetProfileForm, parseErrorMessage]);
 
-  const handleAvatarUpload = (e: { target: { files: any[]; }; }) => {
-    const file = e.target.files[0];
-    if (file) {
-      if (file.size > 1024 * 1024) {
-        toast.error('File size must be less than 1MB');
-        return;
-      }
-      // Store the file for upload
-      setAvatarFile(file);
-      
-      // Create preview
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        //@ts-expect-error:res
-        setAvatar(reader.result);
-      };
-      reader.readAsDataURL(file);
+  const handleAvatarUpload = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 1024 * 1024) {
+      toast.error('File size must be less than 1MB');
+      return;
     }
-  };
 
-  const tabs = [
+    // Store the file for upload
+    setAvatarFile(file);
+    
+    // Create preview
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      if (reader.result) {
+        setAvatar(reader.result as string);
+      }
+    };
+    reader.onerror = () => {
+      toast.error('Failed to read image file');
+    };
+    reader.readAsDataURL(file);
+  }, []);
+
+  const tabs = useMemo(() => [
     { id: "update-profile", label: "Update Profile" },
     { id: "change-password", label: "Change Password" },
     { id: "appearance", label: "Appearance" },
-  ];
+  ], []);
 
-  const handlePasswordChange = async (data: any) => {
+  const handlePasswordChange = useCallback(async (data: any) => {
     try {
       setPasswordErrors([]);
       setIsChangingPassword(true);
@@ -198,57 +212,57 @@ const UserProfilePage = () => {
       toast.success("Password changed successfully!");
       resetPasswordForm();
     } catch (error: any) {
-      if (error instanceof Error) {
-        const errorMessage = error.message;
-        // Check if it's an array of errors or a single error
-        if (errorMessage.includes(",")) {
-          setPasswordErrors(errorMessage.split(", "));
-        } else {
-          setPasswordErrors([errorMessage]);
-        }
-        toast.error(errorMessage);
-      } else {
-        const defaultError = "Failed to change password. Please try again.";
-        setPasswordErrors([defaultError]);
-        toast.error(defaultError);
-      }
+      const errors = parseErrorMessage(error);
+      setPasswordErrors(errors);
+      toast.error(errors[0]);
     } finally {
       setIsChangingPassword(false);
     }
-  };
+  }, [resetPasswordForm, parseErrorMessage]);
 
-  const handleAppearanceSave = () => {
+  const handleAppearanceSave = useCallback(() => {
     // TODO: Implement appearance settings save logic
-    alert('Appearance settings saved successfully!');
-  };
+    toast.success('Appearance settings saved successfully!');
+  }, []);
+
+  const handleTabChange = useCallback((tabId: string) => {
+    setActiveTab(tabId);
+  }, []);
+
+  const breadcrumbs = useMemo(() => [
+    { label: "Dashboard", href: "/dashboard" },
+    { label: "Profile" }
+  ], []);
+
+  const themeOptions = useMemo(() => ['light', 'dark', 'system'], []);
 
   return (
     <div>
       <PageTitle 
         title="User Profile"
-        breadcrumbs={[
-          { label: "Dashboard", href: "/dashboard" },
-          { label: "Profile" }
-        ]}
+        breadcrumbs={breadcrumbs}
       />
 
       {/* Tabs Navigation */}
       <div className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 -mx-6 -mt-6 mb-6">
         <div className="px-6">
           <div className="flex gap-8 overflow-x-auto">
-            {tabs.map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`px-1 py-4 font-semibold text-sm transition-all relative whitespace-nowrap border-b-2 ${
-                  activeTab === tab.id
-                    ? "text-blue-600 dark:text-blue-400 border-blue-600 dark:border-blue-400"
-                    : "text-gray-500 dark:text-gray-400 border-transparent hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600"
-                }`}
-              >
-                {tab.label}
-              </button>
-            ))}
+            {tabs.map((tab) => {
+              const isActive = activeTab === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => handleTabChange(tab.id)}
+                  className={`px-1 py-4 font-semibold text-sm transition-all relative whitespace-nowrap border-b-2 ${
+                    isActive
+                      ? "text-blue-600 dark:text-blue-400 border-blue-600 dark:border-blue-400"
+                      : "text-gray-500 dark:text-gray-400 border-transparent hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600"
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              );
+            })}
           </div>
         </div>
       </div>
@@ -367,7 +381,6 @@ const UserProfilePage = () => {
                       <input
                         type="file"
                         accept="image/png, image/jpeg, image/gif"
-                        //@ts-expect-error:onchange
                         onChange={handleAvatarUpload}
                         className="hidden"
                       />
@@ -520,28 +533,33 @@ const UserProfilePage = () => {
                 </label>
                 <div className="flex-1">
                   <div className="grid grid-cols-3 gap-4">
-                    {['light', 'dark', 'system'].map((themeOption) => (
-                      <button
-                        key={themeOption}
-                        onClick={() => setTheme(themeOption)}
-                        className={`p-4 border-2 rounded-lg transition-all ${
-                          theme === themeOption
-                            ? 'border-blue-600 bg-blue-50'
-                            : 'border-gray-200 hover:border-gray-300'
-                        }`}
-                      >
-                        <div className="text-sm font-semibold text-gray-900 capitalize mb-1">
-                          {themeOption}
-                        </div>
-                        <div className="text-xs text-gray-600">
-                          {themeOption === 'system' 
-                            ? 'Follow system preference'
-                            : themeOption === 'light'
-                            ? 'Light mode'
-                            : 'Dark mode'}
-                        </div>
-                      </button>
-                    ))}
+                    {themeOptions.map((themeOption) => {
+                      const isSelected = theme === themeOption;
+                      const description = themeOption === 'system' 
+                        ? 'Follow system preference'
+                        : themeOption === 'light'
+                        ? 'Light mode'
+                        : 'Dark mode';
+                      
+                      return (
+                        <button
+                          key={themeOption}
+                          onClick={() => setTheme(themeOption)}
+                          className={`p-4 border-2 rounded-lg transition-all ${
+                            isSelected
+                              ? 'border-blue-600 bg-blue-50'
+                              : 'border-gray-200 hover:border-gray-300'
+                          }`}
+                        >
+                          <div className="text-sm font-semibold text-gray-900 capitalize mb-1">
+                            {themeOption}
+                          </div>
+                          <div className="text-xs text-gray-600">
+                            {description}
+                          </div>
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
               </div>
