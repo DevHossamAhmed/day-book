@@ -6,7 +6,7 @@ import PageTitle from "@/components/ui/PageTitle";
 
 const page = () => {
   return (
-    <div className="bg-[#fcfcfc]">
+    <div className="">
       <PageTitle 
         title="Dashboard"
       />

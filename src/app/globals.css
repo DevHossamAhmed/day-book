@@ -23,11 +23,13 @@ html {
 /* Dark theme - only apply when .dark class is explicitly present */
 html.dark {
   color-scheme: dark;
+  background-color: #1b2333; /* gray-900 */
 }
 
 /* Ensure light theme is maintained when dark class is not present */
 html:not(.dark) {
   color-scheme: light;
+  
 }
 
 /* Prevent system dark mode from overriding our theme preference */

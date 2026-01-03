@@ -19,7 +19,7 @@ export default function DashboardLayout({
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen ">
       <SideBar isOpen={isSidebarOpen} onClose={closeSidebar} />
 
       <div className="lg:ml-[320px]">
