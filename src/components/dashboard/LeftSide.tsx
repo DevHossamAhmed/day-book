@@ -208,10 +208,10 @@ const LeftSide = () => {
   }, []);
 
   return (
-    <div className="w-full max-w-4xl mx-auto p-6 space-y-6">
+    <div className="w-full max-w-4xl mx-auto space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-          <div className="flex justify-between items-start mb-4">
+          <div className="flex justify-between items-start mb-6">
             <div>
               <h3 className="text-gray-700 font-semibold text-lg mb-2">
                 Online Sales
@@ -235,7 +235,7 @@ const LeftSide = () => {
         </div>
 
         <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-          <div className="flex justify-between items-start mb-4">
+          <div className="flex justify-between items-start mb-6">
             <div>
               <h3 className="text-gray-700 font-semibold text-lg mb-2">
                 Offline Sales

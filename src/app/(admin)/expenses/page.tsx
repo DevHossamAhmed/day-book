@@ -1,308 +1,348 @@
-"use client"
-import React, { useState } from 'react';
-import { ChevronLeft, ChevronRight, Search, SlidersHorizontal, MoreVertical, Plus, X, Calendar, ChevronDown, Image, Save } from 'lucide-react';
+"use client";
+import React, { useState, useEffect } from "react";
+import { formatDate, getDateByLabel } from "@/lib/utils/date.util";
+import CreateExpense from "@/components/expense/modals/CreateExpense";
+import { fetchExpenses, exportExpenses } from "@/services/expense.service";
+import { Expense } from "@/types/expense";
+import toast from "react-hot-toast";
+import { exportToExcel } from "@/lib/utils/excel.util";
+import { PaginationMeta } from "@/types/pagination";
+import { Pagination } from "@/components/ui/Pagination";
+import ExpenseRow from "@/components/expense/ui/ExpenseRow";
+import PageTitle from "@/components/ui/PageTitle";
+import PageLoading from "@/components/ui/PageLoading";
+import { formatMoney } from "@/lib/utils/money.util";
+import { PaymentMethod } from "@/data/payment-method";
+import { fetchGetIdNameList as fetchVendorIdNameList } from "@/services/vendor.service";
+import { fetchGetIdNameList as fetchExpenseTypeIdNameList } from "@/services/expense-type.service";
+import { useAsyncData } from "@/hooks/useAsyncData";
+import PageActions from "@/components/ui/PageActions";
+import ExportButton from "@/components/ui/ExportButton";
+import FilterButton from "@/components/ui/FilterButton";
+import FilterPanel, { FilterField } from "@/components/ui/FilterPanel";
+import DateFilterTabs from "@/components/ui/DateFilterTabs";
 
 const ExpensesPage = () => {
-  const [selectedDate, setSelectedDate] = useState(21);
+  const [activeTab, setActiveTab] = useState<string>("Today");
+  const [dateFilter, setDateFilter] = useState<string>(getDateByLabel("today"));
   const [isCreateExpenseOpen, setIsCreateExpenseOpen] = useState(false);
+  const [search, setSearch] = useState<string>("");
+  const [expenses, setExpenses] = useState<Expense[]>([]);
+  const [meta, setMeta] = useState<PaginationMeta>();
+  const [page, setPage] = useState<number>(1);
+  const [limit] = useState<number>(10);
+  const [isExporting, setIsExporting] = useState(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isFilterOpen, setIsFilterOpen] = useState<boolean>(false);
   
-  const dates = [
-    { day: 19, name: 'Sun' },
-    { day: 20, name: 'Mon' },
-    { day: 21, name: 'Tue' },
-    { day: 22, name: 'Wed' },
-    { day: 23, name: 'Thu' },
-    { day: 24, name: 'Fri' },
-    { day: 25, name: 'Sat' }
+  // Filter states
+  const [filterFromDate, setFilterFromDate] = useState<string>("");
+  const [filterToDate, setFilterToDate] = useState<string>("");
+  const [filterVendorId, setFilterVendorId] = useState<string>("");
+  const [filterExpenseTypeId, setFilterExpenseTypeId] = useState<string>("");
+  const [filterPaymentMethod, setFilterPaymentMethod] = useState<string>("");
+  const [filterAmountMin, setFilterAmountMin] = useState<string>("");
+  const [filterAmountMax, setFilterAmountMax] = useState<string>("");
+
+  // Fetch vendors and expense types for filters
+  const {
+    data: vendorsData,
+    isLoading: isLoadingVendors,
+  } = useAsyncData({
+    fetchFn: async () => {
+      const res = await fetchVendorIdNameList();
+      return res.data;
+    },
+  });
+
+  const {
+    data: expenseTypesData,
+    isLoading: isLoadingExpenseTypes,
+  } = useAsyncData({
+    fetchFn: async () => {
+      const res = await fetchExpenseTypeIdNameList();
+      return res.data;
+    },
+  });
+
+  const vendors = vendorsData || [];
+  const expenseTypes = expenseTypesData || [];
+
+  useEffect(() => {
+    fetchData(1);
+  }, [activeTab, search, dateFilter, filterFromDate, filterToDate, filterVendorId, filterExpenseTypeId, filterPaymentMethod, filterAmountMin, filterAmountMax]);
+
+  const openCreateExpense = () => setIsCreateExpenseOpen(true);
+  const closeCreateExpense = () => setIsCreateExpenseOpen(false);
+
+  const setDateToFilter = (value: string) => {
+    setActiveTab(value);
+    setDateFilter(getDateByLabel(value.toLowerCase()));
+  };
+
+  const onPageChange = (newPage: number) => {
+    fetchData(newPage);
+  };
+
+  const fetchData = async (newPage: number) => {
+    try {
+      setIsLoading(true);
+      const params: any = {
+        date: dateFilter,
+        page: newPage,
+        limit,
+        search: search || undefined,
+      };
+
+      // Add filter parameters
+      if (filterFromDate) params.from_date = filterFromDate;
+      if (filterToDate) params.to_date = filterToDate;
+      if (filterVendorId) params.vendor_id = filterVendorId;
+      if (filterExpenseTypeId) params.expense_type_id = filterExpenseTypeId;
+      if (filterPaymentMethod) params.payment_method = filterPaymentMethod;
+      if (filterAmountMin) params.amount_min = filterAmountMin;
+      if (filterAmountMax) params.amount_max = filterAmountMax;
+
+      const { items, meta } = await fetchExpenses(params);
+
+      setExpenses(items);
+      setMeta(meta);
+      setPage(meta.page);
+    } catch (error) {
+      toast.error("Failed to fetch expense records. Please try again later.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const onSave = () => {
+    fetchData(1);
+  };
+
+  const handleExportExcel = async () => {
+    try {
+      setIsExporting(true);
+      const params: any = {
+        date: dateFilter,
+        search: search || undefined,
+      };
+
+      // Add filter parameters for export
+      if (filterFromDate) params.from_date = filterFromDate;
+      if (filterToDate) params.to_date = filterToDate;
+      if (filterVendorId) params.vendor_id = filterVendorId;
+      if (filterExpenseTypeId) params.expense_type_id = filterExpenseTypeId;
+      if (filterPaymentMethod) params.payment_method = filterPaymentMethod;
+      if (filterAmountMin) params.amount_min = filterAmountMin;
+      if (filterAmountMax) params.amount_max = filterAmountMax;
+
+      const data = await exportExpenses(params);
+      
+      const exportData = data.map((expense) => ({
+        "Date": formatDate(new Date(expense.date), "YYYY-MM-DD"),
+        "Vendor": expense.vendor?.name || "—",
+        "Expense Type": expense.expense_type?.name || "—",
+        "Amount": formatMoney(expense.amount),
+        "Payment Method": expense.payment_method || "—",
+        "Note": expense.note || "—",
+        "Added By": expense.added_by_fullname || "—",
+      }));
+
+      exportToExcel(exportData, `expenses-${formatDate(new Date(), "YYYY-MM-DD")}`);
+      toast.success("Expenses exported successfully!");
+    } catch (error) {
+      toast.error("Failed to export expenses. Please try again later.");
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  const handleClearFilters = () => {
+    setFilterFromDate("");
+    setFilterToDate("");
+    setFilterVendorId("");
+    setFilterExpenseTypeId("");
+    setFilterPaymentMethod("");
+    setFilterAmountMin("");
+    setFilterAmountMax("");
+  };
+
+  const activeFilterCount = [
+    filterFromDate,
+    filterToDate,
+    filterVendorId,
+    filterExpenseTypeId,
+    filterPaymentMethod,
+    filterAmountMin,
+    filterAmountMax,
+  ].filter(Boolean).length;
+
+  const filterFields: FilterField[] = [
+    {
+      type: "date",
+      label: "Period From",
+      value: filterFromDate,
+      onChange: setFilterFromDate,
+    },
+    {
+      type: "date",
+      label: "Period To",
+      value: filterToDate,
+      onChange: setFilterToDate,
+    },
+    {
+      type: "select",
+      label: "Vendor",
+      value: filterVendorId,
+      onChange: setFilterVendorId,
+      options: [
+        { value: "", label: "All Vendors" },
+        ...vendors.map((vendor) => ({
+          value: String(vendor.id),
+          label: vendor.name,
+        })),
+      ],
+      disabled: isLoadingVendors,
+    },
+    {
+      type: "select",
+      label: "Expense Type",
+      value: filterExpenseTypeId,
+      onChange: setFilterExpenseTypeId,
+      options: [
+        { value: "", label: "All Expense Types" },
+        ...expenseTypes.map((expenseType) => ({
+          value: String(expenseType.id),
+          label: expenseType.name,
+        })),
+      ],
+      disabled: isLoadingExpenseTypes,
+    },
+    {
+      type: "select",
+      label: "Payment Method",
+      value: filterPaymentMethod,
+      onChange: setFilterPaymentMethod,
+      options: [
+        { value: "", label: "All Payment Methods" },
+        ...PaymentMethod.map((method) => ({ value: method, label: method })),
+      ],
+    },
+    {
+      type: "number",
+      label: "Amount Min",
+      value: filterAmountMin,
+      onChange: setFilterAmountMin,
+      placeholder: "Minimum amount",
+    },
+    {
+      type: "number",
+      label: "Amount Max",
+      value: filterAmountMax,
+      onChange: setFilterAmountMax,
+      placeholder: "Maximum amount",
+    },
   ];
 
-  const expenses = [
-    {
-      id: 1,
-      title: 'Electricity',
-      seller: 'Mahmoud Ahmed',
-      time: '9:30 AM',
-      amount: '$35,000',
-      type: 'Account'
-    },
-    {
-      id: 2,
-      title: 'Internet/Phone',
-      seller: 'Sajid Nahvi',
-      time: '9:30 AM',
-      amount: '$30,000',
-      type: 'Cash'
-    },
-    {
-      id: 3,
-      title: 'Travel',
-      seller: 'Sajid Nahvi',
-      time: '9:30 AM',
-      amount: '$30,000',
-      type: 'Cash'
-    },
-    {
-      id: 4,
-      title: 'Misc (Tea,Snacks, Etc)',
-      seller: 'Sajid Nahvi',
-      time: '9:30 AM',
-      amount: '$30,000',
-      type: 'Cash'
-    }
-  ];
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6" >
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold text-gray-900">Expenses</h1>
-        </div>
+    <div>
+      <PageTitle 
+        title="Expenses"
+        breadcrumbs={[
+          { label: "Dashboard", href: "/dashboard" },
+          { label: "Expenses" }
+        ]}
+      />
 
-        {/* Create Expenses Button and Menu */}
-        <div className="flex gap-2 mb-6">
-          <button 
-            onClick={() => setIsCreateExpenseOpen(true)}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-lg flex items-center gap-2 font-medium shadow-sm"
-          >
-            <Plus size={20} />
-            Create Expenses
-          </button>
-          <button className="bg-white border border-gray-200 p-2.5 rounded-lg hover:bg-gray-50">
-            <MoreVertical size={20} className="text-gray-600" />
-          </button>
-        </div>
+      <PageActions
+        search={search}
+        onSearchChange={setSearch}
+        searchPlaceholder="Search expenses..."
+        actions={
+          <>
+            <ExportButton onClick={handleExportExcel} isExporting={isExporting} />
+            <button
+              onClick={() => setIsCreateExpenseOpen(true)}
+              className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium"
+            >
+              Create Expense
+            </button>
+          </>
+        }
+      />
 
-        {/* Main Content Card */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-          {/* Date Navigation */}
-          <div className="flex items-center justify-between mb-8">
-            <div className="flex items-center gap-4">
-              <button className="bg-black text-white px-4 py-2 rounded-lg text-sm font-medium">
-                Day
-              </button>
-              <div className="flex items-center gap-2 text-gray-700">
-                <span className="font-medium">21st September, 2025</span>
-                <ChevronRight size={20} className="transform rotate-90" />
-              </div>
-            </div>
-
-            <div className="flex items-center gap-4">
-              <button className="text-gray-600 hover:text-gray-900 font-medium">Yesterday</button>
-              <button className="text-blue-600 font-medium border-b-2 border-blue-600 pb-1">Today</button>
-              <button className="text-gray-600 hover:text-gray-900 font-medium">Tomorrow</button>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <button className="flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-lg hover:bg-gray-50">
-                <SlidersHorizontal size={18} />
-                <span className="font-medium">Filter</span>
-              </button>
-              <button className="p-2 border border-gray-200 rounded-lg hover:bg-gray-50">
-                <Search size={18} />
-              </button>
+      {/* Main Content Card */}
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100">
+        {/* Date Navigation */}
+        <div className="p-6 border-b border-gray-200">
+          <div className="flex items-center justify-between gap-6">
+            <DateFilterTabs
+              activeTab={activeTab}
+              onTabChange={setDateToFilter}
+              showDatePicker={false}
+            />
+            <div className="flex gap-3">
+              <FilterButton
+                isOpen={isFilterOpen}
+                onClick={() => setIsFilterOpen(!isFilterOpen)}
+                activeFilterCount={activeFilterCount}
+              />
             </div>
           </div>
+        </div>
 
-          {/* Calendar Week View */}
-          <div className="flex items-center justify-between mb-8">
-            <button className="p-2 hover:bg-gray-100 rounded-lg">
-              <ChevronLeft size={20} />
-            </button>
-            
-            <div className="flex gap-2">
-              {dates.map((date) => (
-                <button
-                  key={date.day}
-                  onClick={() => setSelectedDate(date.day)}
-                  className={`flex flex-col items-center justify-center w-20 h-20 rounded-2xl transition-all ${
-                    selectedDate === date.day
-                      ? 'bg-blue-600 text-white shadow-lg'
-                      : 'bg-white hover:bg-gray-50 text-gray-700'
-                  }`}
-                >
-                  <span className="text-2xl font-bold">{date.day}</span>
-                  <span className="text-sm">{date.name}</span>
-                </button>
-              ))}
-            </div>
+        {/* Filter Panel */}
+        <FilterPanel
+          isOpen={isFilterOpen}
+          fields={filterFields}
+          onClearFilters={handleClearFilters}
+        />
 
-            <button className="p-2 hover:bg-gray-100 rounded-lg">
-              <ChevronRight size={20} />
-            </button>
-          </div>
-
-          {/* Expenses List */}
-          <div className="space-y-1">
-            {expenses.map((expense) => (
-              <div
-                key={expense.id}
-                className="flex items-center justify-between py-4 px-2 hover:bg-gray-50 rounded-lg transition-colors"
-              >
-                <div className="flex items-center gap-4">
-                  <div>
-                    <h3 className="font-semibold text-gray-900 mb-1">{expense.title}</h3>
-                    <div className="flex items-center gap-2">
-                      <span
-                        className={`text-xs px-2 py-0.5 rounded ${
-                          expense.type === 'Cash'
-                            ? 'bg-green-100 text-green-700'
-                            : 'bg-pink-100 text-pink-700'
-                        }`}
-                      >
-                        {expense.type}
-                      </span>
-                      <span className="text-sm text-gray-600">{expense.seller}</span>
-                      <span className="text-sm text-gray-600">{expense.time}</span>
-                    </div>
-                  </div>
+        {/* Expenses List */}
+        <div className="p-6">
+          {isLoading ? (
+            <PageLoading />
+          ) : (
+            <div className="space-y-3">
+              {expenses.length === 0 ? (
+                <div className="text-center py-12 text-gray-500">
+                  No expense records found
                 </div>
-                <div className="text-xl font-bold text-gray-900">{expense.amount}</div>
-              </div>
-            ))}
-          </div>
-
-          {/* Pagination */}
-          <div className="flex items-center justify-end gap-2 mt-8 pt-6 border-t border-gray-100">
-            <button className="px-4 py-2 border border-gray-200 rounded-lg hover:bg-gray-50 flex items-center gap-2">
-              <ChevronLeft size={18} />
-              <span>Previous</span>
-            </button>
-            
-            <button className="w-10 h-10 bg-blue-600 text-white rounded-lg font-medium">1</button>
-            <button className="w-10 h-10 hover:bg-gray-100 rounded-lg font-medium">2</button>
-            <button className="w-10 h-10 hover:bg-gray-100 rounded-lg font-medium">3</button>
-            <span className="px-2">...</span>
-            <button className="w-10 h-10 hover:bg-gray-100 rounded-lg font-medium">8</button>
-            <button className="w-10 h-10 hover:bg-gray-100 rounded-lg font-medium">9</button>
-            <button className="w-10 h-10 hover:bg-gray-100 rounded-lg font-medium">10</button>
-            
-            <button className="px-4 py-2 border border-gray-200 rounded-lg hover:bg-gray-50 flex items-center gap-2">
-              <span>Next</span>
-              <ChevronRight size={18} />
-            </button>
-          </div>
+              ) : (
+                expenses.map((expense) => (
+                  <ExpenseRow
+                    key={expense.id}
+                    expense={expense}
+                    onSave={onSave}
+                  />
+                ))
+              )}
+            </div>
+          )}
         </div>
+
+        {/* Pagination */}
+        {meta && (
+          <Pagination
+            meta={meta}
+            onPageChange={(newPage) => onPageChange(newPage)}
+          />
+        )}
       </div>
 
-      {/* Create Expense Side Panel */}
+      {/* Create Expense Modal */}
       {isCreateExpenseOpen && (
-        <>
-          {/* Overlay */}
-          <div 
-            className="fixed inset-0 bg-black/5 bg-opacity-50 z-40"
-            onClick={() => setIsCreateExpenseOpen(false)}
-          />
-          
-          {/* Side Panel */}
-          <div className="fixed top-0 right-0 h-full w-[560px] bg-white shadow-2xl z-[9999] flex flex-col">
-            {/* Header */}
-            <div className="flex items-center justify-between p-6 border-b border-gray-200">
-              <h2 className="text-xl font-bold text-gray-900">Create Expense</h2>
-              <button 
-                onClick={() => setIsCreateExpenseOpen(false)}
-                className="p-1 hover:bg-gray-100 rounded-lg"
-              >
-                <X size={24} className="text-gray-600" />
-              </button>
-            </div>
-
-            {/* Form Content */}
-            <div className="flex-1 overflow-y-auto p-6 space-y-5">
-              {/* Date */}
-              <div>
-                <label className="block text-sm font-semibold text-gray-900 mb-2">Date</label>
-                <div className="relative">
-                  <input
-                    type="text"
-                    placeholder="Select date"
-                    className="w-full pl-4 pr-12 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-500"
-                  />
-                  <Calendar size={20} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400" />
-                </div>
-              </div>
-
-              {/* Vendor */}
-              <div>
-                <label className="block text-sm font-semibold text-gray-900 mb-2">Vendor</label>
-                <div className="relative">
-                  <select className="w-full pl-4 pr-12 py-3 border border-gray-300 rounded-lg appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-500">
-                    <option value=""></option>
-                  </select>
-                  <ChevronDown size={20} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
-                </div>
-              </div>
-
-              {/* Expense Type */}
-              <div>
-                <label className="block text-sm font-semibold text-gray-900 mb-2">Expense Type</label>
-                <div className="relative">
-                  <select className="w-full pl-4 pr-12 py-3 border border-gray-300 rounded-lg appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-500">
-                    <option value=""></option>
-                    <option value="electricity">Electricity</option>
-                    <option value="internet">Internet/Phone</option>
-                    <option value="travel">Travel</option>
-                    <option value="misc">Misc (Tea,Snacks, Etc)</option>
-                  </select>
-                  <ChevronDown size={20} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
-                </div>
-              </div>
-
-              {/* Amount */}
-              <div>
-                <label className="block text-sm font-semibold text-gray-900 mb-2">Amount</label>
-                <input
-                  type="text"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-
-              {/* Payment Method */}
-              <div>
-                <label className="block text-sm font-semibold text-gray-900 mb-2">Payment Method</label>
-                <div className="relative">
-                  <select className="w-full pl-4 pr-12 py-3 border border-gray-300 rounded-lg appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-500">
-                    <option value=""></option>
-                    <option value="cash">Cash</option>
-                    <option value="account">Account</option>
-                  </select>
-                  <ChevronDown size={20} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
-                </div>
-              </div>
-
-              {/* Attachment */}
-              <div>
-                <label className="block text-sm font-semibold text-gray-900 mb-2">Attachment</label>
-                <div className="border-2 border-dashed border-gray-300 rounded-lg p-10 text-center hover:border-gray-400 transition-colors cursor-pointer">
-                  <Image size={36} className="mx-auto text-gray-400 mb-2" />
-                  <p className="text-gray-400 text-sm">Drag & Drop Receipt</p>
-                </div>
-              </div>
-
-              {/* Note */}
-              <div>
-                <label className="block text-sm font-semibold text-gray-900 mb-2">Note</label>
-                <textarea
-                  placeholder="Receipt Info (optional)"
-                  rows={4}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none text-gray-500"
-                />
-              </div>
-            </div>
-
-            {/* Footer Buttons */}
-            <div className="p-6 border-t border-gray-200 flex items-center justify-end gap-3">
-              <button className="px-6 py-2.5 border border-gray-300 rounded-lg font-medium text-gray-700 hover:bg-gray-50">
-                Save and New
-              </button>
-              <button className="px-6 py-2.5 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 flex items-center gap-2">
-                <Save size={18} />
-                Save
-              </button>
-            </div>
-          </div>
-        </>
+        <CreateExpense 
+          onClose={closeCreateExpense} 
+          onSave={onSave}
+          vendors={vendors}
+          expenseTypes={expenseTypes}
+          isLoadingVendors={isLoadingVendors}
+          isLoadingExpenseTypes={isLoadingExpenseTypes}
+        />
       )}
+
     </div>
   );
 };

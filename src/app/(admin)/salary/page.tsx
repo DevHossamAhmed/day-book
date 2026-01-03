@@ -1,407 +1,493 @@
-"use client"
-import React, { useState } from 'react';
-import { ChevronLeft, ChevronRight, Search, SlidersHorizontal, MoreVertical, Plus, X, Calendar, ChevronDown, Save, Copy, Trash2, Printer } from 'lucide-react';
+"use client";
+import React, { useState } from "react";
+import {
+  ChevronRight,
+  Trash2,
+  Printer,
+  Download,
+  Image,
+  FileText,
+  Video,
+} from "lucide-react";
+import { formatDate, getDateByLabel } from "@/lib/utils/date.util";
+import CreateSalary from "@/components/salary/modals/CreateSalary";
+import PageTitle from "@/components/ui/PageTitle";
+import { PaymentMethod } from "@/data/payment-method";
+import { fetchGetIdNameList } from "@/services/user.service";
+import { useAsyncData } from "@/hooks/useAsyncData";
+import toast from "react-hot-toast";
+import { exportToExcel } from "@/lib/utils/excel.util";
+import PageLoading from "@/components/ui/PageLoading";
+import { fetchSalaries, exportSalaries } from "@/services/salary.service";
+import { Salary } from "@/types/salary";
+import { PaginationMeta } from "@/types/pagination";
+import { Pagination } from "@/components/ui/Pagination";
+import { formatMoney } from "@/lib/utils/money.util";
+import PageActions from "@/components/ui/PageActions";
+import ExportButton from "@/components/ui/ExportButton";
+import FilterButton from "@/components/ui/FilterButton";
+import FilterPanel, { FilterField } from "@/components/ui/FilterPanel";
+import DateFilterTabs from "@/components/ui/DateFilterTabs";
+import SidePanel from "@/components/ui/SidePanel";
 
 const SalaryPage = () => {
-  const [selectedDate, setSelectedDate] = useState(21);
+  const [activeTab, setActiveTab] = useState<string>("Today");
+  const [dateFilter, setDateFilter] = useState<string>(getDateByLabel("today"));
   const [isCreateSalaryOpen, setIsCreateSalaryOpen] = useState(false);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
-  const [selectedSalary, setSelectedSalary] = useState(null);
+  const [selectedSalary, setSelectedSalary] = useState<Salary | null>(null);
+  const [search, setSearch] = useState<string>("");
+  const [salaries, setSalaries] = useState<Salary[]>([]);
+  const [meta, setMeta] = useState<PaginationMeta>();
+  const [page, setPage] = useState<number>(1);
+  const [limit] = useState<number>(10);
+  const [isExporting, setIsExporting] = useState(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isFilterOpen, setIsFilterOpen] = useState<boolean>(false);
   
-  const dates = [
-    { day: 19, name: 'Sun' },
-    { day: 20, name: 'Mon' },
-    { day: 21, name: 'Tue' },
-    { day: 22, name: 'Wed' },
-    { day: 23, name: 'Thu' },
-    { day: 24, name: 'Fri' },
-    { day: 25, name: 'Sat' }
-  ];
+  // Filter states
+  const [filterFromDate, setFilterFromDate] = useState<string>("");
+  const [filterToDate, setFilterToDate] = useState<string>("");
+  const [filterEmployeeId, setFilterEmployeeId] = useState<string>("");
+  const [filterPaymentMethod, setFilterPaymentMethod] = useState<string>("");
+  const [filterAmountMin, setFilterAmountMin] = useState<string>("");
+  const [filterAmountMax, setFilterAmountMax] = useState<string>("");
 
-  const salaries = [
+  // Fetch members for filters
+  const {
+    data: membersData,
+    isLoading: isLoadingMembers,
+  } = useAsyncData({
+    fetchFn: async () => {
+      const res = await fetchGetIdNameList();
+      return res.data;
+    },
+  });
+
+  const members = membersData || [];
+
+  React.useEffect(() => {
+    fetchData(1);
+  }, [activeTab, search, dateFilter, filterFromDate, filterToDate, filterEmployeeId, filterPaymentMethod, filterAmountMin, filterAmountMax]);
+
+  const fetchData = async (newPage: number) => {
+    try {
+      setIsLoading(true);
+      const params: any = {
+        date: dateFilter,
+        page: newPage,
+        limit,
+        search: search || undefined,
+      };
+
+      // Add filter parameters
+      if (filterFromDate) params.from_date = filterFromDate;
+      if (filterToDate) params.to_date = filterToDate;
+      if (filterEmployeeId) params.employee_id = filterEmployeeId;
+      if (filterPaymentMethod) params.payment_method = filterPaymentMethod;
+      if (filterAmountMin) params.amount_min = filterAmountMin;
+      if (filterAmountMax) params.amount_max = filterAmountMax;
+
+      const { items, meta } = await fetchSalaries(params);
+
+      setSalaries(items);
+      setMeta(meta);
+      setPage(meta.page);
+    } catch (error) {
+      toast.error("Failed to fetch salary records. Please try again later.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const onPageChange = (newPage: number) => {
+    fetchData(newPage);
+  };
+
+  const onSave = () => {
+    fetchData(1);
+  };
+  const setDateToFilter = (value: string) => {
+    setActiveTab(value);
+    setDateFilter(getDateByLabel(value.toLowerCase()));
+  };
+
+  const handleExportExcel = async () => {
+    try {
+      setIsExporting(true);
+      const params: any = {
+        date: dateFilter,
+        search: search || undefined,
+      };
+
+      // Add filter parameters for export
+      if (filterFromDate) params.from_date = filterFromDate;
+      if (filterToDate) params.to_date = filterToDate;
+      if (filterEmployeeId) params.employee_id = filterEmployeeId;
+      if (filterPaymentMethod) params.payment_method = filterPaymentMethod;
+      if (filterAmountMin) params.amount_min = filterAmountMin;
+      if (filterAmountMax) params.amount_max = filterAmountMax;
+
+      const data = await exportSalaries(params);
+      
+      const exportData = data.map((salary) => ({
+        "Payment Date": formatDate(new Date(salary.payment_date), "YYYY-MM-DD"),
+        "Employee": salary.employee?.first_name && salary.employee?.last_name 
+          ? `${salary.employee.first_name} ${salary.employee.last_name}` 
+          : "—",
+        "Salary Amount": formatMoney(salary.salary_amount),
+        "Deductions": salary.deductions ? formatMoney(salary.deductions) : "—",
+        "Deduction Reason": salary.deduction_reason || "—",
+        "Period": salary.period || "—",
+        "Payment Method": salary.payment_method || "—",
+        "Status": salary.status || "—",
+        "Note": salary.note || "—",
+        "Added By": salary.added_by_fullname || "—",
+      }));
+
+      exportToExcel(exportData, `salaries-${formatDate(new Date(), "YYYY-MM-DD")}`);
+      toast.success("Salary records exported successfully!");
+    } catch (error) {
+      toast.error("Failed to export salary records. Please try again later.");
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  const handleClearFilters = () => {
+    setFilterFromDate("");
+    setFilterToDate("");
+    setFilterEmployeeId("");
+    setFilterPaymentMethod("");
+    setFilterAmountMin("");
+    setFilterAmountMax("");
+  };
+
+  const activeFilterCount = [
+    filterFromDate,
+    filterToDate,
+    filterEmployeeId,
+    filterPaymentMethod,
+    filterAmountMin,
+    filterAmountMax,
+  ].filter(Boolean).length;
+
+  const filterFields: FilterField[] = [
     {
-      id: 1,
-      title: 'Mahmoud Ahmed',
-      position: 'Backend Developer',
-      employeeId: '344521',
-      seller: 'Sajid Nahvi',
-      time: '9:30 AM',
-      amount: '$40,000',
-      salary: '$45,000',
-      deduction: '$5,000',
-      deductionReason: 'Reason',
-      type: 'Account',
-      status: 'Upcoming',
-      hasIcon: true,
-      joiningDate: '1st January, 2025',
-      payPeriod: 'August, 2025',
-      payDate: '29th August, 2025',
-      paidBy: 'Bank Transfer',
-      note: 'This is an additional information. If available this section will show otherwise it will be hidden.',
-      attachment: true
+      type: "date",
+      label: "Period From",
+      value: filterFromDate,
+      onChange: setFilterFromDate,
     },
     {
-      id: 2,
-      title: 'Sajid Nahvi',
-      position: 'Frontend Developer',
-      employeeId: '344522',
-      seller: 'Sajid Nahvi',
-      time: '9:30 AM',
-      amount: '$35,000',
-      salary: '$40,000',
-      deduction: '$5,000',
-      deductionReason: 'Late arrival',
-      type: 'Account',
-      status: 'Upcoming',
-      hasIcon: false,
-      joiningDate: '15th March, 2025',
-      payPeriod: 'August, 2025',
-      payDate: '29th August, 2025',
-      paidBy: 'Bank Transfer',
-      note: 'Regular monthly salary payment',
-      attachment: false
-    }
+      type: "date",
+      label: "Period To",
+      value: filterToDate,
+      onChange: setFilterToDate,
+    },
+    {
+      type: "select",
+      label: "Employee",
+      value: filterEmployeeId,
+      onChange: setFilterEmployeeId,
+      options: [
+        { value: "", label: "All Employees" },
+        ...members.map((member) => ({
+          value: String(member.id),
+          label: member.full_name,
+        })),
+      ],
+      disabled: isLoadingMembers,
+    },
+    {
+      type: "select",
+      label: "Payment Method",
+      value: filterPaymentMethod,
+      onChange: setFilterPaymentMethod,
+      options: [
+        { value: "", label: "All Payment Methods" },
+        ...PaymentMethod.map((method) => ({ value: method, label: method })),
+      ],
+    },
+    {
+      type: "number",
+      label: "Amount Min",
+      value: filterAmountMin,
+      onChange: setFilterAmountMin,
+      placeholder: "Minimum amount",
+    },
+    {
+      type: "number",
+      label: "Amount Max",
+      value: filterAmountMax,
+      onChange: setFilterAmountMax,
+      placeholder: "Maximum amount",
+    },
   ];
-//@ts-expect-error:salary
-  const handleRowClick = (salary) => {
+
+  const handleDownloadMedia = async (media: any, e: React.MouseEvent) => {
+    e.stopPropagation();
+    try {
+      const link = document.createElement('a');
+      link.href = media.url;
+      link.download = media.file_name;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      toast.success('File downloaded successfully');
+    } catch (error) {
+      toast.error('Failed to download file');
+      console.error('Download error:', error);
+    }
+  };
+
+  const formatFileSize = (bytes: string): string => {
+    const size = parseInt(bytes);
+    if (size < 1024) return `${size} B`;
+    if (size < 1024 * 1024) return `${(size / 1024).toFixed(2)} KB`;
+    return `${(size / (1024 * 1024)).toFixed(2)} MB`;
+  };
+
+  const getFileIcon = (mimeType: string) => {
+    if (mimeType.startsWith('image/')) {
+      return <Image size={20} className="text-blue-500" />;
+    } else if (mimeType.startsWith('video/')) {
+      return <Video size={20} className="text-purple-500" />;
+    } else {
+      return <FileText size={20} className="text-gray-500" />;
+    }
+  };
+
+  const handleRowClick = (salary: Salary) => {
     setSelectedSalary(salary);
     setIsDetailsOpen(true);
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold text-gray-900">Salary</h1>
-        </div>
+    <div>
+      <PageTitle 
+        title="Salary"
+        breadcrumbs={[
+          { label: "Dashboard", href: "/dashboard" },
+          { label: "Salary" }
+        ]}
+      />
 
-        {/* Create Salary Button and Menu */}
-        <div className="flex gap-2 mb-6">
-          <button 
-            onClick={() => setIsCreateSalaryOpen(true)}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-lg flex items-center gap-2 font-medium shadow-sm"
-          >
-            <Plus size={20} />
-            Create Salary
-          </button>
-          <button className="bg-white border border-gray-200 p-2.5 rounded-lg hover:bg-gray-50">
-            <MoreVertical size={20} className="text-gray-600" />
-          </button>
-        </div>
+      <PageActions
+        search={search}
+        onSearchChange={setSearch}
+        searchPlaceholder="Search salary..."
+        actions={
+          <>
+            <ExportButton onClick={handleExportExcel} isExporting={isExporting} />
+            <button
+              onClick={() => setIsCreateSalaryOpen(true)}
+              className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium"
+            >
+              Create Salary
+            </button>
+          </>
+        }
+      />
 
-        {/* Main Content Card */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-          {/* Date Navigation */}
-          <div className="flex items-center justify-between mb-8">
-            <div className="flex items-center gap-4">
-              <button className="bg-black text-white px-4 py-2 rounded-lg text-sm font-medium">
-                Day
-              </button>
-              <div className="flex items-center gap-2 text-gray-700">
-                <span className="font-medium">21st September, 2025</span>
-                <ChevronRight size={20} className="transform rotate-90" />
-              </div>
-            </div>
-
-            <div className="flex items-center gap-4">
-              <button className="text-gray-600 hover:text-gray-900 font-medium">Yesterday</button>
-              <button className="text-blue-600 font-medium border-b-2 border-blue-600 pb-1">Today</button>
-              <button className="text-gray-600 hover:text-gray-900 font-medium">Tomorrow</button>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <button className="flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-lg hover:bg-gray-50">
-                <SlidersHorizontal size={18} />
-                <span className="font-medium">Filter</span>
-              </button>
-              <button className="p-2 border border-gray-200 rounded-lg hover:bg-gray-50">
-                <Search size={18} />
-              </button>
+      {/* Main Content Card */}
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100">
+        {/* Date Navigation */}
+        <div className="p-6 border-b border-gray-200">
+          <div className="flex items-center justify-between gap-6">
+            <DateFilterTabs
+              activeTab={activeTab}
+              onTabChange={setDateToFilter}
+              showDatePicker={false}
+            />
+            <div className="flex gap-3">
+              <FilterButton
+                isOpen={isFilterOpen}
+                onClick={() => setIsFilterOpen(!isFilterOpen)}
+                activeFilterCount={activeFilterCount}
+              />
             </div>
           </div>
+        </div>
 
-          {/* Calendar Week View */}
-          <div className="flex items-center justify-between mb-8">
-            <button className="p-2 hover:bg-gray-100 rounded-lg">
-              <ChevronLeft size={20} />
-            </button>
-            
-            <div className="flex gap-2">
-              {dates.map((date) => (
-                <button
-                  key={date.day}
-                  onClick={() => setSelectedDate(date.day)}
-                  className={`flex flex-col items-center justify-center w-20 h-20 rounded-2xl transition-all ${
-                    selectedDate === date.day
-                      ? 'bg-blue-600 text-white shadow-lg'
-                      : 'bg-white hover:bg-gray-50 text-gray-700'
-                  }`}
-                >
-                  <span className="text-2xl font-bold">{date.day}</span>
-                  <span className="text-sm">{date.name}</span>
-                </button>
-              ))}
-            </div>
+        {/* Filter Panel */}
+        <FilterPanel
+          isOpen={isFilterOpen}
+          fields={filterFields}
+          onClearFilters={handleClearFilters}
+        />
 
-            <button className="p-2 hover:bg-gray-100 rounded-lg">
-              <ChevronRight size={20} />
-            </button>
-          </div>
-
-          {/* Salaries List */}
-          <div className="space-y-1">
-            {salaries.map((salary) => (
-              <div
-                key={salary.id}
-                onClick={() => handleRowClick(salary)}
-                className="flex items-center justify-between py-4 px-2 hover:bg-gray-50 rounded-lg transition-colors cursor-pointer"
-              >
-                <div className="flex items-center gap-4">
-                  <div>
-                    <div className="flex items-center gap-2 mb-1">
-                      <h3 className="font-semibold text-gray-900">{salary.title}</h3>
-                      {salary.hasIcon && (
-                        <Copy size={16} className="text-gray-400" />
-                      )}
+        {/* Salaries List */}
+        <div className="p-6">
+          {isLoading ? (
+            <PageLoading />
+          ) : (
+            <div className="space-y-3">
+              {salaries.length === 0 ? (
+                <div className="text-center py-12 text-gray-500">
+                  No salary records found
+                </div>
+              ) : (
+                salaries.map((salary) => (
+                  <div
+                    key={salary.id}
+                    onClick={() => handleRowClick(salary)}
+                    className="flex items-center justify-between p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors cursor-pointer"
+                  >
+                    <div className="flex items-center gap-4 flex-1">
+                      <div className="flex-1">
+                        <h3 className="font-semibold text-gray-900 mb-1">
+                          {salary.employee?.first_name && salary.employee?.last_name
+                            ? `${salary.employee.first_name} ${salary.employee.last_name}`
+                            : salary.employee?.first_name || "Employee"}
+                        </h3>
+                        <div className="flex items-center gap-2 text-sm">
+                          {salary.employee?.designation && (
+                            <span className="text-gray-600">
+                              {salary.employee.designation}
+                            </span>
+                          )}
+                          {salary.payment_date && (
+                            <span className="text-gray-600">
+                              {formatDate(new Date(salary.payment_date), "MMM DD, YYYY")}
+                            </span>
+                          )}
+                        </div>
+                      </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs px-2 py-0.5 rounded bg-pink-100 text-pink-700">
-                        {salary.type}
-                      </span>
-                      <span className="text-sm text-gray-600">{salary.seller}</span>
-                      <span className="text-sm text-gray-600">{salary.time}</span>
+                    <div className="flex items-center gap-4">
+                      {salary.payment_method && (
+                        <span className="text-sm font-medium text-gray-600">
+                          {salary.payment_method}
+                        </span>
+                      )}
+                      <div className="text-xl font-bold text-gray-900">
+                        {formatMoney(salary.salary_amount - (salary.deductions || 0))}
+                      </div>
+                      <ChevronRight size={20} className="text-gray-400 ml-2" />
                     </div>
                   </div>
-                </div>
-                <div className="flex items-center gap-4">
-                  <span className="text-sm font-medium text-orange-500">{salary.status}</span>
-                  <div className="text-xl font-bold text-gray-900">{salary.amount}</div>
-                </div>
-              </div>
-            ))}
-          </div>
+                ))
+              )}
+            </div>
+          )}
         </div>
+
+        {/* Pagination */}
+        {meta && (
+          <Pagination
+            meta={meta}
+            onPageChange={(newPage) => onPageChange(newPage)}
+          />
+        )}
       </div>
 
-      {/* Create Salary Side Panel */}
+      {/* Create Salary Modal */}
       {isCreateSalaryOpen && (
-        <>
-          {/* Overlay */}
-          <div 
-            className="fixed inset-0 bg-black/5 bg-opacity-50 z-40"
-            onClick={() => setIsCreateSalaryOpen(false)}
-          />
-          
-          {/* Side Panel */}
-          <div className="fixed top-0 right-0 h-full w-[560px] bg-white shadow-2xl z-[9999] flex flex-col">
-            {/* Header */}
-            <div className="flex items-center justify-between p-6 border-b border-gray-200">
-              <h2 className="text-xl font-bold text-gray-900">Create Salary</h2>
-              <button 
-                onClick={() => setIsCreateSalaryOpen(false)}
-                className="p-1 hover:bg-gray-100 rounded-lg"
-              >
-                <X size={24} className="text-gray-600" />
-              </button>
-            </div>
-
-            {/* Form Content */}
-            <div className="flex-1 overflow-y-auto p-6 space-y-5">
-              {/* Employee */}
-              <div>
-                <label className="block text-sm font-semibold text-gray-900 mb-2">Employee</label>
-                <div className="relative">
-                  <select className="w-full pl-4 pr-12 py-3 border border-gray-300 rounded-lg appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-500">
-                    <option value=""></option>
-                  </select>
-                  <ChevronDown size={20} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
-                </div>
-              </div>
-
-              {/* Salary Amount */}
-              <div>
-                <label className="block text-sm font-semibold text-gray-900 mb-2">Salary Amount</label>
-                <input
-                  type="text"
-                  placeholder="Enter amount"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-500"
-                />
-              </div>
-
-              {/* Deductions and Deduction Reason */}
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-semibold text-gray-900 mb-2">Deductions</label>
-                  <input
-                    type="text"
-                    placeholder="Enter amount"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-500"
-                  />
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-semibold text-gray-900 mb-2">Deduction Reason</label>
-                  <input
-                    type="text"
-                    placeholder="Enter reason"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-500"
-                  />
-                </div>
-              </div>
-
-              {/* Payment Date and Period */}
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-semibold text-gray-900 mb-2">Payment Date</label>
-                  <div className="relative">
-                    <input
-                      type="text"
-                      placeholder="Select date"
-                      className="w-full pl-4 pr-12 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-500"
-                    />
-                    <Calendar size={20} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400" />
-                  </div>
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-semibold text-gray-900 mb-2">Period</label>
-                  <div className="relative">
-                    <input
-                      type="text"
-                      placeholder="Select period"
-                      className="w-full pl-4 pr-12 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-500"
-                    />
-                    <Calendar size={20} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400" />
-                  </div>
-                </div>
-              </div>
-
-              {/* Payment Method */}
-              <div>
-                <label className="block text-sm font-semibold text-gray-900 mb-2">Payment Method</label>
-                <div className="relative">
-                  <select className="w-full pl-4 pr-12 py-3 border border-gray-300 rounded-lg appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-500">
-                    <option value="">Select method</option>
-                    <option value="cash">Cash</option>
-                    <option value="account">Bank Transfer</option>
-                  </select>
-                  <ChevronDown size={20} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
-                </div>
-              </div>
-
-              {/* Status */}
-              <div>
-                <label className="block text-sm font-semibold text-gray-900 mb-2">Status</label>
-                <div className="relative">
-                  <select className="w-full pl-4 pr-12 py-3 border border-gray-300 rounded-lg appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-500">
-                    <option value="">Select status</option>
-                    <option value="upcoming">Upcoming</option>
-                    <option value="paid">Paid</option>
-                  </select>
-                  <ChevronDown size={20} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
-                </div>
-              </div>
-
-              {/* Note */}
-              <div>
-                <label className="block text-sm font-semibold text-gray-900 mb-2">Note</label>
-                <textarea
-                  placeholder="Receipt Info (optional)"
-                  rows={5}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none text-gray-500"
-                />
-              </div>
-            </div>
-
-            {/* Footer Buttons */}
-            <div className="p-6 border-t border-gray-200 flex items-center justify-end gap-3">
-              <button className="px-6 py-2.5 border border-gray-300 rounded-lg font-medium text-gray-700 hover:bg-gray-50">
-                Save and New
-              </button>
-              <button className="px-6 py-2.5 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 flex items-center gap-2">
-                <Save size={18} />
-                Save
-              </button>
-            </div>
-          </div>
-        </>
+        <CreateSalary
+          onClose={() => setIsCreateSalaryOpen(false)}
+          onSave={onSave}
+        />
       )}
 
       {/* Salary Details Side Panel */}
-      {isDetailsOpen && selectedSalary && (
-        <>
-          {/* Overlay */}
-          <div 
-            className="fixed inset-0 bg-black/5 bg-opacity-50 z-40"
-            onClick={() => setIsDetailsOpen(false)}
-          />
-          
-          {/* Side Panel */}
-          <div className="fixed top-0 right-0 h-full w-[800px] bg-white shadow-2xl z-[9999] flex flex-col">
-            {/* Header */}
-            <div className="flex items-center justify-between p-6 border-b border-gray-200">
-              <h2 className="text-2xl font-bold text-gray-900">Salary Details</h2>
-              <div className="flex items-center gap-3">
-                <button className="flex items-center gap-2 px-4 py-2 border border-red-200 text-red-600 rounded-lg hover:bg-red-50 font-medium">
-                  <Trash2 size={18} />
-                  Delete
-                </button>
-                <button 
-                  onClick={() => setIsDetailsOpen(false)}
-                  className="p-1 hover:bg-gray-100 rounded-lg"
-                >
-                  <X size={24} className="text-gray-600" />
-                </button>
-              </div>
+      {selectedSalary && (
+        <SidePanel
+          isOpen={isDetailsOpen}
+          onClose={() => {
+            setIsDetailsOpen(false);
+            setSelectedSalary(null);
+          }}
+          title="Salary Details"
+          maxWidth="2xl"
+          footer={
+            <div className="flex items-center justify-between gap-3">
+              <button className="flex items-center gap-2 px-4 py-2 border border-red-200 text-red-600 rounded-lg hover:bg-red-50 font-medium">
+                <Trash2 size={18} />
+                Delete
+              </button>
+              <button className="flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 flex items-center justify-center gap-2">
+                <Printer size={18} />
+                Print
+              </button>
             </div>
-
-            {/* Content */}
-            <div className="flex-1 overflow-y-auto p-6">
-              <div className="grid grid-cols-2 gap-6">
-                {/* Left Column */}
-                <div className="space-y-6">
-                  {/* Employee Info Card */}
+          }
+        >
+          <div className="grid grid-cols-2 gap-6">
+            {/* Left Column */}
+            <div className="space-y-6">
+              {/* Employee Info Card */}
                   <div className="bg-gray-50 rounded-xl p-6">
-                    <h3 className="text-2xl font-bold text-gray-900 mb-1">{
-                    //@ts-expect-error:salary
-                    selectedSalary.title}</h3>
-                    <p className="text-gray-600 mb-1">{
-                    //@ts-expect-error:salary
-                    selectedSalary.position}</p>
-                    <p className="text-sm text-gray-500">Employee ID# {
-                    //@ts-expect-error:salary
-                    selectedSalary.employeeId}</p>
+                    <h3 className="text-2xl font-bold text-gray-900 mb-1">
+                      {selectedSalary.employee?.first_name && selectedSalary.employee?.last_name
+                        ? `${selectedSalary.employee.first_name} ${selectedSalary.employee.last_name}`
+                        : selectedSalary.employee?.first_name || "Employee"}
+                    </h3>
+                    <p className="text-gray-600 mb-1">
+                      {selectedSalary.employee?.designation || "—"}
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      Employee ID# {selectedSalary.employee_id || "—"}
+                    </p>
                   </div>
 
                   {/* Details */}
                   <div className="space-y-4">
+                    {selectedSalary.employee?.joining_date && (
+                      <div className="flex justify-between items-center py-3 border-b border-gray-200">
+                        <span className="text-gray-600 font-medium">
+                          Joining Date
+                        </span>
+                        <span className="text-gray-900 font-semibold">
+                          {formatDate(
+                            selectedSalary.employee.joining_date instanceof Date 
+                              ? selectedSalary.employee.joining_date 
+                              : new Date(selectedSalary.employee.joining_date), 
+                            "Do MMMM, YYYY"
+                          )}
+                        </span>
+                      </div>
+                    )}
+
                     <div className="flex justify-between items-center py-3 border-b border-gray-200">
-                      <span className="text-gray-600 font-medium">Joining Date</span>
-                      <span className="text-gray-900 font-semibold">{
-                      //@ts-expect-error:salary
-                      selectedSalary.joiningDate}</span>
+                      <span className="text-gray-600 font-medium">
+                        Pay Period
+                      </span>
+                      <span className="text-gray-900 font-semibold">
+                        {selectedSalary.period || "—"}
+                      </span>
                     </div>
-                    
+
                     <div className="flex justify-between items-center py-3 border-b border-gray-200">
-                      <span className="text-gray-600 font-medium">Pay Period</span>
-                      <span className="text-gray-900 font-semibold">{
-                      //@ts-expect-error:salary
-                      selectedSalary.payPeriod}</span>
+                      <span className="text-gray-600 font-medium">
+                        Payment Date
+                      </span>
+                      <span className="text-gray-900 font-semibold">
+                        {selectedSalary.payment_date 
+                          ? formatDate(new Date(selectedSalary.payment_date), "Do MMMM, YYYY")
+                          : "—"}
+                      </span>
                     </div>
-                    
+
                     <div className="flex justify-between items-center py-3 border-b border-gray-200">
-                      <span className="text-gray-600 font-medium">Pay Date</span>
-                      <span className="text-gray-900 font-semibold">{
-                      //@ts-expect-error:salary
-                      selectedSalary.payDate}</span>
+                      <span className="text-gray-600 font-medium">Payment Method</span>
+                      <span className="text-gray-900 font-semibold">
+                        {selectedSalary.payment_method || "—"}
+                      </span>
                     </div>
-                    
+
                     <div className="flex justify-between items-center py-3 border-b border-gray-200">
-                      <span className="text-gray-600 font-medium">Paid By</span>
-                      <span className="text-gray-900 font-semibold">{
-                      //@ts-expect-error:salary
-                      selectedSalary.paidBy}</span>
+                      <span className="text-gray-600 font-medium">Status</span>
+                      <span className={`font-semibold ${
+                        selectedSalary.status === "paid" 
+                          ? "text-green-600" 
+                          : selectedSalary.status === "overdue"
+                          ? "text-red-600"
+                          : "text-orange-500"
+                      }`}>
+                        {selectedSalary.status || "—"}
+                      </span>
                     </div>
                   </div>
 
@@ -410,178 +496,114 @@ const SalaryPage = () => {
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <p className="text-sm text-gray-500 mb-2">Earning</p>
-                        <p className="text-lg font-semibold text-gray-900">Total</p>
+                        <p className="text-lg font-semibold text-gray-900">
+                          Total
+                        </p>
                       </div>
                       <div className="text-right">
                         <p className="text-sm text-gray-500 mb-2">Deduction</p>
-                        <p className="text-lg font-semibold text-gray-900">Total</p>
+                        <p className="text-lg font-semibold text-gray-900">
+                          Total
+                        </p>
                       </div>
                     </div>
 
                     <div className="grid grid-cols-2 gap-4 pb-4 border-b border-gray-200">
                       <div className="flex justify-between">
                         <span className="text-gray-600">Salary</span>
-                        <span className="text-gray-900 font-semibold">{
-                        //@ts-expect-error:salary
-                        selectedSalary.salary}</span>
+                        <span className="text-gray-900 font-semibold">
+                          {formatMoney(selectedSalary.salary_amount)}
+                        </span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-gray-600">{
-                        //@ts-expect-error:salary
-                        selectedSalary.deductionReason}</span>
-                        <span className="text-red-600 font-semibold">{
-                        //@ts-expect-error:salary
-                        selectedSalary.deduction}</span>
+                        <span className="text-gray-600">
+                          {selectedSalary.deduction_reason || "Deduction"}
+                        </span>
+                        <span className="text-red-600 font-semibold">
+                          {selectedSalary.deductions ? formatMoney(selectedSalary.deductions) : "—"}
+                        </span>
                       </div>
                     </div>
 
                     <div className="bg-blue-50 rounded-lg p-4 flex justify-between items-center">
-                      <span className="text-gray-700 font-semibold">Total</span>
-                      <span className="text-2xl font-bold text-gray-900">{
-                      //@ts-expect-error:salary
-                      selectedSalary.amount}</span>
+                      <span className="text-gray-700 font-semibold">Net Amount</span>
+                      <span className="text-2xl font-bold text-gray-900">
+                        {formatMoney(selectedSalary.salary_amount - (selectedSalary.deductions || 0))}
+                      </span>
                     </div>
                   </div>
 
                   {/* Additional Info */}
-                  <div>
-                    <h4 className="text-sm font-semibold text-gray-900 mb-3">Additional Info</h4>
-                    <div className="bg-gray-50 rounded-lg p-4">
-                      <p className="text-sm text-gray-700 leading-relaxed">{
-                      //@ts-expect-error:salary
-                      selectedSalary.note}</p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Right Column - Attachment */}
-                <div>
-                  <h4 className="text-sm font-semibold text-gray-900 mb-3">Attachment</h4>
-                  {
-                  //@ts-expect-error:salary
-                  selectedSalary.attachment && (
-                    <div className="border border-gray-200 rounded-lg p-4 bg-white">
-                      <div className="bg-gray-50 rounded-lg p-6">
-                        <div className="text-center">
-                          <p className="text-xs text-gray-600 font-medium mb-2">Written Tests - Recruitment - 2025 (944 Posts)</p>
-                          <div className="bg-white border border-gray-200 rounded p-4 text-xs text-left space-y-1">
-                            <p className="font-semibold">It is expected that Written Test of shortlisted candidates for the advertised posts of IRPS 7 or 10</p>
-                            <p>job notification will be held as per the following schedule:</p>
-                            
-                            <table className="w-full mt-3 text-xs">
-                              <thead>
-                                <tr className="border-b">
-                                  <th className="text-left py-1">Date / Day</th>
-                                  <th className="text-left py-1">Shift</th>
-                                  <th className="text-left py-1">Post</th>
-                                  <th className="text-left py-1">Batch</th>
-                                  <th className="text-left py-1">Start Time</th>
-                                </tr>
-                              </thead>
-                              <tbody className="text-gray-700">
-                                <tr>
-                                  <td className="py-1">10-04-2025</td>
-                                  <td>Morning</td>
-                                  <td>Corporate</td>
-                                  <td>Batch-1</td>
-                                  <td>9 AM</td>
-                                </tr>
-                                <tr>
-                                  <td className="py-1">(Day 1)</td>
-                                  <td>Afternoon</td>
-                                  <td>Corporate</td>
-                                  <td>Batch-3</td>
-                                  <td>2 PM</td>
-                                </tr>
-                                <tr>
-                                  <td className="py-1">10-04-2025</td>
-                                  <td>Morning</td>
-                                  <td>AB</td>
-                                  <td>Batch-2</td>
-                                  <td>9 AM</td>
-                                </tr>
-                                <tr>
-                                  <td className="py-1">(Day 2)</td>
-                                  <td>Afternoon</td>
-                                  <td>Corporate</td>
-                                  <td>Batch-1</td>
-                                  <td>2 PM</td>
-                                </tr>
-                                <tr>
-                                  <td className="py-1">10-04-2025</td>
-                                  <td>Morning</td>
-                                  <td>LDC</td>
-                                  <td>-</td>
-                                  <td>9 AM</td>
-                                </tr>
-                                <tr>
-                                  <td className="py-1">(Day 3)</td>
-                                  <td>Afternoon</td>
-                                  <td>Assistant</td>
-                                  <td>Batch-2</td>
-                                  <td>2 PM</td>
-                                </tr>
-                                <tr>
-                                  <td className="py-1">11-04-2025</td>
-                                  <td>Morning</td>
-                                  <td>GDC</td>
-                                  <td>-</td>
-                                  <td>9 AM</td>
-                                </tr>
-                                <tr>
-                                  <td className="py-1">(Day 1)</td>
-                                  <td>Afternoon</td>
-                                  <td>Assistant</td>
-                                  <td>-</td>
-                                  <td>2 PM</td>
-                                </tr>
-                                <tr>
-                                  <td className="py-1">12-04-2025</td>
-                                  <td>Morning</td>
-                                  <td>Lab Attendant</td>
-                                  <td>-</td>
-                                  <td>9 AM</td>
-                                </tr>
-                                <tr>
-                                  <td className="py-1">(Day 2)</td>
-                                  <td>Afternoon</td>
-                                  <td>Stenotypist</td>
-                                  <td>-</td>
-                                  <td>1 PM</td>
-                                </tr>
-                                <tr>
-                                  <td className="py-1">-</td>
-                                  <td>Evening</td>
-                                  <td>Nursing Assistant</td>
-                                  <td>-</td>
-                                  <td>5 PM</td>
-                                </tr>
-                              </tbody>
-                            </table>
-                          </div>
-                        </div>
+                  {selectedSalary.note && (
+                    <div>
+                      <h4 className="text-sm font-semibold text-gray-900 mb-3">
+                        Note
+                      </h4>
+                      <div className="bg-gray-50 rounded-lg p-4">
+                        <p className="text-sm text-gray-700 leading-relaxed">
+                          {selectedSalary.note}
+                        </p>
                       </div>
                     </div>
                   )}
                 </div>
-              </div>
 
-              {/* Footer Note */}
-              <div className="text-xs text-gray-500 border-t pt-4 mt-6">
-                <p>This document has been automatically generated by Day Book.</p>
-                <p>Therefore, a signature is not required.</p>
-              </div>
-            </div>
-
-            {/* Footer Button */}
-            <div className="p-6 border-t border-gray-200">
-              <button className="w-full px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 flex items-center justify-center gap-2">
-                <Printer size={18} />
-                Print
-              </button>
+                {/* Right Column - Attachment */}
+                <div>
+                  <h4 className="text-sm font-semibold text-gray-900 mb-3">
+                    Attachments
+                  </h4>
+                  {selectedSalary.media && selectedSalary.media.length > 0 ? (
+                      <div className="space-y-3">
+                        {selectedSalary.media.map((mediaItem) => (
+                            <div
+                              key={mediaItem.id}
+                              className="flex items-center justify-between bg-gray-50 rounded-lg p-4 border border-gray-200 hover:bg-gray-100 transition-colors"
+                            >
+                              <div className="flex items-center gap-3 flex-1 min-w-0">
+                                {getFileIcon(mediaItem.file_mime_type)}
+                                <div className="flex-1 min-w-0">
+                                  <p className="text-sm font-medium text-gray-900 truncate">
+                                    {mediaItem.file_name}
+                                  </p>
+                                  <div className="flex items-center gap-2 mt-1">
+                                    <span className="text-xs text-gray-500">
+                                      {formatFileSize(mediaItem.file_size)}
+                                    </span>
+                                    <span className="text-xs text-gray-400">•</span>
+                                    <span className="text-xs text-gray-500">
+                                      {mediaItem.file_mime_type}
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+                              <button
+                                onClick={(e) => handleDownloadMedia(mediaItem, e)}
+                                className="flex items-center gap-2 px-3 py-2 text-blue-600 border border-blue-600 rounded-lg hover:bg-blue-50 transition-colors ml-4 flex-shrink-0"
+                              >
+                                <Download size={16} />
+                                Download
+                              </button>
+                            </div>
+                          ))
+                        }
+                      </div>
+                    ) : (
+                      <div className="text-center py-8 text-gray-500 text-sm">
+                        No attachments available
+                      </div>
+                    )}
             </div>
           </div>
-        </>
+
+          {/* Footer Note */}
+          <div className="text-xs text-gray-500 border-t pt-4 mt-6 col-span-2">
+            <p>
+              This document has been automatically generated by Day Book.
+            </p>
+            <p>Therefore, a signature is not required.</p>
+          </div>
+        </SidePanel>
       )}
     </div>
   );
