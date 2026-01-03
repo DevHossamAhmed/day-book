@@ -7,5 +7,5 @@ export default withAuth({
 });
 
 export const config = {
-  matcher: ["/((?!auth/login|api|_next).*)"],
+  matcher: ["/((?!auth/signin|auth/signup|api|_next).*)"],
 };
