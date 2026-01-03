@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import Loading from "@/components/ui/Loading";
-import { Save } from "lucide-react";
+
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LoginValidationSchema } from "@/validations/login.validation";
@@ -11,7 +11,8 @@ import ErrorMessage from "@/components/ui/ErrorMessage";
 import { signIn, getSession } from "next-auth/react";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
-
+import pic1 from "../../../../public/assets/images/leftsideLogin2.png";
+import logo from "../../../../public/assets/images/Logo.png";
 const LoginPage = () => {
   const router = useRouter();
 
@@ -71,7 +72,7 @@ const LoginPage = () => {
               <div className="relative max-w-2xl mx-auto">
                 {/* Dashboard preview image placeholder */}
                 <Image
-                  src="/assets/images/leftsideLogin2.png"
+                  src={pic1}
                   alt="Dashboard Preview"
                   width={800}
                   height={600}
@@ -83,14 +84,14 @@ const LoginPage = () => {
         </div>
       </div>
       {/* Right Side - Login Form */}
-      <div className="w-full lg:w-1/2 bg-white flex items-center justify-center px-8 py-12">
+      <div className="w-full lg:w-1/2 bg-[var(--color-header)]  flex items-center justify-center px-8 py-12">
         <div className="w-full max-w-md px-4">
           {/* Logo */}
           <div className="mb-8">
             <div className="flex items-center justify-start gap-2.5 mb-2">
               <Image 
-                src="/assets/images/Logo.png" 
-                alt="logo" 
+                src={logo}
+                alt="logo"
                 width={160}
                 height={45}
                 className="ml-[-50px] w-auto h-auto"
@@ -98,7 +99,7 @@ const LoginPage = () => {
               />
             </div>
 
-            <h2 className="text-3xl font-semibold text-gray-900">
+            <h2 className="text-3xl font-semibold ">
               Sign in to your account
             </h2>
           </div>
@@ -108,7 +109,7 @@ const LoginPage = () => {
               <div>
                 <label
                   htmlFor="email"
-                  className="block text-sm font-medium text-gray-700 mb-2"
+                  className="block text-sm font-medium  mb-2"
                 >
                   Email
                 </label>
@@ -116,7 +117,7 @@ const LoginPage = () => {
                   {...register("email")}
                   type="email"
                   id="email"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none transition-all text-sm text-gray-900 placeholder-gray-400"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none transition-all text-sm  placeholder-gray-400"
                   placeholder="Enter your email"
                 />
                 <ErrorMessage message={errors.email?.message as string} />
@@ -126,7 +127,7 @@ const LoginPage = () => {
               <div>
                 <label
                   htmlFor="password"
-                  className="block text-sm font-medium text-gray-700 mb-2"
+                  className="block text-sm font-medium  mb-2"
                 >
                   Password
                 </label>

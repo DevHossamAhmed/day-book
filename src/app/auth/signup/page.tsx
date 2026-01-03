@@ -15,7 +15,8 @@ import toast from "react-hot-toast";
 import axios from "axios";
 import { CapitalizeFirst } from "@/lib/utils/string.util";
 import { useRouter } from "next/navigation";
-
+import pic1 from "../../../../public/assets/images/leftsideLogin2.png";
+import Logo from "../../../../public/assets/images/Logo.png";
 const SignupPage = () => {
   const router = useRouter();
 
@@ -70,7 +71,7 @@ const SignupPage = () => {
               <div className="relative max-w-2xl mx-auto">
                 {/* Dashboard preview image placeholder */}
                 <Image
-                  src="/assets/images/leftsideLogin2.png"
+                  src={pic1}
                   alt="Dashboard Preview"
                   width={800}
                   height={600}
@@ -81,12 +82,12 @@ const SignupPage = () => {
           </div>
         </div>
       </div>
-      <div className="w-full lg:w-1/2 bg-white flex items-center justify-center px-8 py-12">
+      <div className="w-full lg:w-1/2 bg-[var(--color-header)] flex items-center justify-center px-8 py-12">
         <div className="w-full max-w-md px-4">
           <div className="mb-12">
             <div className="flex items-center justify-start gap-2.5 mb-2">
               <Image
-                src="/assets/images/Logo.png"
+                src={Logo}
                 alt="Company Logo"
                 width={160}
                 height={45}
@@ -94,20 +95,20 @@ const SignupPage = () => {
                 priority
               />
             </div>
-            <h2 className="text-3xl font-semibold text-gray-900">
+            <h2 className="text-3xl font-semibold ">
               Get started
             </h2>
           </div>
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="space-y-5">
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <label className="block text-sm font-semibold  mb-2">
                   Product
                 </label>
                 <div className="relative">
                   <select
                     {...register("product_id")}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent "
                   >
                     <option value="0">Select Product</option>
                     {products.map((product) => (
@@ -116,7 +117,7 @@ const SignupPage = () => {
                       </option>
                     ))}
                   </select>
-                  <div className="absolute right-3 top-3 text-gray-400 pointer-events-none">
+                  <div className="absolute right-3 top-3  pointer-events-none">
                     <ChevronRight size={20} className="rotate-90" />
                   </div>
                 </div>
@@ -125,7 +126,7 @@ const SignupPage = () => {
               <div>
                 <label
                   htmlFor="company"
-                  className="block text-sm font-medium text-gray-700 mb-2"
+                  className="block text-sm font-medium  mb-2"
                 >
                   Company name
                 </label>
@@ -133,14 +134,14 @@ const SignupPage = () => {
                   type="text"
                   id="company"
                   {...register("name")}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none transition-all text-sm text-gray-900 placeholder-gray-400"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none transition-all text-sm  placeholder-gray-400"
                   placeholder="Enter your company name as per document"
                 />
                 <ErrorMessage message={errors.name?.message} />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-semibold text-gray-900 mb-2">
+                  <label className="block text-sm font-semibold  mb-2">
                     First Name
                   </label>
                   <input
@@ -153,7 +154,7 @@ const SignupPage = () => {
                   <ErrorMessage message={errors.first_name?.message} />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-gray-900 mb-2">
+                  <label className="block text-sm font-semibold  mb-2">
                     Last Name
                   </label>
                   <input
@@ -169,7 +170,7 @@ const SignupPage = () => {
               <div>
                 <label
                   htmlFor="email"
-                  className="block text-sm font-medium text-gray-700 mb-2"
+                  className="block text-sm font-medium  mb-2"
                 >
                   Email
                 </label>
@@ -177,7 +178,7 @@ const SignupPage = () => {
                   type="email"
                   id="email"
                   {...register("email")}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none transition-all text-sm text-gray-900 placeholder-gray-400"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none transition-all text-sm  placeholder-gray-400"
                   placeholder="Enter your email"
                 />
                 <ErrorMessage message={errors.email?.message} />
@@ -185,7 +186,7 @@ const SignupPage = () => {
               <div>
                 <label
                   htmlFor="password"
-                  className="block text-sm font-medium text-gray-700 mb-2"
+                  className="block text-sm font-medium  mb-2"
                 >
                   Password
                 </label>
@@ -193,7 +194,7 @@ const SignupPage = () => {
                   type="password"
                   id="password"
                   {...register("password")}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none transition-all text-sm text-gray-900 placeholder-gray-400"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none transition-all text-sm  placeholder-gray-400"
                   placeholder="Enter your password"
                 />
                 <ErrorMessage message={errors.password?.message} />
