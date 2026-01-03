@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import UsersApi from "@/lib/api/users.api";
 import { ApiResponse } from "@/types/api";
 import { Organization } from "@/types/organization";

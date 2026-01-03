@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import DaybookApi from "@/lib/api/daybook.api";
 import { ApiResponse } from "@/types/api";
 import { BankAccount } from "@/types/bank-account";

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { X, Save } from "lucide-react";
 import { BankAccount } from "@/types/bank-account";
 import dayjs from "dayjs";

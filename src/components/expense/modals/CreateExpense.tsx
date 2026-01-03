@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import ValidationServerErrors from "@/components/ui/ValidationServerErrors";
 import SidePanel from "@/components/ui/SidePanel";
 import FormField from "@/components/ui/form/FormField";

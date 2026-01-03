@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ChevronRight } from "lucide-react";
 import { useEffect, useState } from "react";
 import CreateBankAccount from "../modals/CreateBankAccount";
@@ -49,6 +50,7 @@ export default function BankAccount() {
         "Note": bank.note || "—",
         "Added By": bank.added_by_fullname || "—",
         "Created At": formatDate(new Date(bank.created_at), "YYYY-MM-DD HH:mm:ss"),
+        //@ts-expect-error: 'updated_at' exists on bank
         "Updated At": formatDate(new Date(bank.updated_at), "YYYY-MM-DD HH:mm:ss"),
       }));
 

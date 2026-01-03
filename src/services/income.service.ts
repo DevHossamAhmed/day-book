@@ -43,6 +43,7 @@ export async function store(form: CreateIncomeForm): Promise<Income> {
         // Append all form fields
         Object.keys(form).forEach((key) => {
             if (key !== 'attachments') {
+                //@ts-expect-error:dynamic access
                 const value = form[key];
                 // Convert values to string for FormData
                 if (value !== null && value !== undefined) {

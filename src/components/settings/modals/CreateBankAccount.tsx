@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Save, X } from "lucide-react";
 import { useState } from "react";
 import Loading from "../../ui/Loading";

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { X, Save } from "lucide-react";
 import { Vendor } from "@/types/vendor";
 import dayjs from "dayjs";

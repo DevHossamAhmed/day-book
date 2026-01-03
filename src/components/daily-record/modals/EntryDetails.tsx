@@ -3,11 +3,13 @@ import { X, Trash2 } from 'lucide-react';
 import { Balance } from '@/types/balance';
 import { formatMoney } from '@/lib/utils/money.util';
 
-export default function ({ isOpen, onClose, balance }: {
+interface BalanceDetailsProps {
   isOpen: boolean;
   onClose: () => void;
-  balance: Balance
-}) {
+  balance: Balance;
+}
+
+const BalanceDetails: React.FC<BalanceDetailsProps> = ({ isOpen, onClose, balance }) => {
   if (!isOpen) return null;
 
   return (
@@ -78,3 +80,7 @@ export default function ({ isOpen, onClose, balance }: {
     </>
   );
 };
+
+BalanceDetails.displayName = 'BalanceDetails';
+
+export default BalanceDetails;

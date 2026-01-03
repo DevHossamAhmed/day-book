@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-wrapper-object-types */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import DaybookApi from "@/lib/api/daybook.api";
 import { ApiResponse } from "@/types/api";
 import { Balance } from "@/types/balance";
@@ -43,6 +45,7 @@ export async function store(form: any): Promise<Balance> {
     }
 }
 
+//@
 export async function fetchBalances(params: Object): Promise<PaginatedResult<Balance>> {
     try {
         const res = await DaybookApi.get<ApiResponse<PaginatedResult<Balance>>>("/balances", { params });

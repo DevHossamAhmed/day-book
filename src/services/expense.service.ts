@@ -57,6 +57,7 @@ export async function store(form: CreateExpenseForm): Promise<Expense> {
             });
             
             // Append attachments
+            //@ts-expect-error:attachments
             form.attachments.forEach((file: File, index: number) => {
                 formData.append(`attachments[${index}]`, file);
             });

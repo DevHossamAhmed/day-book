@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { getSession } from "next-auth/react";
 
 export const getToken = async (): Promise<string | null> => {

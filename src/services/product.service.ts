@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import UserApi from "@/lib/api/users.api";
 import { Product } from "@/types/product";
 

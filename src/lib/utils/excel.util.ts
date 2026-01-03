@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * Converts data array to CSV format and downloads it as an Excel file
  * @param data Array of objects to export

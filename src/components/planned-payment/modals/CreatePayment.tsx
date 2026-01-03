@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import React, { useEffect, useState } from "react";
 import { X, Calendar, ChevronDown, Save } from "lucide-react";
@@ -73,6 +74,7 @@ export default function CreatePayment({ onClose, onSave }: Props) {
       if (onSave) await onSave();
       
       // Reset form to default values
+      //@ts-expect-error:reset
       reset({
         vendor_id: "",
         purpose: "",

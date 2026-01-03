@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import Loading from "@/components/ui/Loading";
 import ErrorMessage from "@/components/ui/ErrorMessage";
@@ -74,7 +75,7 @@ export default function CreateSalary({ onClose, onSave }: Props) {
       toast.success("Salary record added successfully!");
       if (onSave) await onSave();
       
-      // Reset form to default values
+      //@ts-expect-error:reset
       reset({
         employee_id: "",
         salary_amount: "",

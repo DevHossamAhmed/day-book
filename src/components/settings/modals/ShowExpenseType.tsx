@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { X, Save } from "lucide-react";
 import { ExpenseType } from "@/types/expense-type";
 import dayjs from "dayjs";

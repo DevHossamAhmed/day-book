@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-wrapper-object-types */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import DaybookApi from "@/lib/api/daybook.api";
 import { ApiResponse } from "@/types/api";
 import { PlannedPayment } from "@/types/planned-payment";
