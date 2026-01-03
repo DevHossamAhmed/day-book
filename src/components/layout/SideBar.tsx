@@ -30,22 +30,25 @@ const SideBar: React.FC<SideBarProps> = ({ isOpen, onClose }) => {
 
   return (
     <>
+      {/* Overlay */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black/10 bg-opacity-50 z-40 lg:hidden"
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 lg:hidden animate-fade-in"
           onClick={onClose}
         />
       )}
 
+      {/* Sidebar */}
       <aside
         className={`
-          h-screen w-[320px]  border-r border-gray-200 dark:border-gray-600 shadow-lg flex flex-col fixed top-0 left-0 z-50
+          h-screen w-[320px] bg-[var(--color-sideBar)] border-r border-gray-200 dark:border-gray-700 shadow-lg dark:shadow-2xl dark:shadow-black/20 flex flex-col fixed top-0 left-0 z-[9999]
           transition-transform duration-300 ease-in-out
           ${isOpen ? "translate-x-0" : "-translate-x-full"}
           lg:translate-x-0
         `}
       >
-        <div className="px-6 py-5 flex items-center justify-between">
+        {/* Logo Section */}
+        <div className="px-6 py-5 flex items-center justify-between border-b border-gray-200 dark:border-gray-700">
           <Image
             src={Logo}
             alt="Logo"
@@ -56,22 +59,41 @@ const SideBar: React.FC<SideBarProps> = ({ isOpen, onClose }) => {
           />
           <button
             onClick={onClose}
-            className="lg:hidden text-gray-600 hover:text-gray-800 p-1"
+            className="lg:hidden p-1 transition-colors duration-200"
+            style={{ color: "var(--color-sidebar-close)" }}
+            onMouseEnter={(e) => e.currentTarget.style.color = "var(--color-sidebar-text-hover)"}
+            onMouseLeave={(e) => e.currentTarget.style.color = "var(--color-sidebar-close)"}
           >
             <IoMdClose className="text-[24px]" />
           </button>
         </div>
 
-        <nav className="flex-1 px-4 py-6 overflow-y-auto">
+        {/* Navigation */}
+        <nav className="flex-1 px-4 py-6 overflow-y-auto scrollbar-thin">
           <ul className="space-y-1">
             <li>
               <Link
                 href="/dashboard"
                 className={`flex items-center gap-3 px-4 py-3 rounded-lg text-[15px] font-medium transition-all duration-200 ${
                   isActive("/dashboard")
-                    ? "bg-blue-50 text-blue-600 font-semibold"
-                    : "text-gray-700 hover:bg-gray-50 hover:text-blue-600"
+                    ? "bg-blue-50 dark:bg-blue-900/30 font-semibold"
+                    : "hover:bg-gray-100 dark:hover:bg-gray-700"
                 }`}
+                style={{
+                  color: isActive("/dashboard")
+                    ? "var(--color-sidebar-text-active)"
+                    : "var(--color-sidebar-text)",
+                }}
+                onMouseEnter={(e) => {
+                  if (!isActive("/dashboard")) {
+                    e.currentTarget.style.color = "var(--color-sidebar-text-hover)";
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!isActive("/dashboard")) {
+                    e.currentTarget.style.color = "var(--color-sidebar-text)";
+                  }
+                }}
                 onClick={onClose}
               >
                 <RiDashboardLine className="text-[20px]" />
@@ -83,9 +105,24 @@ const SideBar: React.FC<SideBarProps> = ({ isOpen, onClose }) => {
                 href="/daily-records"
                 className={`flex items-center gap-3 px-4 py-3 rounded-lg text-[15px] font-medium transition-all duration-200 ${
                   isActive("/daily-records")
-                    ? "bg-blue-50 text-blue-600 font-semibold"
-                    : "text-gray-700 hover:bg-gray-50 hover:text-blue-600"
+                    ? "bg-blue-50 dark:bg-blue-900/30 font-semibold"
+                    : "hover:bg-gray-100 dark:hover:bg-gray-700"
                 }`}
+                style={{
+                  color: isActive("/daily-records")
+                    ? "var(--color-sidebar-text-active)"
+                    : "var(--color-sidebar-text)",
+                }}
+                onMouseEnter={(e) => {
+                  if (!isActive("/daily-records")) {
+                    e.currentTarget.style.color = "var(--color-sidebar-text-hover)";
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!isActive("/daily-records")) {
+                    e.currentTarget.style.color = "var(--color-sidebar-text)";
+                  }
+                }}
                 onClick={onClose}
               >
                 <PiMoneyFill className="text-[20px]" />
@@ -97,9 +134,24 @@ const SideBar: React.FC<SideBarProps> = ({ isOpen, onClose }) => {
                 href="/income"
                 className={`flex items-center gap-3 px-4 py-3 rounded-lg text-[15px] font-medium transition-all duration-200 ${
                   isActive("/income")
-                    ? "bg-blue-50 text-blue-600 font-semibold"
-                    : "text-gray-700 hover:bg-gray-50 hover:text-blue-600"
+                    ? "bg-blue-50 dark:bg-blue-900/30 font-semibold"
+                    : "hover:bg-gray-100 dark:hover:bg-gray-700"
                 }`}
+                style={{
+                  color: isActive("/income")
+                    ? "var(--color-sidebar-text-active)"
+                    : "var(--color-sidebar-text)",
+                }}
+                onMouseEnter={(e) => {
+                  if (!isActive("/income")) {
+                    e.currentTarget.style.color = "var(--color-sidebar-text-hover)";
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!isActive("/income")) {
+                    e.currentTarget.style.color = "var(--color-sidebar-text)";
+                  }
+                }}
                 onClick={onClose}
               >
                 <PiMoneyFill className="text-[20px]" />
@@ -111,9 +163,24 @@ const SideBar: React.FC<SideBarProps> = ({ isOpen, onClose }) => {
                 href="/expenses"
                 className={`flex items-center gap-3 px-4 py-3 rounded-lg text-[15px] font-medium transition-all duration-200 ${
                   isActive("/expenses")
-                    ? "bg-blue-50 text-blue-600 font-semibold"
-                    : "text-gray-700 hover:bg-gray-50 hover:text-blue-600"
+                    ? "bg-blue-50 dark:bg-blue-900/30 font-semibold"
+                    : "hover:bg-gray-100 dark:hover:bg-gray-700"
                 }`}
+                style={{
+                  color: isActive("/expenses")
+                    ? "var(--color-sidebar-text-active)"
+                    : "var(--color-sidebar-text)",
+                }}
+                onMouseEnter={(e) => {
+                  if (!isActive("/expenses")) {
+                    e.currentTarget.style.color = "var(--color-sidebar-text-hover)";
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!isActive("/expenses")) {
+                    e.currentTarget.style.color = "var(--color-sidebar-text)";
+                  }
+                }}
                 onClick={onClose}
               >
                 <LuNotepadText className="text-[20px]" />
@@ -125,9 +192,24 @@ const SideBar: React.FC<SideBarProps> = ({ isOpen, onClose }) => {
                 href="/planned-payments"
                 className={`flex items-center gap-3 px-4 py-3 rounded-lg text-[15px] font-medium transition-all duration-200 ${
                   isActive("/planned-payments")
-                    ? "bg-blue-50 text-blue-600 font-semibold"
-                    : "text-gray-700 hover:bg-gray-50 hover:text-blue-600"
+                    ? "bg-blue-50 dark:bg-blue-900/30 font-semibold"
+                    : "hover:bg-gray-100 dark:hover:bg-gray-700"
                 }`}
+                style={{
+                  color: isActive("/planned-payments")
+                    ? "var(--color-sidebar-text-active)"
+                    : "var(--color-sidebar-text)",
+                }}
+                onMouseEnter={(e) => {
+                  if (!isActive("/planned-payments")) {
+                    e.currentTarget.style.color = "var(--color-sidebar-text-hover)";
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!isActive("/planned-payments")) {
+                    e.currentTarget.style.color = "var(--color-sidebar-text)";
+                  }
+                }}
                 onClick={onClose}
               >
                 <GiNotebook className="text-[20px]" />
@@ -139,9 +221,24 @@ const SideBar: React.FC<SideBarProps> = ({ isOpen, onClose }) => {
                 href="/salary"
                 className={`flex items-center gap-3 px-4 py-3 rounded-lg text-[15px] font-medium transition-all duration-200 ${
                   isActive("/salary")
-                    ? "bg-blue-50 text-blue-600 font-semibold"
-                    : "text-gray-700 hover:bg-gray-50 hover:text-blue-600"
+                    ? "bg-blue-50 dark:bg-blue-900/30 font-semibold"
+                    : "hover:bg-gray-100 dark:hover:bg-gray-700"
                 }`}
+                style={{
+                  color: isActive("/salary")
+                    ? "var(--color-sidebar-text-active)"
+                    : "var(--color-sidebar-text)",
+                }}
+                onMouseEnter={(e) => {
+                  if (!isActive("/salary")) {
+                    e.currentTarget.style.color = "var(--color-sidebar-text-hover)";
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!isActive("/salary")) {
+                    e.currentTarget.style.color = "var(--color-sidebar-text)";
+                  }
+                }}
                 onClick={onClose}
               >
                 <RiWallet2Line className="text-[20px]" />
@@ -150,8 +247,12 @@ const SideBar: React.FC<SideBarProps> = ({ isOpen, onClose }) => {
             </li>
           </ul>
 
+          {/* Support Section */}
           <div className="mt-8">
-            <h2 className="px-4 text-gray-400 text-[11px] font-semibold tracking-wider mb-3">
+            <h2 
+              className="px-4 text-[11px] font-semibold tracking-wider mb-3"
+              style={{ color: "var(--color-sidebar-heading)" }}
+            >
               SUPPORT
             </h2>
             <ul className="space-y-1">
@@ -160,9 +261,24 @@ const SideBar: React.FC<SideBarProps> = ({ isOpen, onClose }) => {
                   href="/members"
                   className={`flex items-center gap-3 px-4 py-3 rounded-lg text-[15px] font-medium transition-all duration-200 ${
                     isActive("/members")
-                      ? "bg-blue-50 text-blue-600 font-semibold"
-                      : "text-gray-700 hover:bg-gray-50 hover:text-blue-600"
+                      ? "bg-blue-50 dark:bg-blue-900/30 font-semibold"
+                      : "hover:bg-gray-100 dark:hover:bg-gray-700"
                   }`}
+                  style={{
+                    color: isActive("/members")
+                      ? "var(--color-sidebar-text-active)"
+                      : "var(--color-sidebar-text)",
+                  }}
+                  onMouseEnter={(e) => {
+                    if (!isActive("/members")) {
+                      e.currentTarget.style.color = "var(--color-sidebar-text-hover)";
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!isActive("/members")) {
+                      e.currentTarget.style.color = "var(--color-sidebar-text)";
+                    }
+                  }}
                   onClick={onClose}
                 >
                   <LuUserPlus className="text-[20px]" />
@@ -174,9 +290,24 @@ const SideBar: React.FC<SideBarProps> = ({ isOpen, onClose }) => {
                   href="/settings"
                   className={`flex items-center gap-3 px-4 py-3 rounded-lg text-[15px] font-medium transition-all duration-200 ${
                     isActive("/settings")
-                      ? "bg-blue-50 text-blue-600 font-semibold"
-                      : "text-gray-700 hover:bg-gray-50 hover:text-blue-600"
+                      ? "bg-blue-50 dark:bg-blue-900/30 font-semibold"
+                      : "hover:bg-gray-100 dark:hover:bg-gray-700"
                   }`}
+                  style={{
+                    color: isActive("/settings")
+                      ? "var(--color-sidebar-text-active)"
+                      : "var(--color-sidebar-text)",
+                  }}
+                  onMouseEnter={(e) => {
+                    if (!isActive("/settings")) {
+                      e.currentTarget.style.color = "var(--color-sidebar-text-hover)";
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!isActive("/settings")) {
+                      e.currentTarget.style.color = "var(--color-sidebar-text)";
+                    }
+                  }}
                   onClick={onClose}
                 >
                   <IoSettingsOutline className="text-[20px]" />
@@ -187,15 +318,27 @@ const SideBar: React.FC<SideBarProps> = ({ isOpen, onClose }) => {
           </div>
         </nav>
 
-        <div className="p-4">
-          <div className="bg-[#f7f9fa] p-4 rounded-lg">
-            <h3 className="font-bold text-[15px] text-gray-800 mb-2">
+        {/* Upgrade Section */}
+        <div className="p-4 border-t border-gray-200 dark:border-gray-700">
+          <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 p-4 rounded-lg border border-blue-100 dark:border-blue-800/30">
+            <h3 
+              className="font-bold text-[15px] mb-2"
+              style={{ color: "var(--color-sidebar-card-title)" }}
+            >
               Need an upgrade?
             </h3>
-            <p className="text-[13px] text-gray-500 mb-4">
+            <p 
+              className="text-[13px] mb-4"
+              style={{ color: "var(--color-sidebar-card-text)" }}
+            >
               Our plans are designed for your team.
             </p>
-            <button className="w-full bg-[#1520eb] py-2.5 rounded-lg text-white font-medium text-[14px] hover:bg-[#0f16c7] transition-colors duration-200">
+            <button 
+              className="w-full py-2.5 rounded-lg text-white font-medium text-[14px] transition-colors duration-200 shadow-sm hover:shadow-md"
+              style={{ backgroundColor: "var(--color-primary)" }}
+              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "var(--color-primary-600)"}
+              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "var(--color-primary)"}
+            >
               Purchase Plan
             </button>
           </div>

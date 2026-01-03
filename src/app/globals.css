@@ -2,6 +2,10 @@
 
 @theme {
   /* Light Theme Colors */
+  --color-header: #ffffff;
+  --color-sideBar: #ffffff;
+  --color-sideBarLinks: #e3e3e4;
+  --color-Hover: #9da0a7;
   --color-gray-50: #f9fafb;
   --color-gray-100: #f3f4f6;
   --color-gray-200: #e5e7eb;
@@ -13,6 +17,25 @@
   --color-gray-800: #1f2937;
   --color-gray-900: #111827;
   --color-gray-950: #030712;
+  
+  /* Semantic Colors - Light */
+  --color-primary: #1520eb;
+  --color-primary-600: #0f16c7;
+  --color-primary-hover: #1520eb;
+  --color-success: #10b981;
+  --color-danger: #ef4444;
+  --color-info: #0ea5e9;
+  --color-muted: #667085;
+  
+  /* Sidebar Specific Colors - Light */
+  --color-sidebar-text: #4b5563; /* gray-600 */
+  --color-sidebar-text-hover: #1520eb; /* primary */
+  --color-sidebar-text-active: #1520eb; /* primary */
+  --color-sidebar-heading: #9ca3af; /* gray-400 */
+  --color-sidebar-icon: #4b5563; /* gray-600 */
+  --color-sidebar-close: #4b5563; /* gray-600 */
+  --color-sidebar-card-title: #1f2937; /* gray-800 */
+  --color-sidebar-card-text: #4b5563; /* gray-600 */
 }
 
 /* Default to light theme */
@@ -24,12 +47,35 @@ html {
 html.dark {
   color-scheme: dark;
   background-color: #1b2333; /* gray-900 */
+  
+  /* Semantic Colors - Dark */
+  --color-header: #161d2c;
+  --color-sideBar: #161d2c;
+  --color-sideBarLinks: #e3e3e4;
+  --color-Hover: #263147;
+  --color-primary: #60a5fa; 
+  --color-primary-600: #3b82f6; /* blue-500 */
+  --color-primary-hover: #60a5fa;
+  --color-success: #34d399;
+  --color-danger: #f87171;
+  --color-info: #38bdf8;
+  --color-muted: #94a3b8;
+
+  
+  /* Sidebar Specific Colors - Dark */
+  --color-sidebar-text: #9ca3af; /* gray-400 */
+  --color-sidebar-text-hover: #60a5fa; /* blue-400 */
+  --color-sidebar-text-active: #60a5fa; /* blue-400 */
+  --color-sidebar-heading: #6b7280; /* gray-500 */
+  --color-sidebar-icon: #9ca3af; /* gray-400 */
+  --color-sidebar-close: #9ca3af; /* gray-400 */
+  --color-sidebar-card-title: #f3f4f6; /* gray-100 */
+  --color-sidebar-card-text: #9ca3af; /* gray-400 */
 }
 
 /* Ensure light theme is maintained when dark class is not present */
 html:not(.dark) {
   color-scheme: light;
-  
 }
 
 /* Prevent system dark mode from overriding our theme preference */
@@ -58,7 +104,7 @@ html:not(.dark) {
 
 /* Focus visible styles for accessibility */
 :focus-visible {
-  outline: 2px solid theme(colors.blue.500);
+  outline: 2px solid var(--color-primary);
   outline-offset: 2px;
 }
 

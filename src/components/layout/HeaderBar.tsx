@@ -110,11 +110,14 @@ const HeaderBar: React.FC<HeaderBarProps> = ({ onMenuClick }) => {
   };
 
   return (
-    <div className="fixed top-0 right-0 z-[999] border-b border-gray-200 dark:border-gray-700  shadow-sm left-0 lg:left-[320px]  duration-200">
+    <div className="fixed top-0 right-0 z-[999] bg-[var(--color-header)] border-b border-gray-200 dark:border-gray-700 shadow-sm left-0 lg:left-[320px] duration-200">
       <div className="w-full flex justify-between lg:justify-end items-center py-2.5 px-4">
         <button
           onClick={onMenuClick}
-          className="lg:hidden text-gray-700 dark:text-gray-300 hover:text-[#1520eb] dark:hover:text-blue-400 p-2 -ml-2  duration-200"
+          className="lg:hidden p-2 -ml-2 duration-200 transition-colors"
+          style={{ color: "var(--color-header-menu-icon)" }}
+          onMouseEnter={(e) => e.currentTarget.style.color = "var(--color-header-text-hover)"}
+          onMouseLeave={(e) => e.currentTarget.style.color = "var(--color-header-menu-icon)"}
         >
           <HiMenuAlt2 className="text-[26px]" />
         </button>
@@ -129,9 +132,24 @@ const HeaderBar: React.FC<HeaderBarProps> = ({ onMenuClick }) => {
               onClick={() => setIsNotificationOpen(!isNotificationOpen)}
               className={`relative p-2.5 rounded-lg transition-all duration-200 group ${
                 isNotificationOpen
-                  ? "bg-blue-50 dark:bg-blue-900/30 text-[#1520eb] dark:text-blue-400"
-                  : "hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 hover:text-[#1520eb] dark:hover:text-blue-400"
+                  ? "bg-blue-50 dark:bg-blue-900/30"
+                  : "hover:bg-gray-100 dark:hover:bg-gray-700"
               }`}
+              style={{
+                color: isNotificationOpen
+                  ? "var(--color-primary)"
+                  : "var(--color-header-notification-text)",
+              }}
+              onMouseEnter={(e) => {
+                if (!isNotificationOpen) {
+                  e.currentTarget.style.color = "var(--color-header-text-hover)";
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!isNotificationOpen) {
+                  e.currentTarget.style.color = "var(--color-header-notification-text)";
+                }
+              }}
               aria-label={`Notifications${unreadCount > 0 ? ` (${unreadCount} unread)` : ""}`}
             >
               {unreadCount > 0 && (
@@ -180,31 +198,60 @@ const HeaderBar: React.FC<HeaderBarProps> = ({ onMenuClick }) => {
                 <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 dark:bg-green-400 border-2 border-white dark:border-gray-800 rounded-full"></span>
               </div>
               <div className="hidden sm:block">
-                <h2 className="text-[15px] font-semibold text-gray-900 dark:text-gray-100">
+                <h2 
+                  className="text-[15px] font-semibold"
+                  style={{ color: "var(--color-header-user-name)" }}
+                >
                   {userFullName}
                 </h2>
-                <p className="text-xs text-gray-500 dark:text-gray-400">Online</p>
+                <p 
+                  className="text-xs"
+                  style={{ color: "var(--color-header-user-status)" }}
+                >
+                  Online
+                </p>
               </div>
               <IoIosArrowDown
-                className={`ml-2 text-gray-500 dark:text-gray-400 transition-all duration-200 ${
-                  isDropdownOpen ? "rotate-180 text-[#1520eb] dark:text-blue-400" : ""
+                className={`ml-2 transition-all duration-200 ${
+                  isDropdownOpen ? "rotate-180" : ""
                 }`}
+                style={{
+                  color: isDropdownOpen
+                    ? "var(--color-primary)"
+                    : "var(--color-header-arrow)",
+                }}
               />
             </div>
 
             {/* Enhanced Dropdown Menu */}
             {isDropdownOpen && (
-              <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-gray-800 rounded-xl shadow-xl dark:shadow-2xl dark:shadow-black/20 border border-gray-200 dark:border-gray-700 py-2 z-50 overflow-hidden">
+              <div className="absolute right-0 mt-2 w-56 bg-[var(--color-header)] border-b border-gray-200 dark:border-gray-700 rounded-xl shadow-xl dark:shadow-2xl dark:shadow-black/20 border border-gray-200 dark:border-gray-700 py-2 z-50 overflow-hidden">
                 <div className="px-4 py-3 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border-b border-gray-100 dark:border-gray-700">
-                  <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">{userFullName}</p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{(session?.user as any)?.email || "user@example.com"}</p>
+                  <p 
+                    className="text-sm font-semibold"
+                    style={{ color: "var(--color-header-user-name)" }}
+                  >
+                    {userFullName}
+                  </p>
+                  <p 
+                    className="text-xs mt-0.5"
+                    style={{ color: "var(--color-header-user-status)" }}
+                  >
+                    {(session?.user as any)?.email || "user@example.com"}
+                  </p>
                 </div>
                 <div className="py-1">
                   <button
                     onClick={handleProfileClick}
-                    className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors group"
+                    className="w-full flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors group"
+                    style={{ color: "var(--color-header-dropdown-text)" }}
                   >
-                    <IoSettingsOutline className="text-[18px] text-gray-500 dark:text-gray-400 group-hover:text-[#1520eb] dark:group-hover:text-blue-400 transition-colors" />
+                    <IoSettingsOutline 
+                      className="text-[18px] transition-colors"
+                      style={{ color: "var(--color-header-dropdown-icon)" }}
+                      onMouseEnter={(e) => e.currentTarget.style.color = "var(--color-primary)"}
+                      onMouseLeave={(e) => e.currentTarget.style.color = "var(--color-header-dropdown-icon)"}
+                    />
                     <span className="font-medium">Profile Settings</span>
                   </button>
                   <div className="border-t border-gray-200 dark:border-gray-700 my-1"></div>
