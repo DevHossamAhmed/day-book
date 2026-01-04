@@ -27,7 +27,7 @@ export default function DateInput({
   const errorClasses = error ? "border-red-300" : "border-gray-300";
   const disabledClasses = disabled
     ? "bg-gray-100 cursor-not-allowed"
-    : "bg-white";
+    : "bg-[var(--color-overviewTab)]";
 
   return (
     <input

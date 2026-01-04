@@ -8,19 +8,19 @@ const OverView = () => {
         <h2 className="text-lg sm:text-xl font-semibold">Overview</h2>
         
         <div className="flex flex-col xs:flex-row gap-3 w-full sm:w-auto">
-          <div className="flex gap-3 bg-[#e2e6e9] p-1 rounded-md w-full xs:w-auto">
-            <p className="bg-white p-1 rounded-md text-[13px] sm:text-[14px] flex-1 xs:flex-none text-center cursor-pointer">
+          <div className="flex gap-3 bg-[var(--color-surface)] p-1 rounded-md w-full xs:w-auto">
+            <p className="bg-[var(--color-overviewTab)] p-1 rounded-md text-[13px] sm:text-[14px] flex-1 xs:flex-none text-center cursor-pointer">
               Weekly
             </p>
-            <p className="text-[#667085] p-1 text-[13px] sm:text-[14px] flex-1 xs:flex-none text-center cursor-pointer hover:text-gray-900">
+            <p className="text-[#667085] p-1 text-[13px] sm:text-[14px] flex-1 xs:flex-none text-center cursor-pointer hover:text-gray-600">
               Monthly
             </p>
-            <p className="text-[#667085] p-1 text-[13px] sm:text-[14px] flex-1 xs:flex-none text-center cursor-pointer hover:text-gray-900">
+            <p className="text-[#667085] p-1 text-[13px] sm:text-[14px] flex-1 xs:flex-none text-center cursor-pointer hover:text-gray-600">
               Yearly
             </p>
           </div>
           
-          <button className="bg-white border px-6 py-3 rounded-lg text-[13px] sm:text-[14px] flex items-center justify-center gap-2 hover:bg-gray-50 transition-colors">
+          <button className="bg-[var(--color-overviewTab)] border px-6 py-3 rounded-lg text-[13px] sm:text-[14px] flex items-center justify-center gap-2 cursor-pointer transition-colors">
             <HiOutlineAdjustmentsHorizontal className="text-[16px]" />
             Filter
           </button>
@@ -29,8 +29,8 @@ const OverView = () => {
 
       <div className="w-full px-6 mx-auto mt-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div className="bg-white p-6 rounded-2xl border lg:border-0 lg:border-r lg:rounded-none">
-            <h2 className="text-[13px] sm:text-[14px] text-gray-600 mb-2">
+          <div className="bg-[var(--color-overviewTab)] p-6 rounded-2xl border lg:border-0 lg:border-r lg:rounded-none">
+            <h2 className="text-[13px] sm:text-[14px]  mb-2">
               Total Transactions
             </h2>
             <p className="text-[24px] sm:text-[28px] lg:text-[30px] font-bold flex flex-wrap items-center gap-2">
@@ -41,8 +41,8 @@ const OverView = () => {
             </p>
           </div>
 
-          <div className="bg-white p-6 rounded-2xl border lg:border-0 lg:border-r lg:rounded-none">
-            <h2 className="text-[13px] sm:text-[14px] text-gray-600 mb-2">
+          <div className="bg-[var(--color-overviewTab)] p-6 rounded-2xl border lg:border-0 lg:border-r lg:rounded-none">
+            <h2 className="text-[13px] sm:text-[14px]  mb-2">
               Total Online Sales
             </h2>
             <p className="text-[24px] sm:text-[28px] lg:text-[30px] font-bold flex flex-wrap items-center gap-2">
@@ -53,8 +53,8 @@ const OverView = () => {
             </p>
           </div>
 
-          <div className="bg-white p-6 rounded-2xl border lg:border-0 lg:border-r lg:rounded-none">
-            <h2 className="text-[13px] sm:text-[14px] text-gray-600 mb-2">
+          <div className="bg-[var(--color-overviewTab)] p-6 rounded-2xl border lg:border-0 lg:border-r lg:rounded-none">
+            <h2 className="text-[13px] sm:text-[14px]  mb-2">
               Total Offline Sales
             </h2>
             <p className="text-[24px] sm:text-[28px] lg:text-[30px] font-bold flex flex-wrap items-center gap-2">
@@ -65,8 +65,8 @@ const OverView = () => {
             </p>
           </div>
 
-          <div className="bg-white p-6 rounded-2xl border lg:border-0 lg:rounded-none">
-            <h2 className="text-[13px] sm:text-[14px] text-gray-600 mb-2">
+          <div className="bg-[var(--color-overviewTab)] p-6 rounded-2xl border lg:border-0 lg:rounded-none">
+            <h2 className="text-[13px] sm:text-[14px]  mb-2">
               Total Payments
             </h2>
             <p className="text-[24px] sm:text-[28px] lg:text-[30px] font-bold flex flex-wrap items-center gap-2">

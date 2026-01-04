@@ -89,14 +89,14 @@ export default function CreateStore({ onClose, onSave }: Props) {
 
   return (
     <div className="fixed inset-0  bg-opacity-50 flex items-center justify-end z-9999">
-      <div className="bg-white shadow-xl w-full max-w-2xl h-full overflow-y-auto">
-        <div className="p-6 border-b border-gray-200 flex items-center justify-between sticky top-0 bg-white">
-          <h2 className="text-xl font-semibold text-gray-900">
+      <div className="bg-[var(--color-overviewTab)] shadow-xl w-full max-w-2xl h-full overflow-y-auto">
+        <div className="p-6 border-b border-gray-200 flex items-center justify-between sticky top-0 bg-[var(--color-overviewTab)]">
+          <h2 className="text-xl font-semibold ">
             Create Source Channel
           </h2>
           <button
             onClick={() => closeDailog()}
-            className="text-gray-400 hover:text-gray-600"
+            className="text-gray-400 cursor-pointer hover:text-gray-600"
           >
             <X className="w-6 h-6" />
           </button>
@@ -113,7 +113,7 @@ export default function CreateStore({ onClose, onSave }: Props) {
               </div>
             )}
             <div>
-              <label className="block text-sm font-medium text-gray-900 mb-2">
+              <label className="block text-sm font-medium  mb-2">
                 Store Name*
               </label>
               <input
@@ -125,7 +125,7 @@ export default function CreateStore({ onClose, onSave }: Props) {
               <ErrorMessage message={errors.name?.message as string} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-900 mb-2">
+              <label className="block text-sm font-medium  mb-2">
                 Sales Person*
               </label>
               <div className="relative">
@@ -149,7 +149,7 @@ export default function CreateStore({ onClose, onSave }: Props) {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-900 mb-2">
+              <label className="block text-sm font-medium  mb-2">
                 Default Currency*
               </label>
               <div className="relative">
@@ -170,7 +170,7 @@ export default function CreateStore({ onClose, onSave }: Props) {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-900 mb-2">
+              <label className="block text-sm font-medium  mb-2">
                 Description
               </label>
               <textarea
@@ -183,12 +183,12 @@ export default function CreateStore({ onClose, onSave }: Props) {
               <ErrorMessage message={errors.description?.message as string} />
             </div>
           </div>
-          <div className="p-6 border-t border-gray-200 flex justify-end gap-3 sticky bottom-0 bg-white z-10">
+          <div className="p-6 border-t border-gray-200 flex justify-end gap-3 sticky bottom-0 bg-[var(--color-overviewTab)] z-10">
             <button
               disabled={isLoading}
               onClick={handleSubmit((d) => submit(d, false))}
               type="button"
-              className="px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 font-medium"
+              className="px-6 py-3 border cursor-pointer border-gray-300 rounded-lg font-medium"
             >
               {isLoading ? (
                 <Loading />
@@ -202,7 +202,7 @@ export default function CreateStore({ onClose, onSave }: Props) {
             <button
               disabled={isLoading}
               type="submit"
-              className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium flex items-center gap-2"
+              className="px-6 py-3 bg-blue-600 cursor-pointer text-white rounded-lg hover:bg-blue-700 font-medium flex items-center gap-2"
             >
               {isLoading ? (
                 <Loading />

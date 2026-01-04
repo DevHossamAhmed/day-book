@@ -261,7 +261,7 @@ const UserProfilePage = () => {
       />
 
       {/* Tabs Navigation */}
-      <div className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 -mx-6 -mt-6 mb-6">
+      <div className="bg-[var(--color-overviewTab)] border-b border-gray-200 dark:border-gray-800 -mx-6 -mt-6 mb-6">
         <div className="px-6">
           <div className="flex gap-8 overflow-x-auto">
             {tabs.map((tab) => {
@@ -273,7 +273,7 @@ const UserProfilePage = () => {
                   className={`px-1 py-4 font-semibold text-sm transition-all relative whitespace-nowrap border-b-2 ${
                     isActive
                       ? "text-blue-600 dark:text-blue-400 border-blue-600 dark:border-blue-400"
-                      : "text-gray-500 dark:text-gray-400 border-transparent hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600"
+                      : " border-transparent  dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600"
                   }`}
                 >
                   {tab.label}
@@ -290,17 +290,17 @@ const UserProfilePage = () => {
         {activeTab === "update-profile" && (
           <div>
             {isLoadingProfile ? (
-              <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-800 p-6">
+              <div className="bg-[var(--color-overviewTab)] rounded-2xl shadow-sm border border-gray-200 dark:border-gray-800 p-6">
                 <div className="flex items-center justify-center py-12">
                   <div className="text-center">
                     <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-                    <p className="mt-4 text-sm text-gray-600 dark:text-gray-400">Loading profile...</p>
+                    <p className="mt-4 text-sm  ">Loading profile...</p>
                   </div>
                 </div>
               </div>
             ) : (
             <form onSubmit={handleProfileSubmit(handleProfileUpdate)}>
-              <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-800 p-6 space-y-6">
+              <div className="bg-[var(--color-overviewTab)] rounded-2xl shadow-sm border border-gray-200 dark:border-gray-800 p-6 space-y-6">
                 {/* Server Error Messages */}
                 {profileErrors.length > 0 && (
                   <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
@@ -316,14 +316,14 @@ const UserProfilePage = () => {
 
                 {/* First Name Field */}
                 <div className="flex flex-col sm:flex-row sm:items-start gap-3">
-                  <label className="text-sm font-medium text-gray-700 dark:text-gray-300 sm:w-32 pt-3">
+                  <label className="text-sm font-medium   sm:w-32 pt-3">
                     First Name<span className="text-red-500">*</span>
                   </label>
                   <div className="flex-1">
                     <input
                       {...registerProfile("first_name")}
                       type="text"
-                      className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-gray-900 dark:text-gray-100 dark:bg-gray-800 placeholder-gray-400 dark:placeholder-gray-500"
+                      className="w-full px-4 bg-[var(--color-overviewTab)] py-3 border border-gray-300  rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all  placeholder-gray-400 dark:placeholder-gray-500"
                       placeholder="Enter your first name"
                     />
                     <ErrorMessage message={profileFormErrors.first_name?.message as string} />
@@ -332,14 +332,14 @@ const UserProfilePage = () => {
 
                 {/* Last Name Field */}
                 <div className="flex flex-col sm:flex-row sm:items-start gap-3">
-                  <label className="text-sm font-medium text-gray-700 dark:text-gray-300 sm:w-32 pt-3">
+                  <label className="text-sm font-medium   sm:w-32 pt-3">
                     Last Name<span className="text-red-500">*</span>
                   </label>
                   <div className="flex-1">
                     <input
                       {...registerProfile("last_name")}
-                      type="text"
-                      className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-gray-900 dark:text-gray-100 dark:bg-gray-800 placeholder-gray-400 dark:placeholder-gray-500"
+                      type="text" className="w-full px-4 bg-[var(--color-overviewTab)] py-3 border border-gray-300  rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all  placeholder-gray-400 dark:placeholder-gray-500"
+                      
                       placeholder="Enter your last name"
                     />
                     <ErrorMessage message={profileFormErrors.last_name?.message as string} />
@@ -348,14 +348,14 @@ const UserProfilePage = () => {
 
                 {/* Email Field */}
                 <div className="flex flex-col sm:flex-row sm:items-start gap-3">
-                  <label className="text-sm font-medium text-gray-700 dark:text-gray-300 sm:w-32 pt-3">
+                  <label className="text-sm font-medium   sm:w-32 pt-3">
                     Email<span className="text-red-500">*</span>
                   </label>
                   <div className="flex-1">
                     <input
                       {...registerProfile("email")}
                       type="email"
-                      className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-gray-900 dark:text-gray-100 dark:bg-gray-800 placeholder-gray-400 dark:placeholder-gray-500"
+                       className="w-full px-4 bg-[var(--color-overviewTab)] py-3 border border-gray-300  rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all  placeholder-gray-400 dark:placeholder-gray-500"
                       placeholder="Enter your email"
                     />
                     <ErrorMessage message={profileFormErrors.email?.message as string} />
@@ -364,14 +364,14 @@ const UserProfilePage = () => {
 
                 {/* Designation Field */}
                 <div className="flex flex-col sm:flex-row sm:items-start gap-3">
-                  <label className="text-sm font-medium text-gray-700 dark:text-gray-300 sm:w-32 pt-3">
+                  <label className="text-sm font-medium   sm:w-32 pt-3">
                     Designation<span className="text-red-500">*</span>
                   </label>
                   <div className="flex-1">
                     <input
                       {...registerProfile("designation")}
                       type="text"
-                      className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-gray-900 dark:text-gray-100 dark:bg-gray-800 placeholder-gray-400 dark:placeholder-gray-500"
+                       className="w-full px-4 bg-[var(--color-overviewTab)] py-3 border border-gray-300  rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all  placeholder-gray-400 dark:placeholder-gray-500"
                       placeholder="Enter your designation"
                     />
                     <ErrorMessage message={profileFormErrors.designation?.message as string} />
@@ -381,8 +381,8 @@ const UserProfilePage = () => {
                 {/* Avatar Field */}
                 <div className="flex flex-col sm:flex-row sm:items-start gap-3">
                   <div className="sm:w-32">
-                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Avatar</label>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                    <label className="text-sm font-medium  ">Avatar</label>
+                    <p className="text-xs   mt-1">
                       JPG, GIF or PNG. 1MB Max.
                     </p>
                   </div>
@@ -391,7 +391,7 @@ const UserProfilePage = () => {
                       <img
                         src={avatar}
                         alt="Avatar"
-                        className="w-16 h-16 rounded-full object-cover border-2 border-gray-200 dark:border-gray-700"
+                        className="w-16 h-16 rounded-full object-cover border-2 border-gray-200 "
                       />
                     </div>
                     <label className="cursor-pointer">
@@ -401,7 +401,7 @@ const UserProfilePage = () => {
                         onChange={handleAvatarUpload}
                         className="hidden"
                       />
-                      <span className="inline-block px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors duration-200">
+                      <span className="inline-block px-6 py-3 bg-blue-600  font-medium rounded-lg hover:bg-blue-700 transition-colors duration-200">
                         Upload Avatar
                       </span>
                     </label>
@@ -410,14 +410,14 @@ const UserProfilePage = () => {
 
                 {/* Additional Info Field */}
                 <div className="flex flex-col sm:flex-row sm:items-start gap-3">
-                  <label className="text-sm font-medium text-gray-700 dark:text-gray-300 sm:w-32 pt-3">
+                  <label className="text-sm font-medium   sm:w-32 pt-3">
                     Additional Info
                   </label>
                   <div className="flex-1">
                     <textarea
                       {...registerProfile("additional_info")}
                       rows={6}
-                      className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-gray-900 dark:text-gray-100 dark:bg-gray-800 placeholder-gray-400 dark:placeholder-gray-500 resize-none"
+                      className="w-full px-4 py-3 border bg-[var(--color-overviewTab)] border-gray-300  rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all  placeholder-gray-400 dark:placeholder-gray-500 resize-none"
                       placeholder="Tell us about yourself..."
                     />
                     <ErrorMessage message={profileFormErrors.additional_info?.message as string} />
@@ -430,7 +430,7 @@ const UserProfilePage = () => {
                 <button
                   type="submit"
                   disabled={isUpdatingProfile || isLoadingProfile}
-                  className={`px-6 py-3 rounded-lg font-medium text-white transition-all duration-200 ${
+                  className={`px-6 py-3 rounded-lg font-medium  transition-all duration-200 ${
                     isUpdatingProfile || isLoadingProfile
                       ? "bg-blue-400 cursor-not-allowed"
                       : "bg-blue-600 hover:bg-blue-700 cursor-pointer"
@@ -448,7 +448,7 @@ const UserProfilePage = () => {
         {activeTab === "change-password" && (
           <div>
             <form onSubmit={handlePasswordSubmit(handlePasswordChange)}>
-              <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-800 p-6 space-y-6">
+              <div className="bg-[var(--color-overviewTab)] rounded-2xl shadow-sm border border-gray-200 dark:border-gray-800 p-6 space-y-6">
                 {/* Server Error Messages */}
                 {passwordErrors.length > 0 && (
                   <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
@@ -464,14 +464,14 @@ const UserProfilePage = () => {
 
                 {/* Current Password */}
                 <div className="flex flex-col sm:flex-row sm:items-start gap-3">
-                  <label className="text-sm font-medium text-gray-700 dark:text-gray-300 sm:w-32 pt-3">
+                  <label className="text-sm font-medium   sm:w-32 pt-3">
                     Current Password<span className="text-red-500">*</span>
                   </label>
                   <div className="flex-1">
                     <input
                       {...registerPassword("current_password")}
                       type="password"
-                      className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-gray-900 dark:text-gray-100 dark:bg-gray-800 placeholder-gray-400 dark:placeholder-gray-500"
+                       className="w-full px-4 bg-[var(--color-overviewTab)] py-3 border border-gray-300  rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all  placeholder-gray-400 dark:placeholder-gray-500"
                       placeholder="Enter current password"
                     />
                     <ErrorMessage message={passwordFormErrors.current_password?.message as string} />
@@ -480,18 +480,18 @@ const UserProfilePage = () => {
 
                 {/* New Password */}
                 <div className="flex flex-col sm:flex-row sm:items-start gap-3">
-                  <label className="text-sm font-medium text-gray-700 dark:text-gray-300 sm:w-32 pt-3">
+                  <label className="text-sm font-medium   sm:w-32 pt-3">
                     New Password<span className="text-red-500">*</span>
                   </label>
                   <div className="flex-1">
                     <input
                       {...registerPassword("password")}
                       type="password"
-                      className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-gray-900 dark:text-gray-100 dark:bg-gray-800 placeholder-gray-400 dark:placeholder-gray-500"
+                       className="w-full px-4 bg-[var(--color-overviewTab)] py-3 border border-gray-300  rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all  placeholder-gray-400 dark:placeholder-gray-500"
                       placeholder="Enter new password (min. 8 characters)"
                     />
                     <ErrorMessage message={passwordFormErrors.password?.message as string} />
-                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                    <p className="text-xs   mt-1">
                       Must contain at least one uppercase letter, one lowercase letter, and one number
                     </p>
                   </div>
@@ -499,7 +499,7 @@ const UserProfilePage = () => {
 
                 {/* Confirm Password */}
                 <div className="flex flex-col sm:flex-row sm:items-start gap-3">
-                  <label className="text-sm font-medium text-gray-700 dark:text-gray-300 sm:w-32 pt-3">
+                  <label className="text-sm font-medium   sm:w-32 pt-3">
                     Confirm Password<span className="text-red-500">*</span>
                   </label>
                   <div className="flex-1">
@@ -509,7 +509,7 @@ const UserProfilePage = () => {
                         validate: (value) =>
                           value === newPasswordValue || "Passwords do not match",
                       })}
-                      className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-gray-900 dark:text-gray-100 dark:bg-gray-800 placeholder-gray-400 dark:placeholder-gray-500"
+                       className="w-full px-4 bg-[var(--color-overviewTab)] py-3 border border-gray-300  rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all  placeholder-gray-400 dark:placeholder-gray-500"
                       placeholder="Confirm new password"
                     />
                     <ErrorMessage
@@ -526,7 +526,7 @@ const UserProfilePage = () => {
                 <button
                   type="submit"
                   disabled={isChangingPassword}
-                  className={`px-6 py-3 rounded-lg font-medium text-white transition-all duration-200 ${
+                  className={`px-6 py-3 rounded-lg font-medium  transition-all duration-200 ${
                     isChangingPassword
                       ? "bg-blue-400 cursor-not-allowed"
                       : "bg-blue-600 hover:bg-blue-700 cursor-pointer"
@@ -542,10 +542,10 @@ const UserProfilePage = () => {
         {/* Appearance Tab */}
         {activeTab === "appearance" && (
           <div>
-            <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-800 p-6 space-y-6">
+            <div className="bg-[var(--color-overviewTab)] rounded-2xl shadow-sm border border-gray-200 dark:border-gray-800 p-6 space-y-6">
               {/* Theme Selection */}
               <div className="flex flex-col sm:flex-row sm:items-start gap-3">
-                <label className="text-sm font-medium text-gray-700 dark:text-gray-300 sm:w-32 pt-3">
+                <label className="text-sm font-medium   sm:w-32 pt-3">
                   Theme
                 </label>
                 <div className="flex-1">
@@ -560,13 +560,13 @@ const UserProfilePage = () => {
                           className={`p-4 border-2 rounded-lg transition-all ${
                             isSelected
                               ? 'border-blue-600 dark:border-blue-500 bg-blue-50 dark:bg-blue-900/20'
-                              : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
+                              : ''
                           }`}
                         >
-                          <div className="text-sm font-semibold text-gray-900 dark:text-gray-100 capitalize mb-1">
+                          <div className="text-sm font-semibold   capitalize mb-1">
                             {themeOption.label}
                           </div>
-                          <div className="text-xs text-gray-600 dark:text-gray-400">
+                          <div className="text-xs  ">
                             {themeOption.description}
                           </div>
                         </button>
@@ -581,7 +581,7 @@ const UserProfilePage = () => {
             <div className="mt-6 flex justify-end">
               <button
                 onClick={handleAppearanceSave}
-                className="px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
+                className="px-6 py-3 bg-blue-600 text-white  rounded-lg font-medium hover:bg-blue-700 transition-colors"
               >
                 Save Appearance Settings
               </button>

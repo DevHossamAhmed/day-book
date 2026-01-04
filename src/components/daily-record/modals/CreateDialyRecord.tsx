@@ -69,19 +69,19 @@ export default function CreateDailyRecord({ onClose, onSave }: Props) {
       onClick={() => closeDailog()}
     >
       <div
-        className="bg-white w-full max-w-md h-full shadow-2xl animate-slide-in"
+        className="bg-[var(--color-overviewTab)] w-full max-w-md h-full shadow-2xl animate-slide-in"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex flex-col h-full">
           <form onSubmit={handleSubmit(onSubmit)}>
             {/* Modal Header */}
             <div className="flex items-center justify-between p-6 border-b border-gray-200">
-              <h2 className="text-xl font-bold text-gray-900">Create Entry</h2>
+              <h2 className="text-xl font-bold ">Create Entry</h2>
               <button
                 onClick={() => closeDailog()}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                className="p-2 cursor-pointer rounded-lg transition-colors"
               >
-                <X size={20} className="text-gray-600" />
+                <X size={20} className="" />
               </button>
             </div>
             {/* Modal Body */}
@@ -96,7 +96,7 @@ export default function CreateDailyRecord({ onClose, onSave }: Props) {
                 </div>
               )}
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <label className="block text-sm font-semibold  mb-2">
                   Date
                 </label>
                 <div className="relative">
@@ -110,13 +110,13 @@ export default function CreateDailyRecord({ onClose, onSave }: Props) {
                 <ErrorMessage message={errors.date?.message as string} />
               </div>
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <label className="block text-sm font-semibold  mb-2">
                   Source
                 </label>
                 <div className="relative">
                   <select
                     {...register("source")}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-[var(--color-overviewTab)]"
                   >
                     <option value="">Select Source</option>
                     {sources.map((item) => (
@@ -125,14 +125,14 @@ export default function CreateDailyRecord({ onClose, onSave }: Props) {
                       </option>
                     ))}
                   </select>
-                  <div className="absolute right-3 top-3 text-gray-400 pointer-events-none">
+                  <div className="absolute right-3 top-3  pointer-events-none">
                     <ChevronRight size={20} className="rotate-90" />
                   </div>
                   <ErrorMessage message={errors.source?.message as string} />
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <label className="block text-sm font-semibold  mb-2">
                   Amount
                 </label>
                 <input
@@ -144,7 +144,7 @@ export default function CreateDailyRecord({ onClose, onSave }: Props) {
                 <ErrorMessage message={errors.amount?.message as string} />
               </div>
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <label className="block text-sm font-semibold  mb-2">
                   Note
                 </label>
                 <textarea
@@ -164,19 +164,19 @@ export default function CreateDailyRecord({ onClose, onSave }: Props) {
               </FormField>
             </div>
             {/* Modal Footer */}
-            <div className="p-6 border-t border-gray-200 bg-gray-50">
+            <div className="p-6 border-t border-gray-200 ">
               <div className="flex gap-3">
                 <button
                   disabled={isLoading}
                   onClick={() => closeDailog()}
-                  className="flex-1 px-6 py-3 bg-white text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors font-medium"
+                  className="flex-1 px-6 py-3 bg-[var(--color-overviewTab)]  border border-gray-300 rounded-lg cursor-pointer transition-colors font-medium"
                 >
                   Save and New
                 </button>
                 <button
                   disabled={isLoading}
                   type="submit"
-                  className="flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium flex items-center justify-center gap-2"
+                  className="flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors cursor-pointer font-medium flex items-center justify-center gap-2"
                 >
                   {isLoading ? (
                     <Loading />

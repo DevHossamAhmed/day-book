@@ -98,7 +98,7 @@ const MembersManagement = () => {
               <button
                 onClick={handleExportExcel}
                 disabled={isExporting}
-                className="px-6 py-3 border border-green-600 text-green-700 rounded-lg hover:bg-green-50 font-medium flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-6 py-3 border border-green-600 text-green-700 rounded-lg cursor-pointer font-medium flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <ExcelIcon />
                 {isExporting ? "Exporting..." : "Export Excel"}
@@ -106,7 +106,7 @@ const MembersManagement = () => {
 
               <button
                 onClick={openCreateMember}
-                className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium"
+                className="px-6 py-3 bg-blue-600 cursor-pointer text-white rounded-lg hover:bg-blue-700 font-medium"
               >
                 Create Member
               </button>
@@ -115,28 +115,28 @@ const MembersManagement = () => {
 
           {/* Desktop Table */}
           {isLoading ? (
-            <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
+            <div className="bg-[var(--color-overviewTab)] rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
               <PageLoading />
             </div>
           ) : (
-            <div className="hidden sm:block bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
+            <div className="hidden sm:block bg-[var(--color-overviewTab)] rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
               <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
+                <thead className="bg-[var(--color-overviewTab)]">
                   <tr>
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">
+                    <th className="px-6 py-4 text-left text-sm font-semibold ">
                       Member
                     </th>
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">
+                    <th className="px-6 py-4 text-left text-sm font-semibold ">
                       Email
                     </th>
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">
+                    <th className="px-6 py-4 text-left text-sm font-semibold ">
                       Joining Date
                     </th>
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">
+                    <th className="px-6 py-4 text-left text-sm font-semibold ">
                       Salary
                     </th>
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">
+                    <th className="px-6 py-4 text-left text-sm font-semibold ">
                       Designation
                     </th>
                   </tr>
@@ -148,13 +148,13 @@ const MembersManagement = () => {
                       <tr
                         key={member.id}
                         className={[
-                          "group transition-colors cursor-pointer hover:bg-gray-50 focus-within:bg-gray-50",
+                          "group transition-colors cursor-pointer  focus-within:bg-gray-50",
                         ].join(" ")}
                       >
                         <td className="px-6 py-4">
                           <div className="flex items-start justify-between gap-3">
                             <div>
-                              <div className="font-semibold text-gray-900">
+                              <div className="font-semibold ">
                                 {member.first_name} {member.last_name}
                               </div>
 
@@ -171,7 +171,7 @@ const MembersManagement = () => {
 
                         <td className="px-6 py-4">
                           {member.email ? (
-                            <span className="text-sm text-gray-700">
+                            <span className="text-sm ">
                               {member.email}
                             </span>
                           ) : (
@@ -181,7 +181,7 @@ const MembersManagement = () => {
 
                         <td className="px-6 py-4">
                           {member.joining_date ? (
-                            <span className="text-sm text-gray-700">
+                            <span className="text-sm ">
                               {formatDate(member.joining_date)}
                             </span>
                           ) : (
@@ -192,7 +192,7 @@ const MembersManagement = () => {
                         <td className="px-6 py-4">
                           {member.salary_amount !== undefined &&
                             member.salary_amount !== null ? (
-                            <span className="text-sm font-medium text-gray-900">
+                            <span className="text-sm font-medium ">
                               {formatMoney(member.salary_amount)}
                             </span>
                           ) : (
@@ -202,7 +202,7 @@ const MembersManagement = () => {
 
                         <td className="px-6 py-4">
                           {member.designation ? (
-                            <span className="inline-flex items-center rounded-full bg-gray-100 px-3 py-1 text-sm text-gray-700">
+                            <span className="inline-flex items-center rounded-full bg-gray-100 px-3 py-1 text-sm ">
                               {member.designation}
                             </span>
                           ) : (
@@ -220,7 +220,7 @@ const MembersManagement = () => {
 
           {/* Mobile Cards */}
           {!isLoading && (
-            <div className="sm:hidden bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm divide-y divide-gray-200">
+            <div className="sm:hidden bg-[var(--color-overviewTab)] rounded-2xl border border-gray-200 overflow-hidden shadow-sm divide-y divide-gray-200">
             {members.map((member) => {
               return (
                 <button
@@ -232,7 +232,7 @@ const MembersManagement = () => {
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div>
-                      <div className="font-semibold text-gray-900">
+                      <div className="font-semibold ">
                         {member.first_name} {member.last_name}
                       </div>
                       <div className="text-sm text-gray-600">
@@ -246,14 +246,14 @@ const MembersManagement = () => {
                   <div className="grid grid-cols-2 gap-2 text-sm">
                     <div className="text-gray-500">
                       Joined:{" "}
-                      <span className="text-gray-700">
+                      <span className="">
                         {member.joining_date ? formatDate(member.joining_date) : "—"}
                       </span>
                     </div>
 
                     <div className="text-gray-500">
                       Salary:{" "}
-                      <span className="text-gray-700">
+                      <span className="">
                         {member.salary_amount !== undefined &&
                           member.salary_amount !== null
                           ? formatMoney(member.salary_amount)
@@ -263,7 +263,7 @@ const MembersManagement = () => {
 
                     <div className="text-gray-500 col-span-2">
                       Role:{" "}
-                      <span className="text-gray-700">
+                      <span className="">
                         {member.designation || "—"}
                       </span>
                     </div>

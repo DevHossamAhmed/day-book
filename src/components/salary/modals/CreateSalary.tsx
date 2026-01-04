@@ -122,9 +122,9 @@ export default function CreateSalary({ onClose, onSave }: Props) {
 
   return (
     <div className="fixed inset-0 bg-opacity-50 flex items-center justify-end z-9999">
-      <div className="bg-white shadow-xl w-full max-w-2xl h-full overflow-y-auto">
-        <div className="p-6 border-b border-gray-200 flex items-center justify-between sticky top-0 bg-white">
-          <h2 className="text-xl font-semibold text-gray-900">Create Salary</h2>
+      <div className="bg-[var(--color-overviewTab)] shadow-xl w-full max-w-2xl h-full overflow-y-auto">
+        <div className="p-6 border-b border-gray-200 flex items-center justify-between sticky top-0 bg-[var(--color-overviewTab)]">
+          <h2 className="text-xl font-semibold ">Create Salary</h2>
           <button
             onClick={() => closeDialog()}
             className="text-gray-400 hover:text-gray-600"
@@ -141,7 +141,7 @@ export default function CreateSalary({ onClose, onSave }: Props) {
 
             {/* Employee */}
             <div>
-              <label className="block text-sm font-medium text-gray-900 mb-2">
+              <label className="block text-sm font-medium  mb-2">
                 Employee <span className="text-red-500">*</span>
               </label>
               <div className="relative">
@@ -150,7 +150,7 @@ export default function CreateSalary({ onClose, onSave }: Props) {
                   disabled={isLoadingMembers}
                   className={`w-full px-4 py-3 border rounded-lg appearance-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
                     errors.employee_id ? "border-red-300" : "border-gray-300"
-                  } ${isLoadingMembers ? "bg-gray-100 cursor-not-allowed" : "bg-white"}`}
+                  } ${isLoadingMembers ? "bg-gray-100 cursor-not-allowed" : "bg-[var(--color-overviewTab)]"}`}
                 >
                   <option value="">
                     {isLoadingMembers ? "Loading..." : "Select employee"}
@@ -168,7 +168,7 @@ export default function CreateSalary({ onClose, onSave }: Props) {
 
             {/* Salary Amount */}
             <div>
-              <label className="block text-sm font-medium text-gray-900 mb-2">
+              <label className="block text-sm font-medium  mb-2">
                 Salary Amount <span className="text-red-500">*</span>
               </label>
               <input
@@ -187,7 +187,7 @@ export default function CreateSalary({ onClose, onSave }: Props) {
             {/* Deductions and Deduction Reason */}
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-900 mb-2">
+                <label className="block text-sm font-medium  mb-2">
                   Deductions
                 </label>
                 <input
@@ -202,7 +202,7 @@ export default function CreateSalary({ onClose, onSave }: Props) {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-900 mb-2">
+                <label className="block text-sm font-medium  mb-2">
                   Deduction Reason
                 </label>
                 <input
@@ -224,7 +224,7 @@ export default function CreateSalary({ onClose, onSave }: Props) {
             {/* Payment Date and Period */}
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-900 mb-2">
+                <label className="block text-sm font-medium  mb-2">
                   Payment Date <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
@@ -243,7 +243,7 @@ export default function CreateSalary({ onClose, onSave }: Props) {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-900 mb-2">
+                <label className="block text-sm font-medium  mb-2">
                   Period <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
@@ -262,13 +262,13 @@ export default function CreateSalary({ onClose, onSave }: Props) {
 
             {/* Payment Method */}
             <div>
-              <label className="block text-sm font-medium text-gray-900 mb-2">
+              <label className="block text-sm font-medium  mb-2">
                 Payment Method <span className="text-red-500">*</span>
               </label>
               <div className="relative">
                 <select
                   {...register("payment_method")}
-                  className={`w-full px-4 py-3 border rounded-lg appearance-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white ${
+                  className={`w-full px-4 py-3 border rounded-lg appearance-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-[var(--color-overviewTab)] ${
                     errors.payment_method ? "border-red-300" : "border-gray-300"
                   }`}
                 >
@@ -288,13 +288,13 @@ export default function CreateSalary({ onClose, onSave }: Props) {
 
             {/* Status */}
             <div>
-              <label className="block text-sm font-medium text-gray-900 mb-2">
+              <label className="block text-sm font-medium  mb-2">
                 Status <span className="text-red-500">*</span>
               </label>
               <div className="relative">
                 <select
                   {...register("status")}
-                  className={`w-full px-4 py-3 border rounded-lg appearance-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white ${
+                  className={`w-full px-4 py-3 border rounded-lg appearance-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-[var(--color-overviewTab)] ${
                     errors.status ? "border-red-300" : "border-gray-300"
                   }`}
                 >
@@ -309,7 +309,7 @@ export default function CreateSalary({ onClose, onSave }: Props) {
 
             {/* Note */}
             <div>
-              <label className="block text-sm font-medium text-gray-900 mb-2">
+              <label className="block text-sm font-medium  mb-2">
                 Note
               </label>
               <textarea
@@ -330,7 +330,7 @@ export default function CreateSalary({ onClose, onSave }: Props) {
               />
             </FormField>
           </div>
-          <div className="p-6 border-t border-gray-200 flex justify-end gap-3 sticky bottom-0 bg-white z-10">
+          <div className="p-6 border-t border-gray-200 flex justify-end gap-3 sticky bottom-0 bg-[var(--color-overviewTab)] z-10">
             <button
               disabled={isLoading}
               onClick={handleSubmit((d) => submit(d, false))}

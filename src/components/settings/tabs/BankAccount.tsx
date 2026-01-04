@@ -89,7 +89,7 @@ export default function BankAccount() {
             <button
               onClick={handleExportExcel}
               disabled={isExporting}
-              className="px-6 py-3 border border-green-600 text-green-700 rounded-lg hover:bg-green-50 font-medium flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-6 py-3 border border-green-600 cursor-pointer text-green-700 rounded-lg  font-medium flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <ExcelIcon />
               {isExporting ? "Exporting..." : "Export Excel"}
@@ -97,28 +97,28 @@ export default function BankAccount() {
 
             <button
               onClick={openBanckAccount}
-              className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium"
+              className="px-6 py-3 bg-blue-600 cursor-pointer text-white rounded-lg hover:bg-blue-700 font-medium"
             >
               Create Bank Account
             </button>
           </div>
         </div>
         {/* Desktop / Tablet Table */}
-        <div className="hidden sm:block bg-white rounded-lg border border-gray-200 overflow-hidden">
+        <div className="hidden sm:block bg-[var(--color-overviewTab)] rounded-lg border border-gray-200 overflow-hidden">
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+              <thead className="bg-[var(--color-overviewTab)]">
                 <tr>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">
+                  <th className="px-6 py-4 text-left text-sm font-semibold ">
                     Bank Account
                   </th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">
+                  <th className="px-6 py-4 text-left text-sm font-semibold ">
                     IBAN
                   </th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">
+                  <th className="px-6 py-4 text-left text-sm font-semibold ">
                     Note
                   </th>
-                  <th className="px-6 py-4 text-right text-sm font-semibold text-gray-700">
+                  <th className="px-6 py-4 text-right text-sm font-semibold ">
                     Action
                   </th>
                 </tr>
@@ -134,19 +134,19 @@ export default function BankAccount() {
                     <td className="px-6 py-4">
                       <div className="font-semibold text-gray-900">{bank.name}</div>
                       {bank.account_number && (
-                        <div className="text-sm text-gray-500">Account Number: {bank.account_number}</div>
+                        <div className="text-sm ">Account Number: {bank.account_number}</div>
                       )}
                     </td>
                     <td className="px-6 py-4">
                       {bank.iban ? (
-                        <span className="text-sm text-gray-700">{bank.iban}</span>
+                        <span className="text-sm ">{bank.iban}</span>
                       ) : (
                         <span className="text-sm text-gray-400">—</span>
                       )}
                     </td>
                     <td className="px-6 py-4">
                       {bank.note ? (
-                        <span className="text-sm text-gray-700">{bank.note}</span>
+                        <span className="text-sm ">{bank.note}</span>
                       ) : (
                         <span className="text-sm text-gray-400">—</span>
                       )}
@@ -161,7 +161,7 @@ export default function BankAccount() {
           </div>
         </div>
         {/* Mobile Cards */}
-        <div className="sm:hidden bg-white rounded-lg divide-y divide-gray-200">
+        <div className="sm:hidden bg-[var(--color-overviewTab)] rounded-lg divide-y divide-gray-200">
           {banks.map((bank) => (
             <div
               key={bank.id}
@@ -178,7 +178,7 @@ export default function BankAccount() {
                   )}
 
                   {bank.iban && (
-                    <p className="text-gray-500 truncate">IBAN: {bank.iban}</p>
+                    <p className=" truncate">IBAN: {bank.iban}</p>
                   )}
                 </div>
               </div>

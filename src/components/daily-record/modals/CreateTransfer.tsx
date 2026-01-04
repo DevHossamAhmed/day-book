@@ -14,13 +14,13 @@ export default function CreateTransfer({ onClose }: Props) {
             onClick={() => closeDailog()}
         >
             <div
-                className="bg-white w-full max-w-md h-full shadow-2xl animate-slide-in"
+                className="bg-[var(--color-overviewTab)] w-full max-w-md h-full shadow-2xl animate-slide-in"
                 onClick={(e) => e.stopPropagation()}
             >
                 <div className="flex flex-col h-full">
                     {/* Modal Header */}
                     <div className="flex items-center justify-between p-6 border-b border-gray-200">
-                        <h2 className="text-xl font-bold text-gray-900">
+                        <h2 className="text-xl font-bold ">
                             Transfer Cash
                         </h2>
                         <button
@@ -35,7 +35,7 @@ export default function CreateTransfer({ onClose }: Props) {
                     <div className="flex-1 overflow-y-auto p-6 space-y-6">
                         {/* Date Field */}
                         <div>
-                            <label className="block text-sm font-semibold text-gray-700 mb-2">
+                            <label className="block text-sm font-semibold  mb-2">
                                 Date
                             </label>
                             <div className="relative">
@@ -60,7 +60,7 @@ export default function CreateTransfer({ onClose }: Props) {
                         {/* From Account Field */}
                         <div>
                             <div className="relative">
-                                <select className="w-full px-4 py-3 border border-gray-300 rounded-lg appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900">
+                                <select className="w-full px-4 py-3 border border-gray-300 rounded-lg appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-[var(--color-overviewTab)] ">
                                     <option value="cash-sale">Cash in Sale Counter</option>
                                     <option value="cash-bank">Cash in Bank</option>
                                     <option value="other">Other</option>
@@ -95,7 +95,7 @@ export default function CreateTransfer({ onClose }: Props) {
                         {/* To Account Field */}
                         <div>
                             <div className="relative">
-                                <select className="w-full px-4 py-3 border border-gray-300 rounded-lg appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900">
+                                <select className="w-full px-4 py-3 border border-gray-300 rounded-lg appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-[var(--color-overviewTab)] ">
                                     <option value="undeposited">Undeposited Fund</option>
                                     <option value="cash-sale">Cash in Sale Counter</option>
                                     <option value="cash-bank">Cash in Bank</option>
@@ -109,7 +109,7 @@ export default function CreateTransfer({ onClose }: Props) {
 
                         {/* Amount Field */}
                         <div>
-                            <label className="block text-sm font-semibold text-gray-700 mb-2">
+                            <label className="block text-sm font-semibold  mb-2">
                                 Amount
                             </label>
                             <input
@@ -124,7 +124,7 @@ export default function CreateTransfer({ onClose }: Props) {
 
                         {/* Attachment Field */}
                         <div>
-                            <label className="block text-sm font-semibold text-gray-700 mb-2">
+                            <label className="block text-sm font-semibold  mb-2">
                                 Attachment
                             </label>
                             <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-gray-400 transition-colors cursor-pointer">
@@ -163,7 +163,7 @@ export default function CreateTransfer({ onClose }: Props) {
 
                         {/* Additional Info Field */}
                         <div>
-                            <label className="block text-sm font-semibold text-gray-700 mb-2">
+                            <label className="block text-sm font-semibold  mb-2">
                                 Additional Info
                             </label>
                             <textarea
@@ -176,7 +176,7 @@ export default function CreateTransfer({ onClose }: Props) {
                     </div>
 
                     {/* Modal Footer */}
-                    <div className="p-6 border-t border-gray-200 bg-gray-50">
+                    <div className="p-6 border-t border-gray-200 ">
                         <button className="w-full px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium flex items-center justify-center gap-2">
                             <Save size={18} />
                             Confirm

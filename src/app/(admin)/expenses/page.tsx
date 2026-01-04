@@ -265,7 +265,7 @@ const ExpensesPage = () => {
             <ExportButton onClick={handleExportExcel} isExporting={isExporting} />
             <button
               onClick={() => setIsCreateExpenseOpen(true)}
-              className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium"
+              className="px-6 py-3 bg-blue-600 text-white rounded-lg cursor-pointer hover:bg-blue-700 font-medium"
             >
               Create Expense
             </button>
@@ -274,7 +274,7 @@ const ExpensesPage = () => {
       />
 
       {/* Main Content Card */}
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100">
+      <div className="bg-[var(--color-overviewTab)] rounded-2xl shadow-sm border border-gray-100">
         {/* Date Navigation */}
         <div className="p-6 border-b border-gray-200">
           <div className="flex items-center justify-between gap-6">

@@ -19,10 +19,10 @@ export default function FilterButton({
   return (
     <button
       onClick={onClick}
-      className={`flex items-center gap-2 px-4 py-2 border rounded-lg transition-colors text-sm font-medium ${className} ${
+      className={`flex items-center gap-2 px-4 py-2 cursor-pointer border rounded-lg transition-colors text-sm font-medium ${className} ${
         isOpen || hasActiveFilters
           ? "bg-blue-600 text-white border-blue-600 hover:bg-blue-700"
-          : "text-gray-700 border-gray-300 hover:bg-gray-50"
+          : ""
       }`}
     >
       <SlidersHorizontal size={16} />

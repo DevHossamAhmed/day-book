@@ -113,12 +113,12 @@ const RightSide = () => {
 
   return (
     <div className="w-full space-y-6">
-      <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+      <div className="bg-[var(--color-overviewTab)] rounded-2xl p-6 shadow-sm border border-gray-100">
         <div className="flex justify-between items-start mb-6">
-          <h2 className="text-gray-900 font-bold text-lg sm:text-xl">
+          <h2 className=" font-bold text-lg sm:text-xl">
             Product Performance
           </h2>
-          <button className="text-gray-400 hover:text-gray-600">
+          <button className="text-gray-400 hover:">
             <FiMoreVertical size={20} />
           </button>
         </div>
@@ -128,8 +128,8 @@ const RightSide = () => {
             onClick={() => setActiveTab("daily")}
             className={`px-6 py-3 rounded-lg text-sm font-medium transition-all ${
               activeTab === "daily"
-                ? "bg-gray-900 text-white shadow-sm"
-                : "bg-gray-50 text-gray-600 hover:bg-gray-100"
+                ? "bg-gray-900  shadow-sm"
+                : "bg-[var(--color-overviewTab)] border  hover:bg-gray-100"
             }`}
           >
             Daily Sales
@@ -139,7 +139,7 @@ const RightSide = () => {
             className={`px-6 py-3 rounded-lg text-sm font-medium transition-all ${
               activeTab === "online"
                 ? "bg-gray-900 text-white shadow-sm"
-                : "bg-gray-50 text-gray-600 hover:bg-gray-100"
+                : "bg-[var(--color-overviewTab)] border  hover:bg-gray-100"
             }`}
           >
             Online Sales
@@ -149,7 +149,7 @@ const RightSide = () => {
             className={`px-6 py-3 rounded-lg text-sm font-medium transition-all ${
               activeTab === "users"
                 ? "bg-gray-900 text-white shadow-sm"
-                : "bg-gray-50 text-gray-600 hover:bg-gray-100"
+                : "bg-[var(--color-overviewTab)] border  hover:bg-gray-100"
             }`}
           >
             New Users
@@ -157,22 +157,22 @@ const RightSide = () => {
         </div>
 
         <div className="grid grid-cols-2 gap-3 mb-6">
-          <div className="bg-gray-50 rounded-2xl p-4">
-            <div className="text-gray-600 text-xs sm:text-sm mb-2">Online</div>
+          <div className="bg-[var(--color-overviewTab)] border rounded-2xl p-4">
+            <div className=" text-xs sm:text-sm mb-2">Online</div>
             <div className="flex items-center gap-2">
               <div className="flex items-center gap-1">
                 <FiArrowUp className="text-emerald-500" size={14} />
-                <span className="text-xl sm:text-2xl font-bold text-gray-900">790</span>
+                <span className="text-xl sm:text-2xl font-bold">790</span>
               </div>
             </div>
           </div>
 
-          <div className="bg-gray-50 rounded-2xl p-4">
-            <div className="text-gray-600 text-xs sm:text-sm mb-2">Offline</div>
+          <div className="bg-[var(--color-overviewTab)] border rounded-2xl p-4">
+            <div className=" text-xs sm:text-sm mb-2">Offline</div>
             <div className="flex items-center gap-2">
               <div className="flex items-center gap-1">
                 <FiArrowDown className="text-red-500" size={14} />
-                <span className="text-xl sm:text-2xl font-bold text-gray-900">572</span>
+                <span className="text-xl sm:text-2xl font-bold ">572</span>
               </div>
             </div>
           </div>
@@ -180,13 +180,13 @@ const RightSide = () => {
 
         <div className="mb-6">
           <div className="flex justify-between items-center mb-2">
-            <span className="text-gray-600 text-xs sm:text-sm">Average Daily Sales</span>
+            <span className=" text-xs sm:text-sm">Average Daily Sales</span>
             <div className="flex items-center gap-1">
               <FiArrowDown className="text-red-500" size={14} />
               <span className="text-red-500 text-xs sm:text-sm font-medium">0.52%</span>
             </div>
           </div>
-          <div className="text-2xl sm:text-3xl font-bold text-gray-900">$2,950</div>
+          <div className="text-2xl sm:text-3xl font-bold ">$2,950</div>
         </div>
 
         <div className="h-48 sm:h-64">
@@ -194,10 +194,10 @@ const RightSide = () => {
         </div>
       </div>
 
-      <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+      <div className="bg-[var(--color-overviewTab)] rounded-2xl p-6 shadow-sm border border-gray-100">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-gray-900 font-bold text-lg sm:text-xl">Activities</h2>
-          <button className="text-gray-400 hover:text-gray-600">
+          <h2 className=" font-bold text-lg sm:text-xl">Activities</h2>
+          <button className="text-gray-400 hover:">
             <FiMoreVertical size={20} />
           </button>
         </div>
@@ -227,11 +227,11 @@ const RightSide = () => {
                   New invoice
                 </div>
               </div>
-              <div className="text-gray-900 text-xs sm:text-sm">
+              <div className=" text-xs sm:text-sm">
                 <span className="font-semibold">Francisco Grbbs</span>
                 <span className="text-gray-500"> created invoice</span>
               </div>
-              <div className="text-gray-900 font-medium text-xs sm:text-sm mt-0.5">
+              <div className=" font-medium text-xs sm:text-sm mt-0.5">
                 PQ-4491C
               </div>
               <div className="text-gray-400 text-[10px] sm:text-xs mt-1">Just Now</div>
@@ -245,11 +245,11 @@ const RightSide = () => {
               className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover flex-shrink-0"
             />
             <div className="flex-1 min-w-0">
-              <div className="text-gray-900 text-xs sm:text-sm">
+              <div className=" text-xs sm:text-sm">
                 <span className="font-semibold">Courtney Henry</span>
                 <span className="text-gray-500"> created invoice</span>
               </div>
-              <div className="text-gray-900 font-medium text-xs sm:text-sm mt-0.5">
+              <div className=" font-medium text-xs sm:text-sm mt-0.5">
                 HK-234G
               </div>
               <div className="text-gray-400 text-[10px] sm:text-xs mt-1">15 minutes ago</div>
@@ -263,11 +263,11 @@ const RightSide = () => {
               className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover flex-shrink-0"
             />
             <div className="flex-1 min-w-0">
-              <div className="text-gray-900 text-xs sm:text-sm">
+              <div className=" text-xs sm:text-sm">
                 <span className="font-semibold">Bessie Cooper</span>
                 <span className="text-gray-500"> created invoice</span>
               </div>
-              <div className="text-gray-900 font-medium text-xs sm:text-sm mt-0.5">
+              <div className=" font-medium text-xs sm:text-sm mt-0.5">
                 LH-2891C
               </div>
               <div className="text-gray-400 text-[10px] sm:text-xs mt-1">5 months ago</div>
@@ -281,11 +281,11 @@ const RightSide = () => {
               className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover flex-shrink-0"
             />
             <div className="flex-1 min-w-0">
-              <div className="text-gray-900 text-xs sm:text-sm">
+              <div className=" text-xs sm:text-sm">
                 <span className="font-semibold">Theresa Web</span>
                 <span className="text-gray-500"> created invoice</span>
               </div>
-              <div className="text-gray-900 font-medium text-xs sm:text-sm mt-0.5">
+              <div className=" font-medium text-xs sm:text-sm mt-0.5">
                 CK-125NH
               </div>
               <div className="text-gray-400 text-[10px] sm:text-xs mt-1">2 weeks ago</div>

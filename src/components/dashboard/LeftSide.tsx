@@ -210,21 +210,21 @@ const LeftSide = () => {
   return (
     <div className="w-full max-w-4xl mx-auto space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+        <div className="bg-[var(--color-overviewTab)] rounded-2xl p-6 shadow-sm border border-gray-100">
           <div className="flex justify-between items-start mb-6">
             <div>
-              <h3 className="text-gray-700 font-semibold text-lg mb-2">
+              <h3 className=" font-semibold text-lg mb-2">
                 Online Sales
               </h3>
               <div className="flex items-baseline gap-2">
-                <span className="text-3xl font-bold text-gray-900">2,500</span>
+                <span className="text-3xl font-bold ">2,500</span>
               </div>
               <div className="flex items-center gap-1 mt-1">
                 <span className="text-red-500 text-sm font-medium">0.31%</span>
-                <span className="text-gray-500 text-sm">than last Week</span>
+                <span className="text-gray-300 text-sm">than last Week</span>
               </div>
             </div>
-            <button className="text-gray-400 hover:text-gray-600">
+            <button className="text-gray-400 hover:">
               <FiMoreVertical size={20} />
             </button>
           </div>
@@ -234,23 +234,23 @@ const LeftSide = () => {
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+        <div className="bg-[var(--color-overviewTab)] rounded-2xl p-6 shadow-sm border border-gray-100">
           <div className="flex justify-between items-start mb-6">
             <div>
-              <h3 className="text-gray-700 font-semibold text-lg mb-2">
+              <h3 className=" font-semibold text-lg mb-2">
                 Offline Sales
               </h3>
               <div className="flex items-baseline gap-2">
-                <span className="text-3xl font-bold text-gray-900">3,768</span>
+                <span className="text-3xl font-bold ">3,768</span>
               </div>
               <div className="flex items-center gap-1 mt-1">
                 <span className="text-emerald-500 text-sm font-medium">
                   +3.85%
                 </span>
-                <span className="text-gray-500 text-sm">than last Week</span>
+                <span className="text-gray-300 text-sm">than last Week</span>
               </div>
             </div>
-            <button className="text-gray-400 hover:text-gray-600">
+            <button className="text-gray-400 hover:">
               <FiMoreVertical size={20} />
             </button>
           </div>
@@ -261,10 +261,10 @@ const LeftSide = () => {
         </div>
       </div>
 
-      <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+      <div className="bg-[var(--color-overviewTab)] rounded-2xl p-6 shadow-sm border border-gray-100">
         <div className="flex justify-between items-center mb-6">
-          <h3 className="text-gray-900 font-semibold text-xl">Forecast</h3>
-          <select className="px-4 py-2 border border-gray-200 rounded-lg text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <h3 className=" font-semibold text-xl">Forecast</h3>
+          <select className="px-4 py-2 border border-gray-200 bg-[var(--color-overviewTab)] rounded-lg text-sm  focus:outline-none focus:ring-2 focus:ring-blue-500">
             <option>October</option>
             <option>November</option>
             <option>December</option>
@@ -276,8 +276,8 @@ const LeftSide = () => {
         </div>
       </div>
 
-      <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-        <h3 className="text-gray-900 font-semibold text-xl mb-6">
+      <div className="bg-[var(--color-overviewTab)] rounded-2xl p-6 shadow-sm border border-gray-100">
+        <h3 className=" font-semibold text-xl mb-6">
           Daily Summary
         </h3>
 
@@ -285,22 +285,22 @@ const LeftSide = () => {
           <table className="w-full">
             <thead>
               <tr className="border-b border-gray-100">
-                <th className="text-left py-4 px-4 text-sm font-medium text-gray-600">
+                <th className="text-left py-4 px-4 text-sm font-medium ">
                   Close Date
                 </th>
-                <th className="text-left py-4 px-4 text-sm font-medium text-gray-600">
+                <th className="text-left py-4 px-4 text-sm font-medium ">
                   Online Sales
                 </th>
-                <th className="text-left py-4 px-4 text-sm font-medium text-gray-600">
+                <th className="text-left py-4 px-4 text-sm font-medium ">
                   Offline Sales
                 </th>
-                <th className="text-left py-4 px-4 text-sm font-medium text-gray-600">
+                <th className="text-left py-4 px-4 text-sm font-medium ">
                   Total Sales
                 </th>
-                <th className="text-left py-4 px-4 text-sm font-medium text-gray-600">
+                <th className="text-left py-4 px-4 text-sm font-medium ">
                   Total Payments
                 </th>
-                <th className="text-left py-4 px-4 text-sm font-medium text-gray-600">
+                <th className="text-left py-4 px-4 text-sm font-medium ">
                   Net Amount
                 </th>
               </tr>
@@ -311,22 +311,22 @@ const LeftSide = () => {
                   key={index}
                   className="border-b border-gray-50 hover:bg-gray-50 transition-colors"
                 >
-                  <td className="py-4 px-4 text-sm text-gray-700">
+                  <td className="py-4 px-4 text-sm ">
                     October 30, 2017
                   </td>
-                  <td className="py-4 px-4 text-sm text-gray-900 font-medium">
+                  <td className="py-4 px-4 text-sm  font-medium">
                     $473.85
                   </td>
-                  <td className="py-4 px-4 text-sm text-gray-900 font-medium">
+                  <td className="py-4 px-4 text-sm  font-medium">
                     $473.85
                   </td>
-                  <td className="py-4 px-4 text-sm text-gray-900 font-medium">
+                  <td className="py-4 px-4 text-sm  font-medium">
                     $473.85
                   </td>
-                  <td className="py-4 px-4 text-sm text-gray-900 font-medium">
+                  <td className="py-4 px-4 text-sm  font-medium">
                     $473.85
                   </td>
-                  <td className="py-4 px-4 text-sm text-gray-900 font-medium">
+                  <td className="py-4 px-4 text-sm  font-medium">
                     $473.85
                   </td>
                 </tr>

@@ -37,10 +37,10 @@ export default function DateFilterTabs({
             <button
               key={tab}
               onClick={() => onTabChange(tab)}
-              className={`font-medium text-sm pb-1 transition-colors ${
+              className={`font-medium text-sm pb-1 cursor-pointer transition-colors ${
                 activeTab === tab
                   ? "text-blue-600 border-b-2 border-blue-600"
-                  : "text-gray-500 hover:text-gray-700"
+                  : ""
               }`}
             >
               {tab}

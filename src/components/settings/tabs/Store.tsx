@@ -86,7 +86,7 @@ export default function Store() {
             <button
               onClick={handleExportExcel}
               disabled={isExporting}
-              className="px-6 py-3 border border-green-600 text-green-700 rounded-lg hover:bg-green-50 font-medium flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-6 py-3 border cursor-pointer border-green-600 text-green-700 rounded-lg font-medium flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <ExcelIcon />
               {isExporting ? "Exporting..." : "Export Excel"}
@@ -94,31 +94,31 @@ export default function Store() {
 
             <button
               onClick={openStore}
-              className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium"
+              className="px-6 py-3 bg-blue-600 cursor-pointer text-white rounded-lg hover:bg-blue-700 font-medium"
             >
               Create Store
             </button>
           </div>
         </div>
         {/* Desktop / Tablet Table */}
-        <div className="hidden sm:block bg-white rounded-lg border border-gray-200 overflow-hidden">
+        <div className="hidden sm:block bg-[var(--color-overviewTab)] rounded-lg border border-gray-200 overflow-hidden">
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+              <thead className="bg-[var(--color-overviewTab)]">
                 <tr>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">
+                  <th className="px-6 py-4 text-left text-sm font-semibold ">
                     Store Name
                   </th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">
+                  <th className="px-6 py-4 text-left text-sm font-semibold ">
                     Sales Person
                   </th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">
+                  <th className="px-6 py-4 text-left text-sm font-semibold ">
                     Default Currency
                   </th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">
+                  <th className="px-6 py-4 text-left text-sm font-semibold ">
                     Description
                   </th>
-                  <th className="px-6 py-4 text-right text-sm font-semibold text-gray-700">
+                  <th className="px-6 py-4 text-right text-sm font-semibold ">
                     Action
                   </th>
                 </tr>
@@ -138,25 +138,25 @@ export default function Store() {
                       className="hover:bg-gray-50 cursor-pointer"
                     >
                       <td className="px-6 py-4">
-                        <div className="font-semibold text-gray-900">{store.name}</div>
+                        <div className="font-semibold ">{store.name}</div>
                       </td>
                       <td className="px-6 py-4">
                         {store.sales_person_fullname ? (
-                          <span className="text-sm text-gray-700">{store.sales_person_fullname}</span>
+                          <span className="text-sm ">{store.sales_person_fullname}</span>
                         ) : (
                           <span className="text-sm text-gray-400">—</span>
                         )}
                       </td>
                       <td className="px-6 py-4">
                         {store.default_currency ? (
-                          <span className="text-sm text-gray-700 uppercase">{store.default_currency}</span>
+                          <span className="text-sm  uppercase">{store.default_currency}</span>
                         ) : (
                           <span className="text-sm text-gray-400">—</span>
                         )}
                       </td>
                       <td className="px-6 py-4">
                         {store.description ? (
-                          <span className="text-sm text-gray-700 line-clamp-2">{store.description}</span>
+                          <span className="text-sm  line-clamp-2">{store.description}</span>
                         ) : (
                           <span className="text-sm text-gray-400">—</span>
                         )}
@@ -172,7 +172,7 @@ export default function Store() {
           </div>
         </div>
         {/* Mobile Cards */}
-        <div className="sm:hidden bg-white rounded-lg divide-y divide-gray-200">
+        <div className="sm:hidden bg-[var(--color-overviewTab)] rounded-lg divide-y divide-gray-200">
           {stores.length === 0 ? (
             <div className="p-8 text-center text-sm text-gray-500">
               No stores found
@@ -184,7 +184,7 @@ export default function Store() {
                 className="p-4 flex items-center justify-between hover:bg-gray-50 cursor-pointer"
               >
                 <div className="min-w-0">
-                  <h3 className="font-semibold text-gray-900 truncate">{store.name}</h3>
+                  <h3 className="font-semibold  truncate">{store.name}</h3>
                   <div className="mt-1 space-y-1 text-sm">
                     {store.sales_person_fullname ? (
                       <p className="text-gray-600 truncate">Sales Person: {store.sales_person_fullname}</p>

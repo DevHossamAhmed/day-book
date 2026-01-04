@@ -11,10 +11,10 @@ export default function Notification() {
 
   return (
     <>
-      <div className="bg-white rounded-lg p-8 space-y-8">
+      <div className="bg-[var(--color-overviewTab)] rounded-lg p-8 space-y-8">
         <div className="space-y-6">
           <div className="flex items-center justify-between py-4 border-b border-gray-200">
-            <label className="text-sm font-medium text-gray-900">Email</label>
+            <label className="text-sm font-medium ">Email</label>
             <button
               onClick={() =>
                 setNotifications({
@@ -22,12 +22,12 @@ export default function Notification() {
                   email: !notifications.email,
                 })
               }
-              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+              className={`relative inline-flex h-6 w-11 cursor-pointer items-center rounded-full transition-colors ${
                 notifications.email ? "bg-green-500" : "bg-gray-300"
               }`}
             >
               <span
-                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                className={`inline-block h-4 w-4 transform rounded-full bg-[var(--color-overviewTab)] transition-transform ${
                   notifications.email ? "translate-x-6" : "translate-x-1"
                 }`}
               />
@@ -35,7 +35,7 @@ export default function Notification() {
           </div>
 
           <div className="flex items-center justify-between py-4">
-            <label className="text-sm font-medium text-gray-900">Desktop</label>
+            <label className="text-sm font-medium ">Desktop</label>
             <button
               onClick={() =>
                 setNotifications({
@@ -43,12 +43,12 @@ export default function Notification() {
                   desktop: !notifications.desktop,
                 })
               }
-              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+              className={`relative inline-flex h-6 w-11 cursor-pointer items-center rounded-full transition-colors ${
                 notifications.desktop ? "bg-green-500" : "bg-gray-300"
               }`}
             >
               <span
-                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                className={`inline-block h-4 w-4 transform rounded-full bg-[var(--color-overviewTab)] transition-transform ${
                   notifications.desktop ? "translate-x-6" : "translate-x-1"
                 }`}
               />
@@ -57,12 +57,12 @@ export default function Notification() {
         </div>
 
         <div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-6">
+          <h3 className="text-lg font-semibold  mb-6">
             Account updates
           </h3>
           <div className="space-y-6">
             <div className="flex items-center justify-between py-4">
-              <label className="text-sm font-medium text-gray-900">
+              <label className="text-sm font-medium ">
                 Weekly digest
               </label>
               <button
@@ -72,12 +72,12 @@ export default function Notification() {
                     weeklyDigest: !notifications.weeklyDigest,
                   })
                 }
-                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                className={`relative inline-flex h-6 cursor-pointer w-11 items-center rounded-full transition-colors ${
                   notifications.weeklyDigest ? "bg-green-500" : "bg-gray-300"
                 }`}
               >
                 <span
-                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                  className={`inline-block h-4 w-4 transform rounded-full bg-[var(--color-overviewTab)] transition-transform ${
                     notifications.weeklyDigest
                       ? "translate-x-6"
                       : "translate-x-1"
@@ -87,7 +87,7 @@ export default function Notification() {
             </div>
 
             <div className="flex items-center justify-between py-4">
-              <label className="text-sm font-medium text-gray-900">
+              <label className="text-sm font-medium ">
                 Product updates
               </label>
               <button
@@ -97,12 +97,12 @@ export default function Notification() {
                     productUpdates: !notifications.productUpdates,
                   })
                 }
-                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                className={`relative inline-flex cursor-pointer h-6 w-11 items-center rounded-full transition-colors ${
                   notifications.productUpdates ? "bg-green-500" : "bg-gray-300"
                 }`}
               >
                 <span
-                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                  className={`inline-block h-4 w-4 transform rounded-full bg-[var(--color-overviewTab)] transition-transform ${
                     notifications.productUpdates
                       ? "translate-x-6"
                       : "translate-x-1"
@@ -112,7 +112,7 @@ export default function Notification() {
             </div>
 
             <div className="flex items-center justify-between py-4">
-              <label className="text-sm font-medium text-gray-900">
+              <label className="text-sm font-medium ">
                 Important updates
               </label>
               <button
@@ -122,14 +122,14 @@ export default function Notification() {
                     importantUpdates: !notifications.importantUpdates,
                   })
                 }
-                className={`relative inline-flex h-6 w-11 items-centers rounded-full transition-colors ${
+                className={`relative inline-flex h-6 w-11 cursor-pointer items-center rounded-full transition-colors ${
                   notifications.importantUpdates
                     ? "bg-green-500"
                     : "bg-gray-300"
                 }`}
               >
                 <span
-                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                  className={`inline-block h-4 w-4 transform rounded-full bg-[var(--color-overviewTab)] transition-transform ${
                     notifications.importantUpdates
                       ? "translate-x-6"
                       : "translate-x-1"

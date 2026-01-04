@@ -126,10 +126,10 @@ export default function CreatePayment({ onClose, onSave }: Props) {
       />
 
       {/* Side Panel */}
-      <div className="fixed top-0 right-0 h-full w-[560px] bg-white shadow-2xl z-9999 flex flex-col">
+      <div className="fixed top-0 right-0 h-full w-[560px] bg-[var(--color-overviewTab)] shadow-2xl z-9999 flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
-          <h2 className="text-xl font-bold text-gray-900">
+          <h2 className="text-xl font-bold ">
             Create Planned Payment
           </h2>
           <button
@@ -149,7 +149,7 @@ export default function CreatePayment({ onClose, onSave }: Props) {
 
             {/* Vendor */}
             <div>
-              <label className="block text-sm font-medium text-gray-900 mb-2">
+              <label className="block text-sm font-medium  mb-2">
                 Vendor <span className="text-red-500">*</span>
               </label>
               <div className="relative">
@@ -157,7 +157,7 @@ export default function CreatePayment({ onClose, onSave }: Props) {
                   {...register("vendor_id")}
                   disabled={isLoadingVendors}
                   className={`w-full px-4 py-3 border rounded-lg appearance-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${errors.vendor_id ? "border-red-300" : "border-gray-300"
-                    } ${isLoadingVendors ? "bg-gray-100 cursor-not-allowed" : "bg-white"}`}
+                    } ${isLoadingVendors ? "bg-gray-100 cursor-not-allowed" : "bg-[var(--color-overviewTab)]"}`}
                 >
                   <option value="">
                     {isLoadingVendors ? "Loading..." : "Select vendor"}
@@ -175,7 +175,7 @@ export default function CreatePayment({ onClose, onSave }: Props) {
 
             {/* Purpose */}
             <div>
-              <label className="block text-sm font-medium text-gray-900 mb-2">
+              <label className="block text-sm font-medium  mb-2">
                 Purpose <span className="text-red-500">*</span>
               </label>
               <input
@@ -190,7 +190,7 @@ export default function CreatePayment({ onClose, onSave }: Props) {
 
             {/* Amount */}
             <div>
-              <label className="block text-sm font-medium text-gray-900 mb-2">
+              <label className="block text-sm font-medium  mb-2">
                 Amount <span className="text-red-500">*</span>
               </label>
               <input
@@ -206,7 +206,7 @@ export default function CreatePayment({ onClose, onSave }: Props) {
             {/* Due Date and Payment Method */}
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-900 mb-2">
+                <label className="block text-sm font-medium  mb-2">
                   Due Date <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
@@ -222,13 +222,13 @@ export default function CreatePayment({ onClose, onSave }: Props) {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-900 mb-2">
+                <label className="block text-sm font-medium  mb-2">
                   Payment Method <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
                   <select
                     {...register("payment_method")}
-                    className={`w-full px-4 py-3 border rounded-lg appearance-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white ${errors.payment_method ? "border-red-300" : "border-gray-300"
+                    className={`w-full px-4 py-3 border rounded-lg appearance-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-[var(--color-overviewTab)] ${errors.payment_method ? "border-red-300" : "border-gray-300"
                       }`}
                   >
                     <option value="">Select payment method</option>
@@ -248,13 +248,13 @@ export default function CreatePayment({ onClose, onSave }: Props) {
 
             {/* Status */}
             <div>
-              <label className="block text-sm font-medium text-gray-900 mb-2">
+              <label className="block text-sm font-medium  mb-2">
                 Status <span className="text-red-500">*</span>
               </label>
               <div className="relative">
                 <select
                   {...register("status")}
-                  className={`w-full px-4 py-3 border rounded-lg appearance-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white ${errors.status ? "border-red-300" : "border-gray-300"
+                  className={`w-full px-4 py-3 border rounded-lg appearance-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-[var(--color-overviewTab)] ${errors.status ? "border-red-300" : "border-gray-300"
                     }`}
                 >
                   <option value="">Select status</option>
@@ -269,7 +269,7 @@ export default function CreatePayment({ onClose, onSave }: Props) {
 
             {/* Note */}
             <div>
-              <label className="block text-sm font-medium text-gray-900 mb-2">
+              <label className="block text-sm font-medium  mb-2">
                 Note
               </label>
               <textarea
@@ -292,19 +292,19 @@ export default function CreatePayment({ onClose, onSave }: Props) {
           </div>
 
           {/* Footer Buttons */}
-          <div className="p-6 border-t border-gray-200 flex items-center justify-end gap-3 sticky bottom-0 bg-white z-10">
+          <div className="p-6 border-t border-gray-200 flex items-center justify-end gap-3 sticky bottom-0 bg-[var(--color-overviewTab)] z-10">
             <button
               disabled={isLoading}
               onClick={handleSubmit((d) => submit(d, false))}
               type="button"
-              className="px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-6 py-3 border border-gray-300 rounded-lg cursor-pointer font-medium disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? <Loading /> : "Save and New"}
             </button>
             <button
               disabled={isLoading}
               type="submit"
-              className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-6 py-3 bg-blue-600 cursor-pointer text-white rounded-lg hover:bg-blue-700 font-medium flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? (
                 <Loading />
