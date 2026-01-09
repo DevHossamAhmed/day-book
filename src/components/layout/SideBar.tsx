@@ -41,7 +41,7 @@ const SideBar: React.FC<SideBarProps> = ({ isOpen, onClose }) => {
       {/* Sidebar */}
       <aside
         className={`
-          h-screen w-[320px] bg-[var(--color-sideBar)] border-r border-gray-200 dark:border-gray-700 shadow-lg dark:shadow-2xl dark:shadow-black/20 flex flex-col fixed top-0 left-0 z-[9999]
+          h-screen w-[320px] bg-[var(--color-sideBar)]  shadow-lg dark:shadow-2xl dark:shadow-black/20 flex flex-col fixed top-0 left-0 z-[9999]
           transition-transform duration-300 ease-in-out
           ${isOpen ? "translate-x-0" : "-translate-x-full"}
           lg:translate-x-0
@@ -76,13 +76,12 @@ const SideBar: React.FC<SideBarProps> = ({ isOpen, onClose }) => {
                 href="/dashboard"
                 className={`flex items-center gap-3 px-4 py-3 rounded-lg text-[15px] font-medium transition-all duration-200 ${
                   isActive("/dashboard")
-                    ? "bg-blue-50 dark:bg-blue-900/30 font-semibold"
+                    ? "font-semibold"
                     : "hover:bg-gray-100 dark:hover:bg-gray-700"
                 }`}
                 style={{
-                  color: isActive("/dashboard")
-                    ? "var(--color-sidebar-text-active)"
-                    : "var(--color-sidebar-text)",
+                  backgroundColor: isActive("/dashboard") ? "#1520eb" : "transparent",
+                  color: isActive("/dashboard") ? "#ffffff" : "var(--color-sidebar-text)",
                 }}
                 onMouseEnter={(e) => {
                   if (!isActive("/dashboard")) {
@@ -105,13 +104,12 @@ const SideBar: React.FC<SideBarProps> = ({ isOpen, onClose }) => {
                 href="/daily-records"
                 className={`flex items-center gap-3 px-4 py-3 rounded-lg text-[15px] font-medium transition-all duration-200 ${
                   isActive("/daily-records")
-                    ? "bg-blue-50 dark:bg-blue-900/30 font-semibold"
+                    ? "font-semibold"
                     : "hover:bg-gray-100 dark:hover:bg-gray-700"
                 }`}
                 style={{
-                  color: isActive("/daily-records")
-                    ? "var(--color-sidebar-text-active)"
-                    : "var(--color-sidebar-text)",
+                  backgroundColor: isActive("/daily-records") ? "#1520eb" : "transparent",
+                  color: isActive("/daily-records") ? "#ffffff" : "var(--color-sidebar-text)",
                 }}
                 onMouseEnter={(e) => {
                   if (!isActive("/daily-records")) {
@@ -134,13 +132,12 @@ const SideBar: React.FC<SideBarProps> = ({ isOpen, onClose }) => {
                 href="/income"
                 className={`flex items-center gap-3 px-4 py-3 rounded-lg text-[15px] font-medium transition-all duration-200 ${
                   isActive("/income")
-                    ? "bg-blue-50 dark:bg-blue-900/30 font-semibold"
+                    ? "font-semibold"
                     : "hover:bg-gray-100 dark:hover:bg-gray-700"
                 }`}
                 style={{
-                  color: isActive("/income")
-                    ? "var(--color-sidebar-text-active)"
-                    : "var(--color-sidebar-text)",
+                  backgroundColor: isActive("/income") ? "#1520eb" : "transparent",
+                  color: isActive("/income") ? "#ffffff" : "var(--color-sidebar-text)",
                 }}
                 onMouseEnter={(e) => {
                   if (!isActive("/income")) {
@@ -163,13 +160,12 @@ const SideBar: React.FC<SideBarProps> = ({ isOpen, onClose }) => {
                 href="/expenses"
                 className={`flex items-center gap-3 px-4 py-3 rounded-lg text-[15px] font-medium transition-all duration-200 ${
                   isActive("/expenses")
-                    ? "bg-blue-50 dark:bg-blue-900/30 font-semibold"
+                    ? "font-semibold"
                     : "hover:bg-gray-100 dark:hover:bg-gray-700"
                 }`}
                 style={{
-                  color: isActive("/expenses")
-                    ? "var(--color-sidebar-text-active)"
-                    : "var(--color-sidebar-text)",
+                  backgroundColor: isActive("/expenses") ? "#1520eb" : "transparent",
+                  color: isActive("/expenses") ? "#ffffff" : "var(--color-sidebar-text)",
                 }}
                 onMouseEnter={(e) => {
                   if (!isActive("/expenses")) {
@@ -192,13 +188,12 @@ const SideBar: React.FC<SideBarProps> = ({ isOpen, onClose }) => {
                 href="/planned-payments"
                 className={`flex items-center gap-3 px-4 py-3 rounded-lg text-[15px] font-medium transition-all duration-200 ${
                   isActive("/planned-payments")
-                    ? "bg-blue-50 dark:bg-blue-900/30 font-semibold"
+                    ? "font-semibold"
                     : "hover:bg-gray-100 dark:hover:bg-gray-700"
                 }`}
                 style={{
-                  color: isActive("/planned-payments")
-                    ? "var(--color-sidebar-text-active)"
-                    : "var(--color-sidebar-text)",
+                  backgroundColor: isActive("/planned-payments") ? "#1520eb" : "transparent",
+                  color: isActive("/planned-payments") ? "#ffffff" : "var(--color-sidebar-text)",
                 }}
                 onMouseEnter={(e) => {
                   if (!isActive("/planned-payments")) {
@@ -221,13 +216,12 @@ const SideBar: React.FC<SideBarProps> = ({ isOpen, onClose }) => {
                 href="/salary"
                 className={`flex items-center gap-3 px-4 py-3 rounded-lg text-[15px] font-medium transition-all duration-200 ${
                   isActive("/salary")
-                    ? "bg-blue-50 dark:bg-blue-900/30 font-semibold"
+                    ? "font-semibold"
                     : "hover:bg-gray-100 dark:hover:bg-gray-700"
                 }`}
                 style={{
-                  color: isActive("/salary")
-                    ? "var(--color-sidebar-text-active)"
-                    : "var(--color-sidebar-text)",
+                  backgroundColor: isActive("/salary") ? "#1520eb" : "transparent",
+                  color: isActive("/salary") ? "#ffffff" : "var(--color-sidebar-text)",
                 }}
                 onMouseEnter={(e) => {
                   if (!isActive("/salary")) {
@@ -261,13 +255,12 @@ const SideBar: React.FC<SideBarProps> = ({ isOpen, onClose }) => {
                   href="/members"
                   className={`flex items-center gap-3 px-4 py-3 rounded-lg text-[15px] font-medium transition-all duration-200 ${
                     isActive("/members")
-                      ? "bg-blue-50 dark:bg-blue-900/30 font-semibold"
+                      ? "font-semibold"
                       : "hover:bg-gray-100 dark:hover:bg-gray-700"
                   }`}
                   style={{
-                    color: isActive("/members")
-                      ? "var(--color-sidebar-text-active)"
-                      : "var(--color-sidebar-text)",
+                    backgroundColor: isActive("/members") ? "#1520eb" : "transparent",
+                    color: isActive("/members") ? "#ffffff" : "var(--color-sidebar-text)",
                   }}
                   onMouseEnter={(e) => {
                     if (!isActive("/members")) {
@@ -290,13 +283,12 @@ const SideBar: React.FC<SideBarProps> = ({ isOpen, onClose }) => {
                   href="/settings"
                   className={`flex items-center gap-3 px-4 py-3 rounded-lg text-[15px] font-medium transition-all duration-200 ${
                     isActive("/settings")
-                      ? "bg-blue-50 dark:bg-blue-900/30 font-semibold"
+                      ? "font-semibold"
                       : "hover:bg-gray-100 dark:hover:bg-gray-700"
                   }`}
                   style={{
-                    color: isActive("/settings")
-                      ? "var(--color-sidebar-text-active)"
-                      : "var(--color-sidebar-text)",
+                    backgroundColor: isActive("/settings") ? "#1520eb" : "transparent",
+                    color: isActive("/settings") ? "#ffffff" : "var(--color-sidebar-text)",
                   }}
                   onMouseEnter={(e) => {
                     if (!isActive("/settings")) {
@@ -320,7 +312,7 @@ const SideBar: React.FC<SideBarProps> = ({ isOpen, onClose }) => {
 
         {/* Upgrade Section */}
         <div className="p-4 border-t border-gray-200 dark:border-gray-700">
-          <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 p-4 rounded-lg border border-blue-100 dark:border-blue-800/30">
+          <div className=" p-4 rounded-lg border border-gray-200 dark:border-blue-800/30">
             <h3 
               className="font-bold text-[15px] mb-2"
               style={{ color: "var(--color-sidebar-card-title)" }}

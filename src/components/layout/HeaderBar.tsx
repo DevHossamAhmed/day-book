@@ -110,7 +110,7 @@ const HeaderBar: React.FC<HeaderBarProps> = ({ onMenuClick }) => {
   };
 
   return (
-    <div className="fixed top-0 right-0 z-[999] bg-[var(--color-header)] border-b border-gray-200 dark:border-gray-700 shadow-sm left-0 lg:left-[320px] duration-200">
+    <div className="fixed top-0 right-0 z-[999] bg-[var(--color-header)]   shadow-sm left-0 lg:left-[320px] duration-200">
       <div className="w-full flex justify-between lg:justify-end items-center py-2.5 px-4">
         <button
           onClick={onMenuClick}
