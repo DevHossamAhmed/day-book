@@ -203,7 +203,7 @@ const IncomePage = () => {
           <button
             onClick={handleExportExcel}
             disabled={isExporting}
-            className="px-6 py-3 border border-green-600 text-green-700 rounded-lg hover:bg-green-50 font-medium flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-6 py-3 border border-green-600 text-green-700 rounded-lg cursor-pointer font-medium flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <ExcelIcon />
             {isExporting ? "Exporting..." : "Export Excel"}
@@ -211,7 +211,7 @@ const IncomePage = () => {
 
           <button
             onClick={() => setIsCreateIcomeOpen(true)}
-            className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium"
+            className="px-6 py-3 bg-blue-600 text-white cursor-pointer rounded-lg hover:bg-blue-700 font-medium"
           >
             Create Income
           </button>
@@ -219,7 +219,7 @@ const IncomePage = () => {
       </div>
 
       {/* Main Content Card */}
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100">
+      <div className="bg-[var(--color-overviewTab)] rounded-2xl shadow-sm border border-gray-100">
         {/* Date Navigation */}
         <div className="p-6 border-b border-gray-200">
           <div className="flex items-center justify-between gap-6">
@@ -231,7 +231,7 @@ const IncomePage = () => {
                   className={`font-medium text-sm pb-1 transition-colors ${
                     activeTab === tab
                       ? "text-blue-600 border-b-2 border-blue-600"
-                      : "text-gray-500 hover:text-gray-700"
+                      : " hover:text-gray-700"
                   }`}
                 >
                   {tab}
@@ -241,10 +241,10 @@ const IncomePage = () => {
             <div className="flex gap-3">
               <button 
                 onClick={() => setIsFilterOpen(!isFilterOpen)}
-                className={`flex items-center gap-2 px-4 py-2 border rounded-lg transition-colors text-sm font-medium ${
+                className={`flex items-center gap-2 cursor-pointer px-4 py-2 border rounded-lg transition-colors text-sm font-medium ${
                   isFilterOpen || hasActiveFilters
                     ? "bg-blue-600 text-white border-blue-600 hover:bg-blue-700"
-                    : "text-gray-700 border-gray-300 hover:bg-gray-50"
+                    : " border-gray-300 "
                 }`}
               >
                 <SlidersHorizontal size={16} />

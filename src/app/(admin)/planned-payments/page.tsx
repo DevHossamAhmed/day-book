@@ -188,7 +188,7 @@ const PlannedPaymentPage = () => {
           <button
             onClick={handleExportExcel}
             disabled={isExporting}
-            className="px-6 py-3 border border-green-600 text-green-700 rounded-lg hover:bg-green-50 font-medium flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-6 py-3 border border-green-600 cursor-pointer text-green-700 rounded-lg  font-medium flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <ExcelIcon />
             {isExporting ? "Exporting..." : "Export Excel"}
@@ -196,7 +196,7 @@ const PlannedPaymentPage = () => {
 
           <button
             onClick={() => setIsCreatePaymentOpen(true)}
-            className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium"
+            className="px-6 py-3 bg-blue-600 cursor-pointer text-white rounded-lg hover:bg-blue-700 font-medium"
           >
             Create Payment
           </button>
@@ -204,7 +204,7 @@ const PlannedPaymentPage = () => {
       </div>
 
       {/* Main Content Card */}
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100">
+      <div className="bg-[var(--color-overviewTab)] rounded-2xl shadow-sm border border-gray-100">
         {/* Date Navigation */}
         <div className="p-6 border-b border-gray-200">
           <div className="flex items-center justify-between gap-6">
@@ -213,10 +213,10 @@ const PlannedPaymentPage = () => {
                 <button
                   key={tab}
                   onClick={() => setDateToFilter(tab)}
-                  className={`font-medium text-sm pb-1 transition-colors ${
+                  className={`font-medium cursor-pointer text-sm pb-1 transition-colors ${
                     activeTab === tab
                       ? "text-blue-600 border-b-2 border-blue-600"
-                      : "text-gray-500 hover:text-gray-700"
+                      : ""
                   }`}
                 >
                   {tab}
@@ -226,16 +226,16 @@ const PlannedPaymentPage = () => {
             <div className="flex gap-3">
               <button 
                 onClick={() => setIsFilterOpen(!isFilterOpen)}
-                className={`flex items-center gap-2 px-4 py-2 border rounded-lg transition-colors text-sm font-medium ${
+                className={`flex items-center gap-2 cursor-pointer px-4 py-2 border rounded-lg transition-colors text-sm font-medium ${
                   isFilterOpen || hasActiveFilters
                     ? "bg-blue-600 text-white border-blue-600 hover:bg-blue-700"
-                    : "text-gray-700 border-gray-300 hover:bg-gray-50"
+                    : " border-gray-300 hover:bg-gray-50"
                 }`}
               >
                 <SlidersHorizontal size={16} />
                 Filter
                 {hasActiveFilters && (
-                  <span className="ml-1 px-1.5 py-0.5 bg-white text-blue-600 rounded-full text-xs font-semibold">
+                  <span className="ml-1 px-1.5 py-0.5 bg-[var(--color-overviewTab)] text-blue-600 rounded-full text-xs font-semibold">
                     {[
                       filterFromDate && "1",
                       filterToDate && "1",
@@ -254,11 +254,11 @@ const PlannedPaymentPage = () => {
 
         {/* Filter Panel */}
         {isFilterOpen && (
-          <div className="p-6 border-b border-gray-200 bg-gray-50">
+          <div className="p-6 border-b border-gray-200 bg-[var(--color-overviewTab)]">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {/* Period From */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium  mb-2">
                   Period From
                 </label>
                 <input
@@ -271,7 +271,7 @@ const PlannedPaymentPage = () => {
 
               {/* Period To */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium  mb-2">
                   Period To
                 </label>
                 <input
@@ -284,14 +284,14 @@ const PlannedPaymentPage = () => {
 
               {/* Vendor */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium  mb-2">
                   Vendor
                 </label>
                 <select
                   value={filterVendorId}
                   onChange={(e) => setFilterVendorId(e.target.value)}
                   disabled={isLoadingVendors}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white disabled:bg-gray-100 disabled:cursor-not-allowed"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-[var(--color-overviewTab)] disabled:bg-gray-100 disabled:cursor-not-allowed"
                 >
                   <option value="">All Vendors</option>
                   {vendors.map((vendor) => (
@@ -304,13 +304,13 @@ const PlannedPaymentPage = () => {
 
               {/* Payment Method */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium  mb-2">
                   Payment Method
                 </label>
                 <select
                   value={filterPaymentMethod}
                   onChange={(e) => setFilterPaymentMethod(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-[var(--color-overviewTab)]"
                 >
                   <option value="">All Payment Methods</option>
                   {PaymentMethod.map((method) => (
@@ -323,13 +323,13 @@ const PlannedPaymentPage = () => {
 
               {/* Status */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium  mb-2">
                   Status
                 </label>
                 <select
                   value={filterStatus}
                   onChange={(e) => setFilterStatus(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-[var(--color-overviewTab)]"
                 >
                   <option value="">All Statuses</option>
                   <option value="upcoming">Upcoming</option>
@@ -340,7 +340,7 @@ const PlannedPaymentPage = () => {
 
               {/* Amount Min */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium  mb-2">
                   Amount Min
                 </label>
                 <input
@@ -354,7 +354,7 @@ const PlannedPaymentPage = () => {
 
               {/* Amount Max */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium  mb-2">
                   Amount Max
                 </label>
                 <input
@@ -371,7 +371,7 @@ const PlannedPaymentPage = () => {
             <div className="flex justify-end gap-3 mt-4">
               <button
                 onClick={handleClearFilters}
-                className="px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium"
+                className="px-4 py-2  border border-gray-300 rounded-lg cursor-pointer transition-colors text-sm font-medium"
               >
                 Clear Filters
               </button>

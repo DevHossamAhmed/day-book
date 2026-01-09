@@ -24,20 +24,24 @@ export default function DataTable<T extends { id: string | number }>({
 }: DataTableProps<T>) {
   if (data.length === 0) {
     return (
-      <div className="px-6 py-12 text-center text-gray-500 dark:text-gray-400">{emptyMessage}</div>
+      <div className="px-6 py-12 text-center text-[var(--color-muted)]">
+        {emptyMessage}
+      </div>
     );
   }
 
   return (
-    <div className={`bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 overflow-hidden ${className}`}>
+    <div
+      className={`bg-[var(--color-surface)] rounded-lg border border-[var(--color-border)] overflow-hidden ${className}`}
+    >
       <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-          <thead className="bg-gray-50 dark:bg-gray-800">
+        <table className="min-w-full divide-y divide-[var(--color-border)]">
+          <thead className="bg-[var(--color-gray-50)]">
             <tr>
               {columns.map((column) => (
                 <th
                   key={String(column.key)}
-                  className={`px-6 py-4 text-left text-sm font-semibold text-gray-700 dark:text-gray-300 ${
+                  className={`px-6 py-4 text-left text-sm font-semibold text-[var(--color-text-muted)] ${
                     column.className || ""
                   }`}
                 >
@@ -46,19 +50,21 @@ export default function DataTable<T extends { id: string | number }>({
               ))}
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-900">
+          <tbody className="divide-y divide-[var(--color-border)] bg-[var(--color-surface)]">
             {data.map((item) => (
               <tr
                 key={item.id}
                 onClick={() => onRowClick?.(item)}
                 className={`${
-                  onRowClick ? "hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer" : ""
+                  onRowClick
+                    ? "hover:bg-[var(--color-gray-50)] cursor-pointer"
+                    : ""
                 }`}
               >
                 {columns.map((column) => (
                   <td
                     key={String(column.key)}
-                    className={`px-6 py-4 text-gray-900 dark:text-gray-100 ${
+                    className={`px-6 py-4 text-[var(--color-text)] ${
                       column.className || ""
                     }`}
                   >

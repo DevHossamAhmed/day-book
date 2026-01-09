@@ -31,13 +31,13 @@ export default function Select({
   onChange,
 }: SelectProps) {
   const baseClasses =
-    "w-full px-4 py-3 border rounded-lg appearance-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors";
+    "w-full bg-[var(--color-overviewTab)] px-4 py-3 border rounded-lg appearance-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors";
   const errorClasses = error ? "border-red-300" : "border-gray-300";
   const disabledClasses =
-    disabled || isLoading ? "bg-gray-100 cursor-not-allowed" : "bg-white";
+    disabled || isLoading ? "bg-gray-100 cursor-not-allowed" : "bg-[var(--color-overviewTab)]";
 
   return (
-    <div className="relative">
+    <div className="relative bg-[var(--color-overviewTab)]">
       <select
         {...register}
         disabled={disabled || isLoading}
@@ -54,7 +54,7 @@ export default function Select({
           </option>
         ))}
       </select>
-      <ChevronDown className="absolute right-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+      <ChevronDown className="absolute  right-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
     </div>
   );
 }

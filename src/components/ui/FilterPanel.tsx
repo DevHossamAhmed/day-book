@@ -26,11 +26,11 @@ export default function FilterPanel({
   if (!isOpen) return null;
 
   return (
-    <div className={`p-6 border-b border-gray-200 bg-gray-50 ${className}`}>
+    <div className={`p-6 border-b border-gray-200 bg-[var(--color-overviewTab)] ${className}`}>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {fields.map((field, index) => (
           <div key={index}>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium  mb-2">
               {field.label}
             </label>
             {field.type === "date" && (
@@ -46,7 +46,7 @@ export default function FilterPanel({
                 value={field.value}
                 onChange={(e) => field.onChange(e.target.value)}
                 disabled={field.disabled}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white disabled:bg-gray-100 disabled:cursor-not-allowed"
+                className="w-full px-4 py-2 border bg-[var(--color-overviewTab)] border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent  disabled:bg-gray-100 disabled:cursor-not-allowed"
               >
                 {field.options?.map((option) => (
                   <option key={option.value} value={option.value}>
@@ -81,7 +81,7 @@ export default function FilterPanel({
       <div className="flex justify-end gap-3 mt-4">
         <button
           onClick={onClearFilters}
-          className="px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium"
+          className="px-4 py-2 cursor-pointer border border-gray-300 rounded-lg  transition-colors text-sm font-medium"
         >
           Clear Filters
         </button>

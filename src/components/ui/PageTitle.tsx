@@ -17,7 +17,7 @@ const PageTitle: React.FC<PageTitleProps> = ({
       {breadcrumbs && breadcrumbs.length > 0 && (
         <Breadcrumb items={breadcrumbs} />
       )}
-      <h1 className="text-3xl font-bold text-gray-900">{title}</h1>
+      <h1 className="text-3xl font-bold ">{title}</h1>
     </div>
   );
 };

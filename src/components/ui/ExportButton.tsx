@@ -16,7 +16,7 @@ export default function ExportButton({
     <button
       onClick={onClick}
       disabled={isExporting}
-      className={`px-6 py-3 border border-green-600 text-green-700 rounded-lg hover:bg-green-50 font-medium flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed ${className}`}
+      className={`px-6 py-3 border border-green-600 cursor-pointer text-green-700 rounded-lg  font-medium flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed ${className}`}
     >
       <ExcelIcon />
       {isExporting ? "Exporting..." : "Export Excel"}

@@ -65,11 +65,11 @@ export default function CreateBankAccount({ onClose, onSave }: Props) {
       onClick={() => closeDailog()}
     >
       <div
-        className="bg-white shadow-xl w-full max-w-2xl h-full overflow-y-auto"
+        className="bg-[var(--color-overviewTab)] shadow-xl w-full max-w-2xl h-full overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="p-6 border-b border-gray-200 flex items-center justify-between sticky top-0 bg-white z-20">
-          <h2 className="text-xl font-semibold text-gray-900">
+        <div className="p-6 border-b border-gray-200 flex items-center justify-between sticky top-0 bg-[var(--color-overviewTab)] z-20">
+          <h2 className="text-xl font-semibold ">
             Create Bank Account
           </h2>
           <button
@@ -91,7 +91,7 @@ export default function CreateBankAccount({ onClose, onSave }: Props) {
             )}
 
             <div>
-              <label className="block text-sm font-medium text-gray-900 mb-2">
+              <label className="block text-sm font-medium  mb-2">
                 Bank Name*
               </label>
               <input
@@ -104,7 +104,7 @@ export default function CreateBankAccount({ onClose, onSave }: Props) {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-900 mb-2">
+              <label className="block text-sm font-medium  mb-2">
                 Account Number*
               </label>
               <input
@@ -119,7 +119,7 @@ export default function CreateBankAccount({ onClose, onSave }: Props) {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-900 mb-2">
+              <label className="block text-sm font-medium  mb-2">
                 IBAN
               </label>
               <input
@@ -132,7 +132,7 @@ export default function CreateBankAccount({ onClose, onSave }: Props) {
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
+              <label className="block text-sm font-semibold  mb-2">
                 Note
               </label>
               <textarea
@@ -142,19 +142,19 @@ export default function CreateBankAccount({ onClose, onSave }: Props) {
             </div>
           </div>
 
-          <div className="p-6 border-t border-gray-200 flex justify-end gap-3 sticky bottom-0 bg-white z-10">
+          <div className="p-6 border-t border-gray-200 flex justify-end gap-3 sticky bottom-0 bg-[var(--color-overviewTab)] z-10">
             <button
               disabled={isLoading}
               onClick={handleSubmit((d) => submit(d, false))}
               type="button"
-              className="px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 font-medium"
+              className="px-6 py-3 border border-gray-300 rounded-lg cursor-pointer font-medium"
             >
               Save and New
             </button>
             <button
               disabled={isLoading}
               type="submit"
-              className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium flex items-center gap-2"
+              className="px-6 py-3 bg-blue-600 cursor-pointer text-white rounded-lg hover:bg-blue-700 font-medium flex items-center gap-2"
             >
               {isLoading ? (
                 <Loading />

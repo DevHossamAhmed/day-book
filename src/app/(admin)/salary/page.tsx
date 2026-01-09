@@ -284,7 +284,7 @@ const SalaryPage = () => {
             <ExportButton onClick={handleExportExcel} isExporting={isExporting} />
             <button
               onClick={() => setIsCreateSalaryOpen(true)}
-              className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium"
+              className="px-6 py-3 bg-blue-600 text-white cursor-pointer  rounded-lg hover:bg-blue-700 font-medium"
             >
               Create Salary
             </button>
@@ -293,7 +293,7 @@ const SalaryPage = () => {
       />
 
       {/* Main Content Card */}
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100">
+      <div className="bg-[var(--color-overviewTab)] rounded-2xl shadow-sm border border-gray-100">
         {/* Date Navigation */}
         <div className="p-6 border-b border-gray-200">
           <div className="flex items-center justify-between gap-6">
@@ -338,7 +338,7 @@ const SalaryPage = () => {
                   >
                     <div className="flex items-center gap-4 flex-1">
                       <div className="flex-1">
-                        <h3 className="font-semibold text-gray-900 mb-1">
+                        <h3 className="font-semibold  mb-1">
                           {salary.employee?.first_name && salary.employee?.last_name
                             ? `${salary.employee.first_name} ${salary.employee.last_name}`
                             : salary.employee?.first_name || "Employee"}
@@ -363,7 +363,7 @@ const SalaryPage = () => {
                           {salary.payment_method}
                         </span>
                       )}
-                      <div className="text-xl font-bold text-gray-900">
+                      <div className="text-xl font-bold ">
                         {formatMoney(salary.salary_amount - (salary.deductions || 0))}
                       </div>
                       <ChevronRight size={20} className="text-gray-400 ml-2" />
@@ -420,7 +420,7 @@ const SalaryPage = () => {
             <div className="space-y-6">
               {/* Employee Info Card */}
                   <div className="bg-gray-50 rounded-xl p-6">
-                    <h3 className="text-2xl font-bold text-gray-900 mb-1">
+                    <h3 className="text-2xl font-bold  mb-1">
                       {selectedSalary.employee?.first_name && selectedSalary.employee?.last_name
                         ? `${selectedSalary.employee.first_name} ${selectedSalary.employee.last_name}`
                         : selectedSalary.employee?.first_name || "Employee"}
@@ -440,7 +440,7 @@ const SalaryPage = () => {
                         <span className="text-gray-600 font-medium">
                           Joining Date
                         </span>
-                        <span className="text-gray-900 font-semibold">
+                        <span className=" font-semibold">
                           {formatDate(
                             selectedSalary.employee.joining_date instanceof Date 
                               ? selectedSalary.employee.joining_date 
@@ -455,7 +455,7 @@ const SalaryPage = () => {
                       <span className="text-gray-600 font-medium">
                         Pay Period
                       </span>
-                      <span className="text-gray-900 font-semibold">
+                      <span className=" font-semibold">
                         {selectedSalary.period || "—"}
                       </span>
                     </div>
@@ -464,7 +464,7 @@ const SalaryPage = () => {
                       <span className="text-gray-600 font-medium">
                         Payment Date
                       </span>
-                      <span className="text-gray-900 font-semibold">
+                      <span className=" font-semibold">
                         {selectedSalary.payment_date 
                           ? formatDate(new Date(selectedSalary.payment_date), "Do MMMM, YYYY")
                           : "—"}
@@ -473,7 +473,7 @@ const SalaryPage = () => {
 
                     <div className="flex justify-between items-center py-3 border-b border-gray-200">
                       <span className="text-gray-600 font-medium">Payment Method</span>
-                      <span className="text-gray-900 font-semibold">
+                      <span className=" font-semibold">
                         {selectedSalary.payment_method || "—"}
                       </span>
                     </div>
@@ -497,13 +497,13 @@ const SalaryPage = () => {
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <p className="text-sm text-gray-500 mb-2">Earning</p>
-                        <p className="text-lg font-semibold text-gray-900">
+                        <p className="text-lg font-semibold ">
                           Total
                         </p>
                       </div>
                       <div className="text-right">
                         <p className="text-sm text-gray-500 mb-2">Deduction</p>
-                        <p className="text-lg font-semibold text-gray-900">
+                        <p className="text-lg font-semibold ">
                           Total
                         </p>
                       </div>
@@ -512,7 +512,7 @@ const SalaryPage = () => {
                     <div className="grid grid-cols-2 gap-4 pb-4 border-b border-gray-200">
                       <div className="flex justify-between">
                         <span className="text-gray-600">Salary</span>
-                        <span className="text-gray-900 font-semibold">
+                        <span className=" font-semibold">
                           {formatMoney(selectedSalary.salary_amount)}
                         </span>
                       </div>
@@ -528,7 +528,7 @@ const SalaryPage = () => {
 
                     <div className="bg-blue-50 rounded-lg p-4 flex justify-between items-center">
                       <span className="text-gray-700 font-semibold">Net Amount</span>
-                      <span className="text-2xl font-bold text-gray-900">
+                      <span className="text-2xl font-bold ">
                         {formatMoney(selectedSalary.salary_amount - (selectedSalary.deductions || 0))}
                       </span>
                     </div>
@@ -537,7 +537,7 @@ const SalaryPage = () => {
                   {/* Additional Info */}
                   {selectedSalary.note && (
                     <div>
-                      <h4 className="text-sm font-semibold text-gray-900 mb-3">
+                      <h4 className="text-sm font-semibold  mb-3">
                         Note
                       </h4>
                       <div className="bg-gray-50 rounded-lg p-4">
@@ -551,7 +551,7 @@ const SalaryPage = () => {
 
                 {/* Right Column - Attachment */}
                 <div>
-                  <h4 className="text-sm font-semibold text-gray-900 mb-3">
+                  <h4 className="text-sm font-semibold  mb-3">
                     Attachments
                   </h4>
                   {selectedSalary.media && selectedSalary.media.length > 0 ? (
@@ -564,7 +564,7 @@ const SalaryPage = () => {
                               <div className="flex items-center gap-3 flex-1 min-w-0">
                                 {getFileIcon(mediaItem.file_mime_type)}
                                 <div className="flex-1 min-w-0">
-                                  <p className="text-sm font-medium text-gray-900 truncate">
+                                  <p className="text-sm font-medium  truncate">
                                     {mediaItem.file_name}
                                   </p>
                                   <div className="flex items-center gap-2 mt-1">

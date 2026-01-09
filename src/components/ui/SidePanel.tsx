@@ -51,17 +51,17 @@ export default function SidePanel({
       {/* Side Panel */}
       <div className="fixed inset-0 flex items-center justify-end z-[9999] pointer-events-none">
         <div
-          className={`bg-white shadow-xl w-full ${maxWidthClasses[maxWidth]} h-full overflow-y-auto pointer-events-auto animate-slide-in`}
+          className={`bg-[var(--color-surface)] shadow-xl w-full ${maxWidthClasses[maxWidth]} h-full overflow-y-auto pointer-events-auto animate-slide-in`}
           onClick={(e) => e.stopPropagation()}
           role="dialog"
           aria-modal="true"
           aria-labelledby="side-panel-title"
         >
           {/* Header */}
-          <div className="p-6 border-b border-gray-200 flex items-center justify-between sticky top-0 bg-white z-10">
+          <div className="p-6 border-b border-[var(--color-border)] flex items-center justify-between sticky top-0 bg-[var(--color-surface)] z-10">
             <h2
               id="side-panel-title"
-              className="text-xl font-semibold text-gray-900"
+              className="text-xl font-semibold text-[var(--color-text)]"
             >
               {title}
             </h2>
@@ -79,7 +79,7 @@ export default function SidePanel({
 
           {/* Footer */}
           {footer && (
-            <div className="p-6 border-t border-gray-200 sticky bottom-0 bg-white z-10">
+            <div className="p-6 border-t border-[var(--color-border)] sticky bottom-0 bg-[var(--color-surface)] z-10">
               {footer}
             </div>
           )}

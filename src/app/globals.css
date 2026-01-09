@@ -1,7 +1,20 @@
 @import "tailwindcss";
 
 @theme {
+  /* Base tokens */
+  --color-bg: #f9fafb; /* page background */
+  --color-surface: #ffffff; /* cards, header, sidebar */
+  --color-text: #111827; /* primary text */
+  --color-text-muted: #6b7280; /* secondary text */
+  --color-border: #e5e7eb;
+  --color-Hover: #f3f4f6;
+
   /* Light Theme Colors */
+  --color-header: var(--color-surface);
+  --color-sideBar: var(--color-surface);
+  --color-sideBarLinks: #e3e3e4;
+  --color-overviewTab: #ffffff;
+  --color-overviewTabbg: #94a3b8;
   --color-gray-50: #f9fafb;
   --color-gray-100: #f3f4f6;
   --color-gray-200: #e5e7eb;
@@ -13,16 +26,95 @@
   --color-gray-800: #1f2937;
   --color-gray-900: #111827;
   --color-gray-950: #030712;
+
+  /* Semantic Colors - Light */
+  --color-primary: #1520eb;
+  --color-primary-600: #0f16c7;
+  --color-primary-hover: #0f16c7;
+  --color-success: #10b981;
+  --color-danger: #ef4444;
+  --color-info: #0ea5e9;
+  --color-muted: #667085;
+
+  /* Header specific - Light */
+  --color-header-menu-icon: #374151; /* gray-700 */
+  --color-header-text-hover: var(--color-primary);
+  --color-header-notification-text: #374151;
+  --color-header-user-name: #111827;
+  --color-header-user-status: #6b7280;
+  --color-header-arrow: #6b7280;
+  --color-header-dropdown-text: #111827;
+  --color-header-dropdown-icon: #6b7280;
+
+  /* Sidebar Specific Colors - Light */
+  --color-sidebar-text: #4b5563; /* gray-600 */
+  --color-sidebar-text-hover: var(--color-primary); /* primary */
+  --color-sidebar-text-active: var(--color-primary); /* primary */
+  --color-sidebar-heading: #9ca3af; /* gray-400 */
+  --color-sidebar-icon: #4b5563; /* gray-600 */
+  --color-sidebar-close: #4b5563; /* gray-600 */
+  --color-sidebar-card-title: #1f2937; /* gray-800 */
+  --color-sidebar-card-text: #4b5563; /* gray-600 */
 }
 
 /* Default to light theme */
 html {
   color-scheme: light;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+}
+
+/* Ensure body inherits the theme tokens for pages */
+body {
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  min-height: 100vh;
 }
 
 /* Dark theme - only apply when .dark class is explicitly present */
 html.dark {
   color-scheme: dark;
+  --color-bg: #0f1724; /* darker page background */
+  --color-surface: #161d2c; /* header/sidebar surface */
+  --color-text: #f3f4f6; /* primary text */
+  --color-text-muted: #94a3b8;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+
+  /* Semantic Colors - Dark */
+  --color-header: var(--color-surface);
+  --color-sideBar: var(--color-surface);
+  --color-sideBarLinks: #e3e3e4;
+  --color-overviewTab: #263147;
+  --color-overviewTabbg: var(--color-surface);
+  --color-Hover: #263147;
+  --color-primary: #60a5fa;
+  --color-primary-600: #3b82f6; /* blue-500 */
+  --color-primary-hover: #3b82f6;
+  --color-success: #34d399;
+  --color-danger: #f87171;
+  --color-info: #38bdf8;
+  --color-muted: #94a3b8;
+
+  /* Header specific - Dark */
+  --color-header-menu-icon: #cbd5e1; /* gray-300 */
+  --color-header-text-hover: var(--color-primary);
+  --color-header-notification-text: #cbd5e1;
+  --color-header-user-name: #f3f4f6;
+  --color-header-user-status: #94a3b8;
+  --color-header-arrow: #cbd5e1;
+  --color-header-dropdown-text: #f3f4f6;
+  --color-header-dropdown-icon: #cbd5e1;
+
+  /* Sidebar Specific Colors - Dark */
+  --color-sidebar-text: #9ca3af; /* gray-400 */
+  --color-sidebar-text-hover: #60a5fa; /* blue-400 */
+  --color-sidebar-text-active: #60a5fa; /* blue-400 */
+  --color-sidebar-heading: #6b7280; /* gray-500 */
+  --color-sidebar-icon: #9ca3af; /* gray-400 */
+  --color-sidebar-close: #9ca3af; /* gray-400 */
+  --color-sidebar-card-title: #f3f4f6; /* gray-100 */
+  --color-sidebar-card-text: #9ca3af; /* gray-400 */
 }
 
 /* Ensure light theme is maintained when dark class is not present */
@@ -56,7 +148,7 @@ html:not(.dark) {
 
 /* Focus visible styles for accessibility */
 :focus-visible {
-  outline: 2px solid theme(colors.blue.500);
+  outline: 2px solid var(--color-primary-600);
   outline-offset: 2px;
 }
 

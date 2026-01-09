@@ -89,10 +89,10 @@ export default function ShowBankAccount({ onClose, isOpen, bankAccount, onSave }
 
     return (
         <div className="fixed inset-0  bg-opacity-50 flex items-center justify-end z-9999" onClick={() => closeDailog()}>
-            <div className="bg-white shadow-xl w-full max-w-2xl h-full overflow-y-auto" onClick={(e) => e.stopPropagation()}>
-                <div className="p-6 border-b border-gray-200 flex items-center justify-between sticky top-0 bg-white">
+            <div className="bg-[var(--color-overviewTab)] shadow-xl w-full max-w-2xl h-full overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+                <div className="p-6 border-b border-gray-200 flex items-center justify-between sticky top-0 bg-[var(--color-overviewTab)]">
                     <div>
-                        <h2 className="text-xl font-semibold text-gray-900">{bankAccount.name}</h2>
+                        <h2 className="text-xl font-semibold ">{bankAccount.name}</h2>
                         <div className="flex items-center gap-4 mt-2 text-sm text-gray-500">
                             {bankAccount.added_by_fullname && (
                                 <span>Added by: {bankAccount.added_by_fullname}</span>
@@ -121,7 +121,7 @@ export default function ShowBankAccount({ onClose, isOpen, bankAccount, onSave }
                             </div>
                         )}
                         <div>
-                            <label className="block text-sm font-medium text-gray-900 mb-2">
+                            <label className="block text-sm font-medium  mb-2">
                                 Bank Name*
                             </label>
                             <input
@@ -133,7 +133,7 @@ export default function ShowBankAccount({ onClose, isOpen, bankAccount, onSave }
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-gray-900 mb-2">
+                            <label className="block text-sm font-medium  mb-2">
                                 Account Number*
                             </label>
                             <input
@@ -147,7 +147,7 @@ export default function ShowBankAccount({ onClose, isOpen, bankAccount, onSave }
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-gray-900 mb-2">
+                            <label className="block text-sm font-medium  mb-2">
                                 IBAN
                             </label>
                             <input
@@ -159,7 +159,7 @@ export default function ShowBankAccount({ onClose, isOpen, bankAccount, onSave }
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-gray-900 mb-2">
+                            <label className="block text-sm font-medium  mb-2">
                                 Note
                             </label>
                             <textarea
@@ -172,7 +172,7 @@ export default function ShowBankAccount({ onClose, isOpen, bankAccount, onSave }
                             <ErrorMessage message={errors.note?.message as string} />
                         </div>
                     </div>
-                    <div className="p-6 border-t border-gray-200 flex justify-end gap-3 sticky bottom-0 bg-white z-10">
+                    <div className="p-6 border-t border-gray-200 flex justify-end gap-3 sticky bottom-0 bg-[var(--color-overviewTab)] z-10">
                         <button
                             disabled={isLoading}
                             onClick={() => closeDailog()}

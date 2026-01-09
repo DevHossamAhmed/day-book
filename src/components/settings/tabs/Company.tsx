@@ -98,13 +98,13 @@ export default function Company() {
   return (
     <>
       <form onSubmit={handleSubmit(submit)}>
-        <div className="bg-white rounded-lg p-8 space-y-6">
+        <div className="bg-[var(--color-overviewTab)] rounded-lg p-8 space-y-6">
           {serverErrors.length > 0 && (
             <ValidationServerErrors errors={serverErrors} />
           )}
 
           <div className="grid grid-cols-3 gap-6 items-start">
-            <label className="text-sm font-medium text-gray-900">
+            <label className="text-sm font-medium ">
               Company Name<span className="text-red-500">*</span>
             </label>
             <div className="col-span-2">
@@ -117,7 +117,7 @@ export default function Company() {
             </div>
           </div>
           <div className="grid grid-cols-3 gap-6 items-start">
-            <label className="text-sm font-medium text-gray-900">
+            <label className="text-sm font-medium ">
               Email<span className="text-red-500">*</span>
             </label>
             <div className="col-span-2">
@@ -130,7 +130,7 @@ export default function Company() {
             </div>
           </div>
           <div className="grid grid-cols-3 gap-6 items-start">
-            <label className="text-sm font-medium text-gray-900">Address</label>
+            <label className="text-sm font-medium ">Address</label>
             <div className="col-span-2">
               <textarea
                 {...register("address")}
@@ -142,7 +142,7 @@ export default function Company() {
             </div>
           </div>
           <div className="grid grid-cols-3 gap-6 items-start">
-            <label className="text-sm font-medium text-gray-900">
+            <label className="text-sm font-medium ">
               CR number
             </label>
             <div className="col-span-2">
@@ -155,7 +155,7 @@ export default function Company() {
             </div>
           </div>
           <div className="grid grid-cols-3 gap-6 items-start">
-            <label className="text-sm font-medium text-gray-900">
+            <label className="text-sm font-medium ">
               Tax configuration
             </label>
             <div className="col-span-2">
@@ -170,7 +170,7 @@ export default function Company() {
             </div>
           </div>
           <div className="grid grid-cols-3 gap-6 items-start">
-            <label className="text-sm font-medium text-gray-900">
+            <label className="text-sm font-medium ">
               Default Currency
             </label>
             <div className="col-span-2 relative">
@@ -191,7 +191,7 @@ export default function Company() {
           </div>
 
           <div className="grid grid-cols-3 gap-6 items-start">
-            <label className="text-sm font-medium text-gray-900">
+            <label className="text-sm font-medium ">
               Financial Year Start/End
             </label>
             <div className="col-span-2 relative">
@@ -211,7 +211,7 @@ export default function Company() {
           </div>
 
           <div className="grid grid-cols-3 gap-6 items-start">
-            <label className="text-sm font-medium text-gray-900">Time Zone</label>
+            <label className="text-sm font-medium ">Time Zone</label>
             <div className="col-span-2 relative">
               <select
                 {...register("timezone")}
@@ -231,7 +231,7 @@ export default function Company() {
             <button
               disabled={isLoading}
               type="submit"
-              className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium flex items-center gap-2"
+              className="px-6 py-3 bg-blue-600 cursor-pointer text-white rounded-lg hover:bg-blue-700 font-medium flex items-center gap-2"
             >
               {isLoading ? (
                 <Loading />

@@ -49,11 +49,11 @@ export default function NotificationDropdown({
       />
 
       {/* Dropdown */}
-      <div className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-xl border border-gray-200 z-50 max-h-[500px] flex flex-col">
+      <div className="absolute right-0 mt-2 w-80 bg-[var(--color-header)]  rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 z-50 max-h-[500px] flex flex-col">
         {/* Header */}
-        <div className="p-4 border-b border-gray-200 flex items-center justify-between">
+        <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <h3 className="text-sm font-semibold text-gray-900">Notifications</h3>
+            <h3 className="text-sm font-semibold ">Notifications</h3>
             {unreadCount > 0 && (
               <span className="px-2 py-0.5 text-xs font-medium text-white bg-blue-600 rounded-full">
                 {unreadCount}
@@ -83,7 +83,7 @@ export default function NotificationDropdown({
               <p className="text-sm text-gray-500">No notifications</p>
             </div>
           ) : (
-            <div className="divide-y divide-gray-100">
+            <div className="divide-y divide-gray-200 dark:divide-gray-700">
               {notifications.map((notification) => {
                 const Icon = typeIcons[notification.type] || Info;
                 const colorClass = typeColors[notification.type] || typeColors.info;
@@ -97,7 +97,7 @@ export default function NotificationDropdown({
                       }
                       onNotificationClick?.(notification);
                     }}
-                    className={`p-4 hover:bg-gray-50 cursor-pointer transition-colors ${
+                    className={`p-4 hover:bg-[var(--color-Hover)] cursor-pointer transition-colors ${
                       !notification.isRead ? "bg-blue-50/30" : ""
                     }`}
                   >
@@ -144,7 +144,7 @@ export default function NotificationDropdown({
 
         {/* Footer */}
         {notifications.length > 0 && (
-          <div className="p-3 border-t border-gray-200 text-center">
+          <div className="p-3 border-t border-gray-200 dark:border-gray-700 text-center">
             <button
               onClick={(e) => {
                 e.stopPropagation();

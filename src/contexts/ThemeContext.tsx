@@ -37,6 +37,7 @@ function getInitialTheme(): Theme {
     }
   } catch (e) {
     // If localStorage fails, default to light
+    console.error("Failed to load theme from localStorage:", e);
     document.documentElement.classList.remove("dark");
     document.documentElement.style.colorScheme = "light";
     return "light";
@@ -50,6 +51,8 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   // Mark as mounted after initial render
   useEffect(() => {
     setMounted(true);
+    // Remove disable-transitions class after mount to enable smooth transitions
+    document.body.classList.remove('disable-transitions');
   }, []);
 
   // Update DOM and localStorage when theme changes
@@ -80,8 +83,13 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     setThemeState(newTheme);
   }, []);
 
+  const value = React.useMemo(
+    () => ({ theme, toggleTheme, setTheme, mounted }),
+    [theme, toggleTheme, setTheme, mounted]
+  );
+
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme, setTheme, mounted }}>
+    <ThemeContext.Provider value={value}>
       {children}
     </ThemeContext.Provider>
   );
@@ -94,4 +102,3 @@ export function useTheme() {
   }
   return context;
 }
-

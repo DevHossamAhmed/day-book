@@ -31,17 +31,17 @@ const CompanySettings = () => {
       />
 
       {/* Tabs Navigation */}
-      <div className="bg-white border-b border-gray-200 -mx-6 -mt-6 mb-6">
+      <div className="bg-[var(--color-overviewTab)] rounded-md border-b border-gray-200 -mx-6 -mt-6 mb-6">
         <div className="px-6">
           <div className="flex gap-8 overflow-x-auto">
             {tabs.map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`px-1 py-4 font-semibold text-sm transition-all relative whitespace-nowrap border-b-2 ${
+                className={`px-1 py-4 font-semibold cursor-pointer  text-sm transition-all relative whitespace-nowrap border-b-2 ${
                   activeTab === tab.id
                     ? "text-blue-600 border-blue-600"
-                    : "text-gray-500 border-transparent hover:text-gray-700 hover:border-gray-300"
+                    : " border-transparent  hover:border-gray-300"
                 }`}
               >
                 {tab.label}

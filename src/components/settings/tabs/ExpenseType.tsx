@@ -91,7 +91,7 @@ export default function ExpenseType() {
             <button
               onClick={handleExportExcel}
               disabled={isExporting}
-              className="px-6 py-3 border border-green-600 text-green-700 rounded-lg hover:bg-green-50 font-medium flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-6 py-3 border border-green-600 cursor-pointer text-green-700 rounded-lg  font-medium flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <ExcelIcon />
               {isExporting ? "Exporting..." : "Export Excel"}
@@ -99,22 +99,22 @@ export default function ExpenseType() {
 
             <button
               onClick={openExpenseType}
-              className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium"
+              className="px-6 py-3 bg-blue-600 cursor-pointer text-white rounded-lg hover:bg-blue-700 font-medium"
             >
               Create Expense Type
             </button>
           </div>
         </div>
         {/* Desktop / Tablet Table */}
-        <div className="hidden sm:block bg-white rounded-lg border border-gray-200 overflow-hidden">
+        <div className="hidden sm:block bg-[var(--color-overviewTab)] rounded-lg border border-gray-200 overflow-hidden">
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+              <thead className="bg-[var(--color-overviewTab)]">
                 <tr>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">
+                  <th className="px-6 py-4 text-left text-sm font-semibold ">
                     Expense Type
                   </th>
-                  <th className="px-6 py-4 text-right text-sm font-semibold text-gray-700">
+                  <th className="px-6 py-4 text-right text-sm font-semibold ">
                     Action
                   </th>
                 </tr>

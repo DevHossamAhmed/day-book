@@ -75,11 +75,11 @@ export default function CreateMember({ onClose, onSave }: Props) {
       onClick={() => closeDailog()}
     >
       <div
-        className="bg-white shadow-xl w-full max-w-md h-full overflow-y-auto"
+        className="bg-[var(--color-overviewTab)] shadow-xl w-full max-w-md h-full overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="p-6 border-b border-gray-200 flex items-center justify-between sticky top-0 bg-white">
-          <h2 className="text-xl font-semibold text-gray-900">Create Member</h2>
+        <div className="p-6 border-b border-gray-200 flex items-center justify-between sticky top-0 bg-[var(--color-overviewTab)]">
+          <h2 className="text-xl font-semibold ">Create Member</h2>
           <button
             onClick={() => closeDailog()}
             className="text-gray-400 hover:text-gray-600"
@@ -100,7 +100,7 @@ export default function CreateMember({ onClose, onSave }: Props) {
             )}
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-semibold text-gray-900 mb-2">
+                <label className="block text-sm font-semibold  mb-2">
                   First Name*
                 </label>
                 <input
@@ -115,7 +115,7 @@ export default function CreateMember({ onClose, onSave }: Props) {
                 )}
               </div>
               <div>
-                <label className="block text-sm font-semibold text-gray-900 mb-2">
+                <label className="block text-sm font-semibold  mb-2">
                   Last Name*
                 </label>
                 <input
@@ -131,7 +131,7 @@ export default function CreateMember({ onClose, onSave }: Props) {
               </div>
             </div>
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
+              <label className="block text-sm font-semibold  mb-2">
                 Joining Date*
               </label>
               <div className="relative">
@@ -147,7 +147,7 @@ export default function CreateMember({ onClose, onSave }: Props) {
               />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
+              <label className="block text-sm font-semibold  mb-2">
                 Designation*
               </label>
               <input
@@ -159,13 +159,13 @@ export default function CreateMember({ onClose, onSave }: Props) {
               <ErrorMessage message={errors.designation?.message as string} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-900 mb-2">
+              <label className="block text-sm font-medium  mb-2">
                 Salary Cycle*
               </label>
               <div className="relative">
                 <select
                   {...register("salary_cycle")}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg appearance-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-3 bg-[var(--color-overviewTab)] border border-gray-300 rounded-lg appearance-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 >
                   <option value="">Select cycle</option>
                   <option value="monthly">Monthly</option>
@@ -177,7 +177,7 @@ export default function CreateMember({ onClose, onSave }: Props) {
               <ErrorMessage message={errors.salary_cycle?.message as string} />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
+              <label className="block text-sm font-semibold  mb-2">
                 Salary Amount*
               </label>
               <input
@@ -191,13 +191,13 @@ export default function CreateMember({ onClose, onSave }: Props) {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-900 mb-2">
+              <label className="block text-sm font-medium  mb-2">
                 Role*
               </label>
               <div className="relative">
                 <select
                   {...register("role")}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg appearance-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-3 border bg-[var(--color-overviewTab)] border-gray-300 rounded-lg appearance-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 >
                   <option value="">Select Role</option>
                   <option value="Admin">Admin</option>
@@ -213,7 +213,7 @@ export default function CreateMember({ onClose, onSave }: Props) {
             <div>
               <label
                 htmlFor="email"
-                className="block text-sm font-medium text-gray-700 mb-2"
+                className="block text-sm font-medium  mb-2"
               >
                 Email
               </label>
@@ -221,7 +221,7 @@ export default function CreateMember({ onClose, onSave }: Props) {
                 type="email"
                 id="email"
                 {...register("email")}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none transition-all text-sm text-gray-900 placeholder-gray-400"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none transition-all text-sm  placeholder-gray-400"
                 placeholder="Enter your email"
               />
               {errors.email && (
@@ -231,7 +231,7 @@ export default function CreateMember({ onClose, onSave }: Props) {
             <div>
               <label
                 htmlFor="password"
-                className="block text-sm font-medium text-gray-700 mb-2"
+                className="block text-sm font-medium  mb-2"
               >
                 Password
               </label>
@@ -239,7 +239,7 @@ export default function CreateMember({ onClose, onSave }: Props) {
                 type="password"
                 id="password"
                 {...register("password")}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none transition-all text-sm text-gray-900 placeholder-gray-400"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none transition-all text-sm  placeholder-gray-400"
                 placeholder="Enter your password"
               />
               {errors.password && (
@@ -247,7 +247,7 @@ export default function CreateMember({ onClose, onSave }: Props) {
               )}
             </div>
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
+              <label className="block text-sm font-semibold  mb-2">
                 Additional Info
               </label>
               <textarea
@@ -263,7 +263,7 @@ export default function CreateMember({ onClose, onSave }: Props) {
             </div>
           </div>
           {/* Modal Footer */}
-          <div className="p-6 border-t border-gray-200 flex justify-end gap-3 sticky bottom-0 bg-white z-10">
+          <div className="p-6 border-t border-gray-200 flex justify-end gap-3 sticky bottom-0 bg-[var(--color-overviewTab)] z-10">
             <button
               disabled={isLoading}
               onClick={handleSubmit((d) => submit(d, false))}

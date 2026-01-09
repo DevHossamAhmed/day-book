@@ -7,6 +7,7 @@ import { ThemeProvider } from "@/contexts/ThemeContext";
 
 export const metadata: Metadata = {
   title: "Day Book",
+  description: "Manage your daily bookkeeping efficiently",
 };
 
 export default function RootLayout({
@@ -28,6 +29,7 @@ export default function RootLayout({
                   const html = document.documentElement;
                   
                   if (!theme || (theme !== 'light' && theme !== 'dark')) {
+                    // Default to light theme
                     localStorage.setItem('theme', 'light');
                     html.classList.remove('dark');
                     html.style.colorScheme = 'light';
@@ -39,16 +41,18 @@ export default function RootLayout({
                     html.style.colorScheme = 'light';
                   }
                 } catch (e) {
+                  // Fallback if localStorage fails
                   const html = document.documentElement;
                   html.classList.remove('dark');
                   html.style.colorScheme = 'light';
+                  console.error('Theme initialization error:', e);
                 }
               })();
             `,
           }}
         />
       </head>
-      <body>
+      <body className="antialiased">
         {/** set providers */}
         <ThemeProvider>
           <SessionProviderWrapper>

@@ -126,7 +126,7 @@ const OpeningBalancePage = () => {
           />
         </div>
         <button
-          className="cursor-pointer flex items-center gap-3 bg-liner-to-r from-blue-400 to-blue-700 text-white px-5 py-3 rounded-full shadow-lg hover:bg-blue-600 transition-colors"
+          className="cursor-pointer flex items-center gap-3 bg-gradient-to-r from-blue-400 to-blue-700 text-white px-5 py-3 rounded-full shadow-lg hover:bg-blue-600 transition-colors"
         >
           <div className="w-8 h-8 border border-[#cefa8c] bg-[#0d81e0] bg-opacity-20 rounded-full flex items-center justify-center">
             <ArrowUpDown size={20} className="text-[#cefa8c]" />
@@ -155,14 +155,14 @@ const OpeningBalancePage = () => {
         <div className="flex gap-3">
           <button
             onClick={() => openCreateRecord()}
-            className="flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium"
+            className="flex items-center gap-2 bg-blue-600 cursor-pointer text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium"
           >
             <Plus size={18} />
             Create Entry
           </button>
           <button
             onClick={() => openCreateTransfer()}
-            className="flex items-center gap-2 bg-white text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-50 transition-colors font-medium border border-gray-300"
+            className="flex items-center gap-2 bg-[var(--color-overviewTab)] cursor-pointer px-6 py-3 rounded-lg  transition-colors font-medium border border-gray-300"
           >
             <ArrowLeftRight size={18} />
             Transfer
@@ -170,19 +170,19 @@ const OpeningBalancePage = () => {
           <button
             onClick={handleExportExcel}
             disabled={isExporting}
-            className="px-6 py-3 border border-green-600 text-green-700 rounded-lg hover:bg-green-50 font-medium flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-6 py-3 border border-green-600 text-green-700 rounded-lg cursor-pointer font-medium flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <ExcelIcon />
             {isExporting ? "Exporting..." : "Export Excel"}
           </button>
-          <button className="flex items-center justify-center w-10 h-10 bg-white text-gray-700 rounded-lg hover:bg-gray-50 transition-colors border border-gray-300">
+          <button className="flex items-center justify-center w-10 h-10 bg-[var(--color-overviewTab)]  rounded-lg cursor-pointer transition-colors border border-gray-300">
             <MoreVertical size={18} />
           </button>
         </div>
       </div>
 
       {/* Main Content Card */}
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100">
+      <div className="bg-[var(--color-overviewTab)] rounded-2xl shadow-sm border border-gray-100">
         {/* Date Navigation */}
         <div className="p-6 border-b border-gray-200">
           <div className="flex items-center justify-between gap-6">
@@ -190,7 +190,7 @@ const OpeningBalancePage = () => {
               <button className="px-4 py-2 bg-gray-900 text-white rounded-lg font-medium text-sm">
                 Day
               </button>
-              <button className="flex items-center gap-2 text-gray-700 font-medium text-sm">
+              <button className="flex items-center gap-2 font-medium text-sm">
                 {formatDate(new Date(), "Do MMMM, YYYY")}
                 <ChevronRight size={16} className="rotate-90" />
               </button>
@@ -211,7 +211,7 @@ const OpeningBalancePage = () => {
               ))}
             </div>
             <div className="flex gap-3">
-              <button className="flex items-center gap-2 px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium">
+              <button className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg cursor-pointer transition-colors text-sm font-medium">
                 <SlidersHorizontal size={16} />
                 Filter
               </button>
